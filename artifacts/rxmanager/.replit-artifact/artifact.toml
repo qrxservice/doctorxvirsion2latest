@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "DoctorX Prescription"
+description = "A doctor-facing prescription workspace for managing patient details, clinical notes, medicines, templates, queue status, and prescription actions."
+version = "1.0.0"
+id = "artifacts/rxmanager"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25108
+
+[services.development]
+run = "pnpm --filter @workspace/rxmanager run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/rxmanager", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/rxmanager/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25108"
+BASE_PATH = "/"
