@@ -832,9 +832,7 @@ export default function NewPrescriptionPage() {
   // ── UI toggles
   const [showLoadPatient, setShowLoadPatient] = useState(false);
   const [showMedicineComposer, setShowMedicineComposer] = useState(false);
-  const [headerCollapsed, setHeaderCollapsed] = useState(false);
   const [patientSearch, setPatientSearch] = useState("");
-  const [showQueue, setShowQueue] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [activeCalculatorKey, setActiveCalculatorKey] = useState<string | null>(null);
   const [showQuickTools, setShowQuickTools] = useState(true);
@@ -1081,25 +1079,6 @@ export default function NewPrescriptionPage() {
     }, 500);
     return () => clearTimeout(timer);
   }, [prescriptionDraftStorageKey, mode, recoveryDraft, patient, currentMed, medicines, advice, treatmentNote, followUpDate, diagnosis]);
-
-  // Collapse the large doctor header while the writing area scrolls down and
-  // bring it back when the doctor scrolls up.
-  useEffect(() => {
-    const viewports = Array.from(
-      document.querySelectorAll<HTMLElement>(".rx-shell [data-radix-scroll-area-viewport]"),
-    );
-    if (viewports.length === 0) return;
-    let lastTop = 0;
-    const handleScroll = (event: Event) => {
-      const viewport = event.currentTarget as HTMLElement;
-      const nextTop = viewport.scrollTop;
-      if (Math.abs(nextTop - lastTop) < 3) return;
-      setHeaderCollapsed(nextTop > lastTop && nextTop > 24);
-      lastTop = nextTop;
-    };
-    viewports.forEach(viewport => viewport.addEventListener("scroll", handleScroll, { passive: true }));
-    return () => viewports.forEach(viewport => viewport.removeEventListener("scroll", handleScroll));
-  }, []);
 
   // Patient list = unique patients from this doctor's prescription history,
   // scoped to the selected loader date (only patients seen on that date).
@@ -1679,7 +1658,6 @@ export default function NewPrescriptionPage() {
     setNewTmpl(emptyTemplateForm(type));
     setTemplateMedicines(type === "full" ? cloneTemplateMedicines(medicines) : []);
     setShowTemplateForm(true);
-    setShowQueue(false);
   };
 
   const updateTemplateMedicine = (id: string, patch: Partial<MedItem>) => {
@@ -2257,10 +2235,7 @@ export default function NewPrescriptionPage() {
     <div className="rx-shell rx-reference-mode h-screen min-w-0 flex flex-col bg-background overflow-hidden">
 
       {/* ══ REFERENCE-STYLE HEADER ═════════════════════════════════════ */}
-      <header className={cn(
-        "rx-topbar rx-reference-header min-w-0 shrink-0 border-b bg-background px-3 py-2 print:hidden z-20 relative",
-        headerCollapsed && "is-scroll-collapsed",
-      )}>
+      <header className="rx-topbar rx-reference-header min-w-0 shrink-0 border-b bg-background px-3 py-2 print:hidden relative">
         <div className="rx-doctor-identity rx-doctor-identity-left min-w-0">
           <div className="rx-screen-doctor-brand">
             <div className="rx-screen-doctor-mark" aria-hidden="true">℞</div>
@@ -2387,61 +2362,6 @@ export default function NewPrescriptionPage() {
           </DropdownMenu>
         )}
 
-        {/* ── Live Queue Status Badge ── always visible, click to expand panel */}
-        <button
-          type="button"
-          onClick={() => setShowQueue(v => !v)}
-          className={cn(
-            "flex items-center gap-1.5 h-7 px-2 rounded-md border text-xs font-medium transition-colors shrink-0",
-            isDayEnded
-              ? "border-red-400 bg-red-50 text-red-800 dark:bg-red-950/30 dark:text-red-300 dark:border-red-700"
-              : isOnBreak
-                ? "border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-700"
-                : queueServing
-                  ? "border-green-400 bg-green-50 text-green-800 dark:bg-green-950/30 dark:text-green-300 dark:border-green-700"
-                  : queueWaiting.length > 0
-                    ? "border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/30 dark:text-amber-300 dark:border-amber-700"
-                    : "border-border bg-muted/40 text-muted-foreground hover:bg-muted"
-          )}
-        >
-          {isDayEnded ? (
-            <span className="h-2 w-2 rounded-full bg-red-500 shrink-0" />
-          ) : isOnBreak ? (
-            <Coffee className="h-3 w-3 shrink-0" />
-          ) : queueServing ? (
-            <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0" />
-          ) : queueWaiting.length > 0 ? (
-            <span className="h-2 w-2 rounded-full bg-amber-500 shrink-0" />
-          ) : (
-            <Activity className="h-3 w-3 shrink-0" />
-          )}
-          {isDayEnded ? (
-            <span className="hidden sm:inline">{L.statusDayEnded}</span>
-          ) : isOnBreak ? (
-            <span className="hidden sm:inline font-mono">{breakCdStr ?? L.statusOnBreak}</span>
-          ) : queueServing ? (
-            <span className="hidden sm:inline max-w-[120px] truncate">#{queueServing.serialNo} {queueServing.patientName}</span>
-          ) : (
-            <span className="hidden sm:inline">{L.queueColon}</span>
-          )}
-          {!isDayEnded && queueWaiting.length > 0 && (
-            <span className="flex items-center justify-center h-4 min-w-[1.25rem] px-1 rounded-full text-[10px] font-bold shrink-0 bg-amber-500 text-white">
-              {queueWaiting.length}
-            </span>
-          )}
-          {showQueue ? <ChevronUp className="h-3 w-3 shrink-0" /> : <ChevronDown className="h-3 w-3 shrink-0" />}
-        </button>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-7 px-2 text-xs gap-1 shrink-0"
-          onClick={() => setShowTemplates(v => !v)}
-        >
-          <BookOpen className="h-3 w-3" />
-          <span className="hidden sm:inline">{L.templates}</span>
-        </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs gap-1 shrink-0">
@@ -2465,17 +2385,6 @@ export default function NewPrescriptionPage() {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-         <Button
-           type="button"
-           variant="outline"
-           size="sm"
-           className="h-7 shrink-0 gap-1 px-2 text-xs"
-           onClick={() => document.getElementById("diagnosis-field")?.focus()}
-           aria-label={L.diagnosisDx}
-         >
-           <ClipboardList className="h-3 w-3" />
-           <span className="hidden sm:inline">{L.diagnosisDx}</span>
-         </Button>
         </div>
        </div>
 
@@ -2524,10 +2433,14 @@ export default function NewPrescriptionPage() {
               <div className="text-[10px] text-muted-foreground truncate">{L.nowServingShort}</div>
               <div className="text-base font-bold text-teal-700 dark:text-teal-400 truncate">{queueServing ? `#${queueServing.serialNo}` : "—"}</div>
             </div>
-            <div className="min-w-0 rounded bg-muted px-2 py-1.5">
+              <div className="min-w-0 rounded bg-muted px-2 py-1.5">
               <div className="text-[10px] text-muted-foreground truncate">{L.nextShort}</div>
               <div className="text-base font-bold truncate">{queueWaiting[0] ? `#${queueWaiting[0].serialNo}` : "—"}</div>
             </div>
+             <div className="min-w-0 rounded bg-blue-600/10 px-2 py-1.5">
+               <div className="text-[10px] text-muted-foreground truncate">{isBn ? "পরামর্শ চলছে" : "In Consultation"}</div>
+               <div className="text-base font-bold text-blue-700 dark:text-blue-400">{queueServing ? 1 : 0}</div>
+             </div>
             <div className="min-w-0 rounded bg-muted px-2 py-1.5">
               <div className="text-[10px] text-muted-foreground">{L.waitingShort}</div>
               <div className="text-base font-bold">{queueWaiting.length}</div>
@@ -3532,8 +3445,8 @@ export default function NewPrescriptionPage() {
                      value={followUpDate}
                      onChange={e => setFollowUpDate(e.target.value)}
                    />
-                   <label className="text-[10px] text-muted-foreground font-semibold uppercase whitespace-nowrap">
-                     {isBn ? "ফলো-আপ" : "Follow-up"}
+                    <label className="text-[10px] text-muted-foreground font-semibold uppercase whitespace-nowrap">
+                      {isBn ? "ফলো-আপ টেমপ্লেট" : "Follow-up Template"}
                    </label>
                    <select
                      className="h-7 min-w-0 flex-1 rounded border bg-background px-1.5 text-xs sm:max-w-[14rem]"
@@ -3615,7 +3528,7 @@ export default function NewPrescriptionPage() {
                   className="text-xs text-teal-700 dark:text-teal-300 hover:text-teal-600 flex items-center gap-0.5">
                   <Save className="h-3 w-3" />{L.saveCurrentTemplate}
                 </button>
-                <button type="button" onClick={() => { setShowQueue(false); setShowTemplates(false); }}
+                <button type="button" onClick={() => setShowTemplates(false)}
                    className="inline-flex h-9 w-9 items-center justify-center rounded-md text-xl leading-none text-muted-foreground hover:bg-muted hover:text-foreground" aria-label="Close templates">
                   ×
                 </button>
