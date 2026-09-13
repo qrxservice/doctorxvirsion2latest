@@ -526,6 +526,50 @@
   position: relative;
 }
 
+.rx-shell .rx-stethoscope-watermark {
+  position: absolute;
+  z-index: 0;
+  top: 5.5rem;
+  right: clamp(1rem, 7vw, 5rem);
+  width: min(34vw, 21rem);
+  max-width: 42%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.16;
+  filter: sepia(0.35) saturate(0.65) hue-rotate(125deg) contrast(1.35)
+    drop-shadow(0 12px 12px rgba(13, 88, 90, 0.24));
+  mix-blend-mode: multiply;
+  transform: rotate(-8deg);
+}
+
+.dark .rx-shell .rx-stethoscope-watermark {
+  opacity: 0.13;
+  filter: sepia(0.25) saturate(0.7) hue-rotate(125deg) contrast(1.25)
+    drop-shadow(0 12px 12px rgba(0, 0, 0, 0.42));
+  mix-blend-mode: screen;
+}
+
+.rx-shell .rx-prescription-sheet > :not(.rx-stethoscope-watermark) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .rx-shell .rx-stethoscope-watermark {
+    top: 7rem;
+    right: 1.5rem;
+    width: min(40vw, 15rem);
+    opacity: 0.11;
+  }
+}
+
+@media print {
+  .rx-shell .rx-stethoscope-watermark {
+    display: none;
+  }
+}
+
 .rx-shell .rx-prescription-sheet::before {
   position: absolute;
   inset: 1rem 1rem auto auto;

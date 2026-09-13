@@ -2915,6 +2915,12 @@ export default function NewPrescriptionPage() {
         <main className="rx-prescription-panel flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden bg-background/30">
           <ScrollArea className="min-w-0 flex-1">
             <div className="rx-prescription-sheet mx-auto w-full min-w-0 max-w-6xl space-y-4 p-3 sm:p-5">
+              <img
+                src={`${import.meta.env.BASE_URL}stethoscope-watermark.png`}
+                alt=""
+                aria-hidden="true"
+                className="rx-stethoscope-watermark"
+              />
 
               {recoveryDraft && (
                 <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100">
