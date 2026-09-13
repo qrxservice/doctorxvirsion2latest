@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "R2-dpAax7w8H__h2FEFY0"
+uri = "file://doctorx-rxmanager-work-plan-handoff.md"
+type = "text"
+title = "DoctorX RxManager Work Plan Handoff"
+description = "Transferable project summary covering completed Phases A–D, preserved logic, validation commands, known API limitations, workflow notes, and the pending Phase E plan."
+logical_id = "a88ebce5-6218-42c2-8b1f-15d7fcc795cd"
+content_hash = "sha256:94ee982ea086df85f645c3d98342d7d4572ca08e541dca9fe1c531a539adfeb5"
+size = 6440
+mtime_ms = 1789011203892
+storage_uri = "gcs://replit-rams-assets-pike/rams/assets/repl:4f45ca7e-8336-47d7-95d3-2d5e630ed250/a88ebce5-6218-42c2-8b1f-15d7fcc795cd/5d93cbfa-19ba-432d-b972-1c4f9e35b253"
+storage_version_token = "1789011214780653"
+content_type = "text/markdown"

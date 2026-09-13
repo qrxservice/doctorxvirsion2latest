@@ -1,0 +1,578 @@
+We have completed:
+
+- Phase A — Source Audit
+- Phase B — UI Skeleton
+- Phase C — Medicine Prescription UI
+
+Now proceed with:
+
+# PHASE D — PRESCRIBED MEDICINE LIST ONLY
+
+IMPORTANT:
+
+Do NOT redesign unrelated parts of the application.
+
+Do NOT modify:
+
+- Backend
+- API
+- Database schema
+- Authentication
+- Routes
+- Queue system
+- Patient loading
+- Doctor profile
+- Templates
+- Print/PDF logic
+
+The goal of this phase is ONLY to improve the prescribed medicine list UI and safely connect it to the EXISTING prescription medicine data/state.
+
+Primary file:
+
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Before changing code, inspect:
+
+1. Current prescribed medicine state.
+2. Existing medicine list rendering.
+3. Existing add medicine handler.
+4. Existing medicine edit logic.
+5. Existing delete/remove logic.
+6. Existing drag-and-drop or reorder logic.
+7. Existing prescription edit/load logic.
+
+IMPORTANT:
+
+Reuse existing state and handlers wherever possible.
+
+Do NOT create duplicate medicine state.
+
+Do NOT replace working prescription data flow.
+
+--------------------------------------------------
+
+# PRIMARY GOAL
+
+Create a clean, professional, doctor-friendly prescribed medicine list.
+
+The list should make it easy to:
+
+- Review medicines
+- Understand dose quickly
+- Reorder medicines
+- Edit a medicine
+- Delete a medicine
+- Continue adding medicines
+
+The interface should remain fast and flexible.
+
+--------------------------------------------------
+
+# MEDICINE LIST DESIGN
+
+Each prescribed medicine should appear as a clean medicine card or compact row.
+
+Concept:
+
+⠿   ১. Napa 500 mg                     ✏  🗑
+
+     ১+০+১   •   খাবারের পরে   •   ৫ দিন
+
+
+⠿   ২. Omeprazole 20 mg                ✏  🗑
+
+     ১+০+০   •   খাবারের আগে   •   ৭ দিন
+
+
+Requirements:
+
+Each medicine should clearly display:
+
+- Serial number
+- Medicine name
+- Existing strength information when available
+- Existing generic information when available
+- Dose
+- Timing
+- Duration
+
+Do not invent data.
+
+Only display information available from the existing prescription medicine object.
+
+--------------------------------------------------
+
+# SERIAL NUMBER
+
+Automatically display medicine serial numbers.
+
+Example:
+
+1.
+2.
+3.
+4.
+
+Serial numbers must update correctly after:
+
+- Adding medicine
+- Deleting medicine
+- Reordering medicine
+
+Do not store serial number separately in the database unless the existing data model already does so.
+
+The displayed number should reflect the current list order.
+
+--------------------------------------------------
+
+# DRAG AND DROP REORDERING
+
+This is a critical feature.
+
+Doctors must be able to reorder prescribed medicines.
+
+Example:
+
+Before:
+
+1. Napa
+2. Omeprazole
+3. Amlodipine
+
+After drag:
+
+1. Amlodipine
+2. Napa
+3. Omeprazole
+
+IMPORTANT:
+
+First inspect whether drag/reorder functionality already exists.
+
+If it exists:
+
+- Preserve the existing reorder logic.
+- Improve only the UI and usability.
+- Do not replace working logic unnecessarily.
+
+If it does NOT exist:
+
+Implement a safe frontend-only drag-and-drop solution using the existing medicine state.
+
+Requirements:
+
+- Drag handle visible
+- Drag handle should not interfere with edit/delete buttons
+- Smooth desktop interaction
+- Touch-friendly mobile interaction where supported
+- No duplicate medicines
+- No lost medicine data
+- Correct state order after dropping
+
+IMPORTANT:
+
+Do NOT change the database schema.
+
+Do NOT create a second medicine array.
+
+Use the existing prescription medicine state.
+
+--------------------------------------------------
+
+# DRAG HANDLE
+
+Use a subtle drag handle.
+
+Example:
+
+⠿
+
+or a suitable existing icon.
+
+The drag handle should visually indicate:
+
+"Hold and move this medicine."
+
+Do not make the entire card accidentally draggable if that causes usability problems.
+
+Prefer dragging through a dedicated handle when practical.
+
+--------------------------------------------------
+
+# EDIT MEDICINE
+
+Each medicine should have an Edit button.
+
+Example:
+
+✏
+
+When Edit is clicked:
+
+Load the existing medicine into the Phase C medicine entry form.
+
+The doctor must be able to modify:
+
+- Medicine
+- Dose
+- Timing
+- Duration
+- Existing instruction fields if supported by the current application
+
+IMPORTANT:
+
+Reuse existing edit logic if it already exists.
+
+Do NOT create a separate parallel edit system.
+
+The edit workflow should:
+
+1. Click Edit.
+2. Existing medicine values load into the medicine form.
+3. Doctor changes values.
+4. Doctor saves/updates.
+5. The same medicine item updates in its original position.
+
+CRITICAL:
+
+Do not add a duplicate medicine when updating.
+
+The original medicine should be updated.
+
+--------------------------------------------------
+
+# EDIT MODE UX
+
+When editing a medicine:
+
+Clearly indicate that the form is in Edit Mode.
+
+Example:
+
+Editing: Napa 500 mg
+
+The Add button may safely change to:
+
+[ Update Medicine ]
+
+Provide a visible way to:
+
+[ Cancel Edit ]
+
+When Cancel Edit is clicked:
+
+- Exit edit mode.
+- Clear temporary edit state.
+- Restore normal medicine entry mode.
+- Do not modify the medicine.
+
+--------------------------------------------------
+
+# DELETE MEDICINE
+
+Each medicine should have a Delete button.
+
+Example:
+
+🗑
+
+When clicked:
+
+Remove the medicine using the EXISTING remove/delete handler.
+
+Before adding any new confirmation dialog:
+
+First inspect whether confirmation already exists.
+
+If confirmation already exists:
+
+- Preserve it.
+
+If there is no confirmation:
+
+Use a lightweight confirmation appropriate to the current UI.
+
+Do not create a complicated modal system.
+
+After deletion:
+
+- Remove the correct medicine.
+- Update serial numbers automatically.
+- Preserve all remaining medicine data.
+- Do not affect other prescription fields.
+
+--------------------------------------------------
+
+# DATA INTEGRITY
+
+This is extremely important.
+
+The following must remain correct after:
+
+- Add
+- Edit
+- Delete
+- Reorder
+
+Each medicine must preserve:
+
+- Medicine identity
+- Existing medicine ID
+- Name
+- Strength
+- Dose
+- Timing
+- Duration
+- Instructions
+- Any existing medicine fields
+
+Do not accidentally strip properties when updating or reordering.
+
+Use immutable state updates where appropriate.
+
+--------------------------------------------------
+
+# EXISTING PRESCRIPTION EDITING
+
+This is critical.
+
+When an existing saved prescription is opened:
+
+All existing prescribed medicines must:
+
+- Load correctly
+- Display correctly
+- Remain editable
+- Remain deletable
+- Remain reorderable
+
+Do NOT break the existing prescription reopening/edit workflow.
+
+Do NOT require a new prescription to use the improved medicine list.
+
+The new UI must work with both:
+
+1. New prescription
+2. Existing/reopened prescription
+
+--------------------------------------------------
+
+# MEDICINE LIST + PHASE C CONNECTION
+
+Phase C already provides the medicine entry form.
+
+Phase D should connect naturally with it.
+
+Workflow:
+
+1. Doctor searches medicine.
+2. Selects medicine.
+3. Selects dose.
+4. Selects timing.
+5. Selects duration.
+6. Adds medicine.
+7. Medicine appears immediately in the list.
+8. Doctor can edit/delete/reorder it.
+
+When Edit is clicked:
+
+1. Existing medicine loads into the same Phase C form.
+2. Doctor modifies it.
+3. Clicks Update Medicine.
+4. Existing list item updates.
+
+Do NOT create a separate medicine edit page.
+
+Do NOT navigate away from the prescription page.
+
+--------------------------------------------------
+
+# VISUAL DESIGN
+
+The medicine list should be:
+
+- Clean
+- Compact
+- Easy to scan
+- Professional
+- Doctor-friendly
+
+Recommended hierarchy:
+
+Medicine Name
+↓
+Dose • Timing • Duration
+
+Example:
+
+Napa 500 mg
+
+১+০+১   •   খাবারের পরে   •   ৫ দিন
+
+Avoid excessive borders.
+
+Use spacing and typography for hierarchy.
+
+The medicine name should be visually prominent.
+
+Secondary prescription information should be lighter and compact.
+
+--------------------------------------------------
+
+# MOBILE RESPONSIVENESS
+
+The medicine list must work properly on mobile.
+
+Requirements:
+
+- No horizontal overflow
+- Medicine names wrap correctly
+- Edit/Delete controls remain accessible
+- Drag handle remains usable
+- Buttons are touch-friendly
+- Dose/timing/duration remain readable
+
+On smaller screens:
+
+The layout may adapt from horizontal to vertical.
+
+Do not hide essential controls.
+
+--------------------------------------------------
+
+# DO NOT IMPLEMENT YET
+
+Do NOT start Phase E.
+
+Specifically do NOT implement or redesign:
+
+- Doctor Header
+- Doctor profile layout
+- Stethoscope watermark changes
+- Print header
+- PDF header
+- Print prescription design
+
+Also do NOT modify:
+
+- Templates
+- Observation templates
+- C/C
+- O/E
+- I/X
+- Advice
+- Follow-up
+
+Those will be handled separately.
+
+--------------------------------------------------
+
+# CRITICAL SAFETY RULES
+
+DO NOT:
+
+- Change database schema
+- Change backend code
+- Change API endpoints
+- Remove existing medicine fields
+- Create duplicate medicine state
+- Replace working medicine search
+- Break medicine save logic
+- Break prescription save logic
+- Break prescription reopening
+- Break existing templates
+- Break print/PDF behavior
+- Modify unrelated files unnecessarily
+
+Prefer minimal and focused changes.
+
+--------------------------------------------------
+
+# VALIDATION
+
+After implementation, run:
+
+1. Shared library typecheck if required.
+2. RxManager TypeScript/typecheck.
+3. Production build.
+4. git diff --check.
+
+Then manually verify:
+
+### Add Medicine
+
+- Search existing medicine.
+- Select medicine.
+- Set dose.
+- Set timing.
+- Set duration.
+- Add medicine.
+- Medicine appears correctly.
+
+### Edit Medicine
+
+- Click Edit.
+- Existing values load correctly.
+- Change dose/timing/duration.
+- Click Update Medicine.
+- Same medicine updates.
+- No duplicate medicine appears.
+
+### Cancel Edit
+
+- Click Edit.
+- Click Cancel.
+- Medicine remains unchanged.
+- Form returns to Add Medicine mode.
+
+### Delete Medicine
+
+- Delete one medicine.
+- Correct medicine is removed.
+- Remaining medicines remain intact.
+- Serial numbers update correctly.
+
+### Reorder
+
+- Add at least three medicines.
+- Reorder them.
+- Verify all medicine information remains intact.
+- Verify serial numbers update correctly.
+
+### Existing Prescription
+
+- Open an existing prescription if available.
+- Verify medicines load correctly.
+- Verify Edit works.
+- Verify Delete works.
+- Verify Reorder works.
+
+### Responsive
+
+Check:
+
+- Desktop
+- Mobile
+
+--------------------------------------------------
+
+# FINAL REPORT
+
+When finished, provide a concise report containing:
+
+1. Files changed
+2. Existing logic reused
+3. Medicine list improvements
+4. Edit workflow behavior
+5. Delete workflow behavior
+6. Reorder/drag-and-drop behavior
+7. Validation results
+8. Any limitation encountered
+
+IMPORTANT:
+
+Complete ONLY Phase D.
+
+Do NOT start Phase E.
+
+Do NOT make backend/API/database changes.

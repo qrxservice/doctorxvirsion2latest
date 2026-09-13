@@ -1,0 +1,323 @@
+We have completed Phase A (source audit) and Phase B (UI skeleton).
+
+Now proceed with:
+
+# PHASE C — MEDICINE PRESCRIPTION UI ONLY
+
+IMPORTANT:
+Do NOT redesign unrelated parts of the application.
+Do NOT modify backend/API/database.
+Do NOT change authentication, routes, print logic, PDF logic, queue logic, or existing save/edit functionality.
+
+The goal is to improve ONLY the medicine prescribing experience inside the existing:
+
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Before changing code:
+
+1. Inspect the current medicine-related state.
+2. Inspect the existing medicine search logic.
+3. Inspect how a medicine is currently added.
+4. Inspect existing prescription medicine data structure.
+5. Inspect existing edit/update logic.
+6. Reuse existing handlers wherever possible.
+
+Do not replace working logic unnecessarily.
+
+--------------------------------------------------
+
+# PRIMARY GOAL
+
+Create a fast, doctor-friendly medicine prescribing interface.
+
+The existing medicine search and data flow must remain intact.
+
+The doctor should be able to:
+
+- Search medicine quickly
+- Select medicine
+- Set dose
+- Set timing
+- Set duration
+- Add the medicine
+- Continue adding another medicine
+
+The workflow should be fast and keyboard-friendly.
+
+--------------------------------------------------
+
+# MEDICINE INPUT UI
+
+Create a clean prescription medicine section.
+
+Layout concept:
+
+                    ℞
+
+┌──────────────────────────────────────┐
+│ 🔍 ওষুধ লিখুন...                    │
+└──────────────────────────────────────┘
+
+When typing:
+
+- Use the EXISTING medicine search logic.
+- Show existing medicine suggestions.
+- Do not create a new API.
+- Do not replace the current search system.
+- Preserve existing debounce/search behavior if present.
+
+Example suggestions:
+
+Napa 500 mg
+Napa Extra
+Omeprazole 20 mg
+Amlodipine 5 mg
+
+Suggestions should be:
+
+- Easy to scan
+- Clickable
+- Keyboard accessible
+- Mobile friendly
+
+--------------------------------------------------
+
+# MEDICINE SELECTION
+
+After selecting a medicine, show the selected medicine clearly.
+
+Example:
+
+Selected Medicine
+
+Napa 500 mg
+
+If the existing data model includes generic name, strength, or form, display them where appropriate.
+
+Do not change the database schema.
+
+--------------------------------------------------
+
+# DOSE SECTION
+
+Add a fast selectable dose section.
+
+Example:
+
+ডোজ
+
+[ ১+০+১ ]
+[ ১+১+১ ]
+[ ১+০+০ ]
+[ ০+১+০ ]
+[ ০+০+১ ]
+[ ১+১+১ ]
+[ ১+১+০ ]
+[ প্রয়োজন হলে ]
+
+IMPORTANT:
+
+Reuse existing dose handling if it already exists.
+
+Do not break custom dose entry.
+
+If the current application supports custom dose values, preserve that functionality.
+
+Selected option should have a clear active state.
+
+--------------------------------------------------
+
+# TIMING SECTION
+
+Add quick timing options.
+
+সময়
+
+[ খাবারের আগে ]
+[ খাবারের পরে ]
+[ খাবারের সাথে ]
+[ রাতে ]
+[ প্রয়োজন হলে ]
+
+Requirements:
+
+- Reuse existing timing/instruction logic if available.
+- Do not hardcode values that conflict with the existing prescription data model.
+- Preserve custom instructions if they already exist.
+
+--------------------------------------------------
+
+# DURATION SECTION
+
+Create quick Bengali-friendly duration buttons.
+
+মেয়াদ
+
+[ ৩ দিন ]
+[ ৫ দিন ]
+[ ৭ দিন ]
+[ ১০ দিন ]
+
+[ ১৫ দিন ]
+[ ২১ দিন ]
+[ ৩০ দিন ]
+
+[ ৩ মাস ]
+[ চলবে ]
+
+IMPORTANT:
+
+Also preserve the existing duration input.
+
+Doctors must still be able to enter a custom duration if necessary.
+
+Do not remove existing duration functionality.
+
+--------------------------------------------------
+
+# ADD MEDICINE BUTTON
+
+Add a clear button:
+
+[ + ওষুধ যোগ করুন ]
+
+The button must:
+
+- Use the existing add medicine handler.
+- Add the medicine using the existing prescription state/data structure.
+- Not create duplicate parallel state.
+- Not change API behavior.
+
+After successfully adding a medicine:
+
+- Clear the medicine search input appropriately.
+- Reset temporary dose/timing/duration selection appropriately.
+- Keep the doctor ready to search for the next medicine.
+
+The doctor should be able to rapidly add multiple medicines.
+
+--------------------------------------------------
+
+# UX REQUIREMENTS
+
+The medicine entry process should feel fast.
+
+Desired flow:
+
+1. Doctor clicks medicine input.
+2. Types medicine name.
+3. Existing suggestions appear.
+4. Doctor selects medicine.
+5. Selects dose.
+6. Selects timing.
+7. Selects duration.
+8. Clicks Add Medicine.
+9. Immediately starts typing the next medicine.
+
+Avoid unnecessary popups.
+
+Avoid multi-step dialogs.
+
+Avoid requiring the doctor to leave the prescription screen.
+
+--------------------------------------------------
+
+# KEYBOARD SUPPORT
+
+Where practical:
+
+- Enter should select/add appropriately.
+- Arrow keys should navigate medicine suggestions if existing search supports it.
+- Focus should return to the medicine input after adding a medicine.
+
+Do not break existing keyboard behavior.
+
+--------------------------------------------------
+
+# MOBILE RESPONSIVENESS
+
+The medicine interface must work well on mobile.
+
+Requirements:
+
+- Buttons must be touch-friendly.
+- Dose buttons should wrap properly.
+- Duration buttons should wrap properly.
+- Suggestions must remain readable.
+- No horizontal page overflow.
+
+--------------------------------------------------
+
+# DO NOT IMPLEMENT YET
+
+Do NOT implement Phase D yet.
+
+Specifically do NOT redesign:
+
+- Existing prescribed medicine list
+- Drag and drop behavior
+- Medicine reorder behavior
+- Medicine edit interface
+- Medicine delete interface
+
+Those will be handled in Phase D.
+
+You may connect the new Phase C entry UI to the existing medicine list, but do not redesign the list yet.
+
+--------------------------------------------------
+
+# CRITICAL DATA SAFETY
+
+Do NOT:
+
+- Change database schema
+- Change API endpoints
+- Change backend code
+- Remove existing states
+- Remove existing handlers
+- Replace working medicine search logic
+- Create duplicate prescription state
+- Break prescription editing
+- Break existing templates
+- Break save prescription
+- Break existing medicine reorder functionality
+- Change Print/PDF output
+
+--------------------------------------------------
+
+# VALIDATION
+
+After implementation:
+
+1. Run the RxManager TypeScript/typecheck.
+2. Run the production build.
+3. Run git diff --check.
+4. Preview the prescription page.
+5. Test desktop layout.
+6. Test mobile layout.
+
+Also manually verify:
+
+- Existing medicine search still works.
+- Medicine can still be added.
+- Existing prescribed medicines remain intact.
+- Existing prescription save logic is untouched.
+- Existing prescription edit flow is not broken.
+
+--------------------------------------------------
+
+# FINAL REPORT
+
+When finished, provide a concise report containing:
+
+1. Files changed
+2. Existing logic reused
+3. UI improvements made
+4. Validation results
+5. Any limitation encountered
+
+IMPORTANT:
+
+Do not start Phase D.
+
+Complete ONLY Phase C.

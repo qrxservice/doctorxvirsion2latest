@@ -1,0 +1,84 @@
+Work on the uploaded DoctorX source code only.
+
+Current task: redesign ONLY the Doctor Prescription page UI while preserving all existing functionality.
+
+Important:
+- Do not rewrite the project.
+- Do not change backend, database, API, authentication, routes, print/PDF logic, or unrelated pages.
+- Do not remove existing functionality.
+- Keep existing medicine search and suggestion logic exactly as it works.
+- Keep existing save, draft, preview, edit/reopen prescription, queue, patient loading, templates and existing handlers.
+- Touch only files necessary for this prescription UI redesign.
+- Do not modify files unnecessarily.
+
+Main page:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Target design:
+
+1. Keep the existing top header/menu in two rows.
+2. Keep Queue Summary below the top menu in a horizontal landscape layout.
+3. Keep the LEFT SIDE existing functionality and sections:
+   - Patient Summary / Patient Information
+   - Vitals
+   - C/C
+   - O/E
+   - I/X Investigations
+   - Drug History
+   - RX Quick Tools
+   - Templates
+
+4. Redesign the RIGHT SIDE as a professional prescription-writing area.
+
+Right side structure:
+- Doctor prescription header
+- Patient information row
+- Large Rx symbol
+- Medicine search/input
+- Existing database medicine suggestions
+- Existing medicine/template controls
+- Dose selection
+- Timing selection
+- Duration selection
+- Add Medicine button
+- Prescribed medicine list
+- Instructions
+- Advice
+- Treatment Note
+- Follow-up
+
+Doctor header:
+- Auto-fill from existing doctor profile data.
+- Show doctor name, qualification, specialty, BMDC and available chamber/contact information.
+- Use a premium medical prescription appearance.
+- Light background/gradient is allowed.
+- A subtle stethoscope watermark may be used.
+- Do not hardcode doctor information.
+
+Medicine area is the main redesign priority:
+- Make it look like natural prescription writing.
+- Keep the existing medicine API/search functionality unchanged.
+- Search suggestions must continue to come from the existing database.
+- Do not change medicine permissions.
+- Do not add medicine to the master database automatically.
+
+Use Bengali/Kalpurush-friendly UI text where existing language support allows.
+Increase small text to a comfortable standard readable size.
+
+Duration options should display:
+৩ দিন, ৫ দিন, ৭ দিন, ১০ দিন, ১৫ দিন, ২১ দিন, ৩০ দিন, ৩ মাস, চলবে
+
+Do not use short forms like 3D or 1W in the new UI.
+
+Prescribed medicines must support the existing functionality and visually prepare for:
+- Drag and drop ordering
+- Edit
+- Delete
+- Adding multiple medicines
+
+Do not implement new backend features.
+
+First inspect the existing NewPrescriptionPage.tsx and reuse existing state, handlers and components wherever possible.
+
+Implement the UI carefully.
+After completing, run the frontend build and fix only errors caused by your changes.

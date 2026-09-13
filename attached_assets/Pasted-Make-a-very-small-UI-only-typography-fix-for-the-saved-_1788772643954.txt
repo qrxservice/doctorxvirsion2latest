@@ -1,0 +1,73 @@
+Make a very small UI-only typography fix for the saved/selected template content displayed on the Prescription page.
+
+MODIFY ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+IMPORTANT:
+Do NOT increase only the section headings.
+The problem is specifically that the SAVED/SELECTED CONTENT TEXT inside these sections appears too small compared with the rest of the Prescription page.
+
+TARGET THE ACTUAL CONTENT TEXT displayed after saving/selecting template content:
+
+1. C/C — CHIEF COMPLAINT
+- Increase the displayed saved/template complaint text to a standard readable size.
+
+2. O/E
+- Increase the displayed saved/template examination text to a standard readable size.
+
+3. IX — INVESTIGATIONS
+- Increase the displayed selected/saved investigation items/text to a standard readable size.
+
+4. DRUG HISTORY
+- Increase the displayed saved/template drug-history text to a standard readable size.
+
+5. INSTRUCTIONS (OPTIONAL)
+- Increase the displayed saved/template instruction text to a standard readable size.
+
+6. ADVICE
+- Increase the displayed saved/template advice text to a standard readable size.
+
+7. TREATMENT NOTE
+- Increase the displayed saved/template treatment-note text to a standard readable size.
+
+TYPOGRAPHY:
+- Increase these content text sizes by approximately 2px from their current size.
+- Target roughly 14px as the normal readable body/content size where appropriate.
+- Keep the section headings/labels unchanged unless they are also incorrectly small.
+- Do NOT make the text oversized.
+- The goal is normal, standard, clearly readable doctor-facing text.
+- Preserve existing font family, spacing, colors, borders, and layout as much as possible.
+
+VERY IMPORTANT:
+The change must apply to the ACTUAL SAVED/SELECTED TEXT rendered inside these sections, not merely the textarea placeholder or section title.
+
+For example:
+- If a C/C template is selected/saved, the resulting displayed complaint text should be visibly larger.
+- If O/E template content is saved, the resulting O/E text should be visibly larger.
+- If investigations are selected, their displayed text/chips should be clearly readable.
+- If Advice/Instructions/Treatment Note content is saved, the resulting content should use the larger readable size.
+
+PRESERVE ALL FUNCTIONALITY:
+- Do not change template data.
+- Do not change template loading/applying/saving.
+- Do not change save handlers.
+- Do not change medicine logic.
+- Do not change queue logic.
+- Do not change patient logic.
+- Do not change Preview/Print/Save/Share behavior.
+- Do not change backend/API/database.
+- Do not install packages.
+- Do not refactor unrelated code.
+
+SCOPE:
+Only modify:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Do not run a full project build/typecheck.
+
+FINAL RESPONSE:
+Briefly confirm:
+- Saved/selected content text in C/C, O/E, IX, Drug History, Instructions, Advice and Treatment Note was increased to a standard readable size.
+- The actual rendered saved content was targeted, not just placeholders/headings.
+- Existing functionality was preserved.
+- Only the specified file was modified.
