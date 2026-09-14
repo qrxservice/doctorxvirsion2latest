@@ -2248,6 +2248,16 @@ export default function NewPrescriptionPage() {
           </div>
         </div>
 
+        <div className="rx-queue-summary-inline" aria-label={L.queueSummary}>
+          <div className="rx-queue-summary-inline-title"><Activity className="h-3.5 w-3.5" />{L.queueSummary}</div>
+          <div className="rx-queue-inline-stats">
+            <div><span>{L.totalAppts}</span><strong>{qTotalToday}</strong></div>
+            <div><span>{L.waitingShort}</span><strong>{queueWaiting.length}</strong></div>
+            <div><span>{isBn ? "পরামর্শ চলছে" : "In Consultation"}</span><strong>{queueServing ? 1 : 0}</strong></div>
+            <div><span>{L.completedCount}</span><strong>{qCompleted}</strong></div>
+          </div>
+        </div>
+
         <div className="rx-doctor-identity rx-doctor-identity-right min-w-0 text-right">
           <p className="rx-screen-clinic-label">{isBn ? "চেম্বার ও যোগাযোগ" : "CHAMBER & CONTACT"}</p>
           {screenHHospital && <p className="font-semibold text-foreground">{screenHHospital}</p>}
@@ -2377,81 +2387,6 @@ export default function NewPrescriptionPage() {
         </DropdownMenu>
         </div>
        </div>
-
-      {/* ══ QUEUE SUMMARY — shared workspace strip ═══════════════════ */}
-      <section className="rx-queue-strip shrink-0 border-b px-3 py-2 print:hidden" aria-label={L.queueSummary}>
-        <div className="rx-queue-summary mx-auto max-w-6xl min-w-0 border rounded-xl bg-background overflow-hidden shadow-sm">
-          <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 px-3 py-2 border-b bg-teal-600/10">
-            <span className="text-sm font-bold uppercase tracking-wide text-teal-700 dark:text-teal-400">{L.queueSummary}</span>
-            <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5">
-              <span className={cn("text-[10px] font-medium px-1.5 rounded-full border",
-                isDayEnded ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/20 dark:border-red-800"
-                  : isOnBreak ? "bg-yellow-50 text-yellow-700 border-yellow-200 dark:bg-yellow-950/20 dark:border-yellow-800"
-                  : "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/20 dark:border-green-800"
-              )}>
-                {isDayEnded ? L.statusDayEnded : isOnBreak ? L.statusOnBreak : L.statusAvailable}
-              </span>
-              <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />{L.liveTag}
-              </span>
-            </div>
-          </div>
-          <div className="flex min-w-0 flex-wrap gap-1.5 items-center p-2 border-b">
-            <Button
-              size="sm"
-              className="h-7 text-xs px-2"
-              onClick={() => queueAction("next")}
-              disabled={isOnBreak || isDayEnded || callNext.isPending || (queueWaiting.length === 0 && !queueServing)}
-            >
-              <ChevronRight className="h-3 w-3 mr-0.5" />{L.next}
-            </Button>
-            {queueServing && <>
-              <Button size="sm" variant="outline" className="h-7 text-xs px-2" onClick={() => queueAction("seen", queueServing.id)}>
-                <UserCheck className="h-3 w-3 mr-0.5" />{L.seen}
-              </Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs px-2" onClick={() => queueAction("skip", queueServing.id)}>
-                <SkipForward className="h-3 w-3 mr-0.5" />{L.skip}
-              </Button>
-              <Button size="sm" variant="outline" className="h-7 text-xs px-2" onClick={() => queueAction("recall", queueServing.id)}>
-                <RotateCcw className="h-3 w-3 mr-0.5" />{L.recall}
-              </Button>
-            </>}
-            {queueWaiting[0] && <span className="min-w-0 max-w-full flex-1 truncate text-xs text-muted-foreground">{L.nextColon} #{queueWaiting[0].serialNo} {queueWaiting[0].patientName}</span>}
-          </div>
-          <div className="grid min-w-0 grid-cols-2 gap-1.5 p-2 sm:grid-cols-4 lg:grid-cols-6">
-            <div className="min-w-0 rounded bg-teal-600/10 px-2 py-1.5">
-              <div className="text-[10px] text-muted-foreground truncate">{L.nowServingShort}</div>
-              <div className="text-base font-bold text-teal-700 dark:text-teal-400 truncate">{queueServing ? `#${queueServing.serialNo}` : "—"}</div>
-            </div>
-              <div className="min-w-0 rounded bg-muted px-2 py-1.5">
-              <div className="text-[10px] text-muted-foreground truncate">{L.nextShort}</div>
-              <div className="text-base font-bold truncate">{queueWaiting[0] ? `#${queueWaiting[0].serialNo}` : "—"}</div>
-            </div>
-             <div className="min-w-0 rounded bg-blue-600/10 px-2 py-1.5">
-               <div className="text-[10px] text-muted-foreground truncate">{isBn ? "পরামর্শ চলছে" : "In Consultation"}</div>
-               <div className="text-base font-bold text-blue-700 dark:text-blue-400">{queueServing ? 1 : 0}</div>
-             </div>
-            <div className="min-w-0 rounded bg-muted px-2 py-1.5">
-              <div className="text-[10px] text-muted-foreground">{L.waitingShort}</div>
-              <div className="text-base font-bold">{queueWaiting.length}</div>
-            </div>
-            <div className="min-w-0 rounded bg-green-600/10 px-2 py-1.5">
-              <div className="text-[10px] text-muted-foreground">{L.completedCount}</div>
-              <div className="text-base font-bold text-green-700 dark:text-green-400">{qCompleted}</div>
-            </div>
-            <div className="min-w-0 rounded bg-muted px-2 py-1.5">
-              <div className="text-[10px] text-muted-foreground">{L.totalAppts}</div>
-              <div className="text-base font-bold">{qTotalToday}</div>
-            </div>
-            {qAvgConsultMs > 0 && (
-              <div className="min-w-0 rounded bg-muted/60 px-2 py-1.5">
-                <div className="text-[10px] text-muted-foreground">{L.avgWaitTime}</div>
-                <div className="text-sm font-semibold">{Math.round(qAvgConsultMs / 60000)}m</div>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
 
       {/* ══ TWO-COLUMN BODY ═══════════════════════════════════════════ */}
       <div className="rx-workspace relative flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden lg:flex-row">
