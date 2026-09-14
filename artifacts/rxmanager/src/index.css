@@ -1130,13 +1130,13 @@
 .rx-reference-mode .rx-medicine-entry {
   border-color: var(--rx-reference-border);
   border-radius: 0;
-  background: rgba(255, 255, 255, 0.72);
+  background: #ffffff;
   box-shadow: none;
 }
 
 .rx-reference-mode .rx-medicine-entry-header {
   min-height: 3.25rem;
-  background: #fff;
+  background: #ffffff;
   color: #147d69;
   border-bottom: 1px solid #d4e7df;
 }
@@ -1164,6 +1164,8 @@
 
 .rx-reference-mode .rx-medicine-composer-body {
   display: none;
+  background: #f8fcfa;
+  color: #17353d;
 }
 
 .rx-reference-mode .rx-medicine-entry.is-composer-open .rx-medicine-composer-body {
@@ -1184,7 +1186,7 @@
 .rx-reference-mode .rx-prescribed-row {
   min-height: 3.2rem;
   border-radius: 0.35rem;
-  background: rgba(255, 255, 255, 0.9);
+  background: #ffffff;
 }
 
 .rx-reference-mode .rx-reference-add-medicine {
@@ -1409,6 +1411,112 @@
 .dark .rx-reference-mode .rx-doctor-header,
 .dark .rx-reference-mode .rx-patient-header {
   background: #132a30;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry {
+  border-color: #28545a;
+  background: #0f242a;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header {
+  background: linear-gradient(110deg, #102b31, #14383e);
+  color: #9be7d5;
+  border-bottom-color: #28545a;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header .rx-symbol,
+.dark .rx-reference-mode .rx-medicine-entry-header h2 {
+  color: #9be7d5;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header h2 span {
+  color: #b6d0d4;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header input {
+  border-color: #4a8584 !important;
+  background: #0b1f24 !important;
+  color: #e5f3f1 !important;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header input::placeholder {
+  color: #9bb8bd;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header button {
+  border-color: #4a8584 !important;
+  background: #173b41 !important;
+  color: #d7f4ef !important;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header button:hover {
+  background: #20535a !important;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body {
+  background: #0f242a;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body input,
+.dark .rx-reference-mode .rx-medicine-composer-body textarea,
+.dark .rx-reference-mode .rx-medicine-composer-body select {
+  border-color: #37646a;
+  background: #112c31;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body input::placeholder,
+.dark .rx-reference-mode .rx-medicine-composer-body textarea::placeholder {
+  color: #9bb8bd;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option {
+  border-color: #376b6c;
+  background: #173b41;
+  color: #d7f4ef;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option:hover {
+  border-color: #6ccfc0;
+  background: #20535a;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option.is-active {
+  border-color: #72d8c9;
+  background: #0f8f83;
+  color: #f4fffd;
+}
+
+.dark .rx-reference-mode .rx-prescribed-list {
+  border-color: #28545a;
+  background: #0f242a;
+}
+
+.dark .rx-reference-mode .rx-prescribed-list-header {
+  background: #132f35;
+  border-bottom-color: #28545a;
+}
+
+.dark .rx-reference-mode .rx-prescribed-row {
+  border-color: #28545a;
+  background: #112c31;
+}
+
+.dark .rx-reference-mode .rx-prescribed-row:hover {
+  border-color: #4a8584;
+  background: #173b41;
+}
+
+.dark .rx-reference-mode .rx-prescribed-detail {
+  background: #1c4a4e;
+  color: #d7f4ef;
+}
+
+.dark .rx-reference-mode .rx-prescribed-actions button:hover {
+  background: #20535a;
+  color: #f4fffd;
 }
 
 .dark .rx-reference-mode .rx-workspace,

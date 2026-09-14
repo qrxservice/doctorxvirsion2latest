@@ -1319,6 +1319,7 @@ export default function NewPrescriptionPage() {
     setSelectedMedicineId(null);
     setCurrentMed({ ...medicine });
     setEditingMedicineId(medicine.id);
+    setShowMedicineComposer(true);
     setShowSug(false);
     window.setTimeout(() => medInputRef.current?.focus(), 0);
   };
