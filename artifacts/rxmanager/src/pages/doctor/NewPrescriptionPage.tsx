@@ -28,7 +28,7 @@ import {
   Activity, UserCheck, CheckCircle2, SkipForward, RotateCcw, ClipboardList,
   BookOpen, PlusCircle, Settings2, FileCog, Save, Copy, Star, Pencil, FileDown,
   Coffee, Timer, TrendingUp, Upload, FlaskConical,
-  Eye, EyeOff, ArrowUp, ArrowDown, RefreshCw, X, Calculator,
+  Eye, EyeOff, ArrowUp, ArrowDown, RefreshCw, X, Menu, Calculator,
 } from "lucide-react";
 import QRCode from "qrcode";
 import { cn } from "@/lib/utils";
@@ -854,6 +854,7 @@ export default function NewPrescriptionPage() {
   const [showTemplates, setShowTemplates] = useState(false);
   const [activeCalculatorKey, setActiveCalculatorKey] = useState<string | null>(null);
   const [showQuickTools, setShowQuickTools] = useState(true);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNewToolNotice, setShowNewToolNotice] = useState(false);
   const [showTemplateForm, setShowTemplateForm] = useState(false);
   const [isManageTemplates, setIsManageTemplates] = useState(false);
@@ -2306,8 +2307,25 @@ export default function NewPrescriptionPage() {
 
       {/* ══ TOP MENU TOOLBAR ═══════════════════════════════════════════ */}
       <div className="rx-toolbar rx-reference-toolbar flex min-w-0 w-full shrink-0 items-center border-b bg-muted/20 px-2 py-1 print:hidden">
-       <div className="rx-reference-toolbar-scroll flex min-w-0 max-w-full items-center gap-1 overflow-x-auto">
-         <Button size="sm" className="h-7 shrink-0 px-2 text-xs gap-1 bg-teal-600 hover:bg-teal-700" onClick={handleNewRx}>
+       <div className="rx-mobile-toolbar-head">
+         <Button size="sm" className="h-9 flex-1 justify-center px-3 text-sm gap-1.5 bg-teal-600 hover:bg-teal-700" onClick={handleNewRx}>
+           <Plus className="h-4 w-4" />{L.navNewRx}
+         </Button>
+         <Button
+           type="button"
+           variant="outline"
+           size="icon"
+           className="rx-mobile-menu-toggle h-9 w-9 shrink-0"
+           aria-expanded={showMobileMenu}
+           aria-controls="prescription-mobile-menu"
+           aria-label={showMobileMenu ? "Close prescription menu" : "Open prescription menu"}
+           onClick={() => setShowMobileMenu(value => !value)}
+         >
+           {showMobileMenu ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+         </Button>
+       </div>
+       <div id="prescription-mobile-menu" className={cn("rx-reference-toolbar-scroll flex min-w-0 max-w-full items-center gap-1 overflow-x-auto", showMobileMenu && "is-mobile-open")}>
+         <Button size="sm" className="rx-desktop-new-rx h-7 shrink-0 px-2 text-xs gap-1 bg-teal-600 hover:bg-teal-700" onClick={handleNewRx}>
            <Plus className="h-3.5 w-3.5" />{L.navNewRx}
          </Button>
          <NavBtn href="/doctor/dashboard" icon={<LayoutDashboard className="h-3 w-3" />} label={L.navDashboard} />
@@ -2340,7 +2358,7 @@ export default function NewPrescriptionPage() {
            Share
          </Button>
        </div>
-       <div className="rx-reference-toolbar-secondary ml-auto flex shrink-0 items-center gap-1 pl-2">
+        <div className={cn("rx-reference-toolbar-secondary ml-auto flex shrink-0 items-center gap-1 pl-2", showMobileMenu && "is-mobile-open")}>
         {/* ── Quick break controls ── */}
         {isOnBreak ? (
           <Button

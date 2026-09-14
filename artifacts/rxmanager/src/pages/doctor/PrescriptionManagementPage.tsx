@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "wouter";
-import { ClipboardList, Eye, FilePlus2, Moon, RefreshCw, Search, Sun } from "lucide-react";
+import { ClipboardList, Eye, FilePlus2, Menu, Moon, RefreshCw, Search, Sun, X } from "lucide-react";
 import { useListPrescriptions } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +14,7 @@ export default function PrescriptionManagementPage() {
   const { lang, setLang } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const [query, setQuery] = useState("");
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isBn = lang === "bn";
   const prescriptionsQuery = useListPrescriptions();
 
@@ -33,9 +34,9 @@ export default function PrescriptionManagementPage() {
   }
 
   return (
-    <div className="rx-shell min-h-screen bg-background">
+    <div className="rx-shell rx-management-page min-h-screen bg-background">
       <header className="border-b bg-background/95 px-4 py-3 shadow-sm backdrop-blur">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
+        <div className="rx-management-header mx-auto flex max-w-6xl flex-wrap items-center gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-700 text-xl text-white">℞</div>
             <div className="min-w-0">
@@ -47,7 +48,18 @@ export default function PrescriptionManagementPage() {
               </p>
             </div>
           </div>
-          <nav className="ml-auto flex flex-wrap items-center gap-1" aria-label="Prescription navigation">
+          <Button
+            size="icon"
+            variant="outline"
+            className="rx-management-menu-toggle ml-auto h-9 w-9"
+            aria-expanded={showMobileMenu}
+            aria-controls="prescription-management-nav"
+            aria-label={showMobileMenu ? "Close navigation menu" : "Open navigation menu"}
+            onClick={() => setShowMobileMenu(value => !value)}
+          >
+            {showMobileMenu ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </Button>
+          <nav id="prescription-management-nav" className={cn("rx-management-nav ml-auto flex flex-wrap items-center gap-1", showMobileMenu && "is-mobile-open")} aria-label="Prescription navigation">
             <Link href="/doctor/new-prescription">
               <Button size="sm" className="gap-1.5 bg-teal-700 hover:bg-teal-800">
                 <FilePlus2 className="h-3.5 w-3.5" />

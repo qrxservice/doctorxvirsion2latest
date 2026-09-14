@@ -1748,3 +1748,344 @@
     font-size: 1.15rem;
   }
 }
+
+/* Readability and responsive navigation refinements. The imported screen uses
+   compact utility classes in many places, so these screen-only overrides keep
+   clinical text readable without changing the print document. */
+.rx-shell {
+  font-size: 1rem;
+}
+
+.rx-shell :where(input, textarea, select) {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.rx-shell .text-\[9px\] {
+  font-size: 0.82rem !important;
+}
+
+.rx-shell .text-\[10px\] {
+  font-size: 0.86rem !important;
+}
+
+.rx-shell .text-\[11px\] {
+  font-size: 0.9rem !important;
+}
+
+.rx-shell .text-xs {
+  font-size: 0.92rem !important;
+}
+
+.rx-reference-mode .rx-context-panel {
+  color: hsl(var(--foreground));
+}
+
+.rx-reference-mode .rx-context-panel :where(label, [role="button"], button) {
+  font-size: 0.95rem;
+}
+
+.rx-reference-mode .rx-context-panel :where(input, textarea, select) {
+  min-height: 2.35rem;
+  font-size: 1rem !important;
+}
+
+.rx-reference-mode .rx-context-panel :where(input, textarea)::placeholder {
+  font-size: 0.95rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-patient-info-card label,
+.rx-reference-mode .rx-context-panel .rx-vitals-card label {
+  font-size: 0.86rem !important;
+}
+
+.rx-reference-mode .rx-context-panel .rx-patient-info-card,
+.rx-reference-mode .rx-context-panel .rx-vitals-card {
+  font-size: 0.96rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-patient-info-card input,
+.rx-reference-mode .rx-context-panel .rx-patient-info-card select {
+  min-height: 2.45rem;
+  height: 2.45rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-vitals-card input {
+  min-height: 2.2rem;
+  height: 2.2rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-clinical-section :where(input, textarea),
+.rx-reference-mode .rx-context-panel .rx-diagnosis-field input {
+  font-size: 1rem !important;
+}
+
+.rx-reference-mode .rx-reference-toolbar {
+  position: relative;
+  z-index: 20;
+}
+
+.rx-mobile-toolbar-head {
+  display: none;
+}
+
+.rx-mobile-menu-toggle {
+  display: none;
+}
+
+.rx-management-page {
+  color: hsl(var(--foreground));
+}
+
+.rx-management-page .rx-management-header {
+  min-width: 0;
+}
+
+.rx-management-page .rx-management-menu-toggle {
+  display: none;
+}
+
+.dark .rx-management-page header {
+  border-color: #243e45;
+  background: #0d1d22;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.dark .rx-management-page main > section {
+  border-color: #28464c;
+  background: #12272d;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+}
+
+.dark .rx-management-page input {
+  border-color: #3a6268;
+  background: #0d2025;
+  color: #e8f7f5;
+}
+
+.dark .rx-management-page input::placeholder {
+  color: #9eb8bc;
+}
+
+.dark .rx-management-page article {
+  border-color: #2d5056;
+  background: #132a30;
+}
+
+.dark .rx-management-page article:hover {
+  border-color: #4a8584;
+  background: #17343a;
+}
+
+.dark .rx-management-page .text-muted-foreground {
+  color: #aac2c5;
+}
+
+.dark .rx-management-page .rx-management-menu-toggle {
+  border-color: #4a8584;
+  background: #16343a;
+  color: #d8f5f0;
+}
+
+/* Stronger dark-mode surfaces for the complete prescription workspace. */
+.dark .rx-reference-mode {
+  background: #0b171b;
+  color: #e7f4f2;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar {
+  border-color: #27474d;
+  background: #0d2025;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar button {
+  color: #dcefeb;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar button:hover {
+  background: #1a3c42;
+}
+
+.dark .rx-reference-mode .rx-reference-header {
+  border-color: #27474d;
+  background: linear-gradient(105deg, #0d2025 0%, #102d33 52%, #0d2025 100%);
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary {
+  border-color: #27474d;
+  background: #10272c;
+}
+
+.dark .rx-reference-mode .rx-workspace,
+.dark .rx-reference-mode .rx-prescription-panel {
+  background:
+    radial-gradient(circle at 78% 12%, rgba(64, 174, 165, 0.08), transparent 26rem),
+    #0b1b20;
+}
+
+.dark .rx-reference-mode .rx-context-panel {
+  background: #0a1b20;
+  border-color: #294850;
+}
+
+.dark .rx-reference-mode .rx-context-panel > [data-radix-scroll-area-viewport] > div {
+  background: transparent;
+}
+
+.dark .rx-reference-mode .rx-context-panel .rx-patient-info-card,
+.dark .rx-reference-mode .rx-context-panel .rx-vitals-card,
+.dark .rx-reference-mode .rx-context-panel .rx-clinical-section,
+.dark .rx-reference-mode .rx-context-panel .rx-diagnosis-field {
+  border-color: #2b555c;
+  background: #10272d;
+  color: #e7f4f2;
+}
+
+.dark .rx-reference-mode .rx-context-panel .rx-patient-info-card label,
+.dark .rx-reference-mode .rx-context-panel .rx-vitals-card label,
+.dark .rx-reference-mode .rx-context-panel .rx-clinical-section label {
+  color: #b8d4d5;
+}
+
+.dark .rx-reference-mode .rx-context-panel :where(input, textarea, select) {
+  border-color: #416b70;
+  background: #0d2025;
+  color: #e7f4f2;
+  color-scheme: dark;
+}
+
+.dark .rx-reference-mode .rx-context-panel :where(input, textarea)::placeholder {
+  color: #99b6ba;
+}
+
+.dark .rx-reference-mode .rx-context-panel .text-muted-foreground {
+  color: #a9c2c5;
+}
+
+.dark .rx-reference-mode .rx-context-panel .border-b,
+.dark .rx-reference-mode .rx-context-panel .border-t,
+.dark .rx-reference-mode .rx-context-panel [class*="border-border"] {
+  border-color: #294850;
+}
+
+.dark .rx-reference-mode .rx-context-panel .bg-background {
+  background: #10272d;
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary .rx-field-caption {
+  color: #a9c7ca;
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary p {
+  color: #e7f4f2;
+}
+
+@media (max-width: 640px) {
+  .rx-reference-mode .rx-reference-toolbar {
+    display: block;
+    padding: 0.45rem;
+  }
+
+  .rx-mobile-toolbar-head {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .rx-mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll {
+    display: none;
+    width: 100%;
+    max-width: none;
+    margin-top: 0.45rem;
+    padding: 0.35rem;
+    overflow: visible;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.65rem;
+    background: hsl(var(--card));
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll.is-mobile-open {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll > * {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll .rx-desktop-new-rx {
+    display: none;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-secondary {
+    display: none;
+    width: 100%;
+    margin: 0.45rem 0 0;
+    padding: 0.35rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.65rem;
+    background: hsl(var(--card));
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-secondary.is-mobile-open {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-secondary > * {
+    flex: 1 1 calc(50% - 0.35rem);
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .dark .rx-reference-mode .rx-reference-toolbar-scroll,
+  .dark .rx-reference-mode .rx-reference-toolbar-secondary {
+    border-color: #31565c;
+    background: #10272d;
+  }
+
+  .dark .rx-reference-mode .rx-reference-toolbar-scroll button,
+  .dark .rx-reference-mode .rx-reference-toolbar-secondary button {
+    border-color: #3b686d;
+    background: #16353b;
+    color: #e0f4f1;
+  }
+
+  .dark .rx-reference-mode .rx-reference-toolbar-scroll button:hover,
+  .dark .rx-reference-mode .rx-reference-toolbar-secondary button:hover {
+    background: #205057;
+  }
+
+  .rx-management-page .rx-management-header {
+    align-items: center;
+  }
+
+  .rx-management-page .rx-management-menu-toggle {
+    display: inline-flex;
+  }
+
+  .rx-management-page .rx-management-nav {
+    display: none;
+    width: 100%;
+    margin-left: 0;
+    padding-top: 0.4rem;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .rx-management-page .rx-management-nav.is-mobile-open {
+    display: flex;
+  }
+
+  .rx-management-page .rx-management-nav > * {
+    flex: 1 1 auto;
+  }
+}
