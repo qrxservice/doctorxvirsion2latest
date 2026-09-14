@@ -941,6 +941,21 @@
 .rx-reference-mode .rx-workspace {
   order: 3;
   background: #eef7f6;
+  flex: none;
+  overflow: visible;
+}
+
+.rx-reference-mode .rx-context-scroll,
+.rx-reference-mode .rx-prescription-scroll {
+  height: auto;
+  flex: none;
+  overflow: visible;
+}
+
+.rx-reference-mode .rx-context-scroll > [data-radix-scroll-area-viewport],
+.rx-reference-mode .rx-prescription-scroll > [data-radix-scroll-area-viewport] {
+  height: auto !important;
+  overflow: visible !important;
 }
 
 .rx-reference-mode .rx-context-panel {
@@ -948,6 +963,7 @@
   background: #eef8e8;
   border-right: 1px solid #c9ded1;
   font-size: 0.875rem;
+  overflow: visible;
 }
 
 .rx-reference-mode .rx-context-panel .text-\[9px\] {

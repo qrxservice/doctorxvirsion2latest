@@ -163,9 +163,27 @@ type CalculatorDefinition = {
   calculate: (values: Record<string, string>) => string | null;
 };
 
-// Add future calculators here. CalculatorDialog handles their inputs, action,
-// result area, and closing behavior without changes to the prescription page.
-const CALCULATOR_REGISTRY: CalculatorDefinition[] = [];
+// CalculatorDialog handles the inputs, action, result area, and closing
+// behavior for every calculator listed in the header menu.
+const CALCULATOR_REGISTRY: CalculatorDefinition[] = [
+  {
+    key: "bmi",
+    label: "BMI Calculator",
+    description: "Calculate body mass index from height and weight.",
+    fields: [
+      { key: "heightCm", label: "Height (cm)", placeholder: "170" },
+      { key: "weightKg", label: "Weight (kg)", placeholder: "65" },
+    ],
+    calculate: values => {
+      const height = Number(values.heightCm);
+      const weight = Number(values.weightKg);
+      if (!height || !weight || height <= 0 || weight <= 0) return null;
+      const bmi = weight / ((height / 100) ** 2);
+      const category = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Healthy range" : bmi < 30 ? "Overweight" : "Obesity range";
+      return `BMI: ${bmi.toFixed(1)} — ${category}`;
+    },
+  },
+];
 
 interface LocalPrescriptionDraft {
   version: 1;
@@ -2232,7 +2250,7 @@ export default function NewPrescriptionPage() {
 
   /* ── RENDER ──────────────────────────────────────────────────────── */
   return (
-    <div className="rx-shell rx-reference-mode h-screen min-w-0 flex flex-col bg-background overflow-hidden">
+    <div className="rx-shell rx-reference-mode min-h-screen min-w-0 flex flex-col bg-background overflow-x-hidden">
 
       {/* ══ REFERENCE-STYLE HEADER ═════════════════════════════════════ */}
       <header className="rx-topbar rx-reference-header min-w-0 shrink-0 border-b bg-background px-3 py-2 print:hidden relative">
@@ -2389,11 +2407,11 @@ export default function NewPrescriptionPage() {
        </div>
 
       {/* ══ TWO-COLUMN BODY ═══════════════════════════════════════════ */}
-      <div className="rx-workspace relative flex min-h-0 min-w-0 w-full flex-1 flex-col overflow-hidden lg:flex-row">
+      <div className="rx-workspace relative flex min-w-0 w-full flex-none flex-col overflow-visible lg:flex-row">
 
         {/* ── LEFT PANEL — Patient Info ──────────────────────────── */}
-        <aside className="rx-context-panel flex h-[45vh] w-full min-w-0 flex-col border-r bg-muted/10 shrink-0 overflow-hidden lg:h-auto lg:w-[30%] xl:w-[30%]">
-          <ScrollArea className="flex-1">
+         <aside className="rx-context-panel flex h-auto w-full min-w-0 flex-col border-r bg-muted/10 shrink-0 overflow-visible lg:w-[30%] xl:w-[30%]">
+           <ScrollArea className="rx-context-scroll flex-none">
             <div className="p-2 space-y-1.5 text-xs">
 
               {/* Load Patient button */}
@@ -2837,8 +2855,8 @@ export default function NewPrescriptionPage() {
         </aside>
 
         {/* ── CENTER PANEL — Medicine entry + prescription body ─────── */}
-        <main className="rx-prescription-panel flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden bg-background/30">
-          <ScrollArea className="min-w-0 flex-1">
+        <main className="rx-prescription-panel flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-visible bg-background/30">
+          <ScrollArea className="rx-prescription-scroll min-w-0 flex-none">
             <div className="rx-prescription-sheet mx-auto w-full min-w-0 max-w-6xl space-y-4 p-3 sm:p-5">
               <img
                 src={`${import.meta.env.BASE_URL}stethoscope-watermark.png`}
