@@ -869,65 +869,6 @@
   background: rgba(244, 251, 247, 0.86);
 }
 
-.rx-reference-mode .rx-queue-summary-inline {
-  align-self: stretch;
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  justify-content: center;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  color: var(--rx-reference-header-ink);
-  box-shadow: none;
-}
-
-.rx-reference-mode .rx-queue-summary-inline-title {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.2rem 0 0.35rem;
-  color: var(--rx-reference-header-accent);
-  font-size: 0.9rem;
-  font-weight: 700;
-}
-
-.rx-reference-mode .rx-queue-inline-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid var(--rx-reference-queue-rule);
-}
-
-.rx-reference-mode .rx-queue-inline-stats > div {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.05rem;
-  padding: 0.35rem 0.55rem 0.4rem;
-  border-right: 1px solid var(--rx-reference-queue-rule);
-}
-
-.rx-reference-mode .rx-queue-inline-stats > div:last-child {
-  border-right: 0;
-}
-
-.rx-reference-mode .rx-queue-inline-stats span {
-  overflow: hidden;
-  max-width: 100%;
-  color: var(--rx-reference-header-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.rx-reference-mode .rx-queue-inline-stats strong {
-  color: var(--rx-reference-header-ink);
-  font-size: 1rem;
-  font-weight: 800;
-}
-
 .rx-reference-mode .rx-reference-toolbar {
   order: 1;
   min-height: 2.35rem;
@@ -1502,25 +1443,11 @@
     font-size: 0.82rem;
   }
 
-  .rx-reference-mode .rx-queue-summary-inline {
-    flex: 1 1 100%;
-    min-width: 0;
-    order: 3;
-  }
-
   .rx-reference-mode .rx-reference-patient-summary {
     flex: 1 1 100%;
     min-width: 0;
     order: 4;
     padding-inline: 0.55rem;
-  }
-
-  .rx-reference-mode .rx-queue-inline-stats {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
-  .rx-reference-mode .rx-queue-inline-stats span {
-    font-size: 0.55rem;
   }
 
   .rx-reference-mode .rx-reference-toolbar {

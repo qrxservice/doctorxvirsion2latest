@@ -2248,16 +2248,6 @@ export default function NewPrescriptionPage() {
           </div>
         </div>
 
-        <div className="rx-queue-summary-inline" aria-label={L.queueSummary}>
-          <div className="rx-queue-summary-inline-title"><Activity className="h-3.5 w-3.5" />{L.queueSummary}</div>
-          <div className="rx-queue-inline-stats">
-            <div><span>{L.totalAppts}</span><strong>{qTotalToday}</strong></div>
-            <div><span>{L.waitingShort}</span><strong>{queueWaiting.length}</strong></div>
-            <div><span>{isBn ? "পরামর্শ চলছে" : "In Consultation"}</span><strong>{queueServing ? 1 : 0}</strong></div>
-            <div><span>{L.completedCount}</span><strong>{qCompleted}</strong></div>
-          </div>
-        </div>
-
         <div className="rx-doctor-identity rx-doctor-identity-right min-w-0 text-right">
           <p className="rx-screen-clinic-label">{isBn ? "চেম্বার ও যোগাযোগ" : "CHAMBER & CONTACT"}</p>
           {screenHHospital && <p className="font-semibold text-foreground">{screenHHospital}</p>}
