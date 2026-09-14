@@ -1,0 +1,91 @@
+Make a small, extensible UI change to the RX QUICK TOOLS section.
+
+MODIFY ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+GOAL:
+On the LEFT SIDEBAR, directly below DRUG HISTORY, there is the RX QUICK TOOLS section.
+
+Currently it has TEMPLATES.
+
+Create a proper expandable/dropdown structure for RX QUICK TOOLS so that additional tools can be added later without redesigning this section.
+
+REQUIREMENTS:
+
+1. RX QUICK TOOLS LOCATION
+- Keep RX QUICK TOOLS directly below DRUG HISTORY.
+- Keep the existing TEMPLATES option.
+- Do not move C/C, O/E, IX, or DRUG HISTORY.
+
+2. ADD "NEW TOOL" OPTION
+- Add a clearly visible "＋ New Tool" / "Add Tool" option inside the RX QUICK TOOLS dropdown/list.
+- It should look like a normal standard UI control.
+- Make it easy for a doctor to identify and click.
+- Clicking it should NOT break or change the existing Templates functionality.
+
+3. FUTURE-EXTENSIBLE STRUCTURE
+Build the UI so the Quick Tools list can later contain multiple tools, for example:
+
+- Templates
+- BMI
+- BSA
+- eGFR
+- Ideal Body Weight
+- Calculator
+- Other future clinical tools
+
+Do NOT implement these future tools now.
+
+The important requirement is that the structure should allow additional tool entries to be added later easily without redesigning the RX QUICK TOOLS section.
+
+4. NEW TOOL BEHAVIOR
+For now, "New Tool" can be a placeholder/non-functional action or show a simple existing-safe placeholder state.
+
+Do NOT create a new backend/API/database system.
+Do NOT create a new tool-management database.
+Do NOT install packages.
+
+5. VISUAL DESIGN
+- Match the existing Prescription page style.
+- Keep it compact.
+- Make the dropdown/list clearly visible.
+- Use standard readable text size.
+- Make the expand/collapse control and tool items easy to click.
+- Maintain the existing sidebar width/layout.
+- Make sure the section works responsively.
+
+6. PRESERVE EVERYTHING
+Do NOT change:
+- C/C
+- O/E
+- IX — INVESTIGATIONS
+- DRUG HISTORY
+- Medicine search/add/edit/delete/reorder
+- Templates functionality
+- Queue
+- Patient loading
+- Save Draft
+- Save Only
+- Save & Print
+- Preview
+- Print
+- Share
+- Backend/API/database
+- Existing prescription data/state
+
+7. SCOPE
+Only modify:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Do not modify any other file.
+Do not install packages.
+Do not refactor unrelated code.
+Do not run a full project build/typecheck.
+
+FINAL REPORT:
+Briefly report:
+- RX QUICK TOOLS remains below DRUG HISTORY.
+- New Tool/Add Tool option was added.
+- Quick Tools structure is now ready for future tools such as BMI.
+- Existing Templates functionality is preserved.
+- Only NewPrescriptionPage.tsx was modified.

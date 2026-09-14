@@ -1,0 +1,382 @@
+## PHASE B — PRESCRIPTION PAGE UI SKELETON
+
+Phase A Source Audit is already completed. Use the existing audit findings and current source code as the baseline. Do NOT repeat the full audit unless needed to understand a specific component.
+
+Now implement ONLY Phase B: the Prescription Page UI Skeleton.
+
+### PRIMARY FILE
+
+Work primarily on:
+
+`artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx`
+
+You may modify ONLY directly related existing UI components if absolutely necessary for this skeleton.
+
+---
+
+# CORE OBJECTIVE
+
+Reorganize the existing Prescription Page into a clean, modern, doctor-friendly layout WITHOUT changing existing prescription functionality.
+
+The UI should become visually structured and easy to use, while existing states, handlers, API calls, save logic, search logic, template logic, edit logic, and data flow remain intact.
+
+---
+
+# TARGET LAYOUT
+
+Create this overall structure:
+
+TOP MENU ROW 1
+↓
+TOP MENU ROW 2
+↓
+QUEUE SUMMARY
+↓
+┌──────────────────┬────────────────────────────────┐
+│ LEFT PANEL       │ RIGHT PRESCRIPTION PANEL       │
+│                  │                                │
+│ Patient          │ Doctor Header                  │
+│ Vitals           │ Patient Header                 │
+│ C/C              │ Medicine Input                 │
+│ O/E              │ Dose                           │
+│ I/X              │ Timing                         │
+│ Drug History     │ Duration                       │
+│ Templates        │ Medicine List                  │
+│                  │ Instructions                   │
+│                  │ Advice                          │
+│                  │ Follow-up                       │
+└──────────────────┴────────────────────────────────┘
+
+---
+
+# 1. TOP MENU ROW 1
+
+Preserve the existing top navigation/actions.
+
+Reorganize them visually into a clean first row.
+
+Do NOT remove any currently working action.
+
+Do NOT change their handlers or routes.
+
+Keep the existing functionality exactly as it is.
+
+---
+
+# 2. TOP MENU ROW 2
+
+Create a second compact navigation/action row for existing prescription-related controls where appropriate.
+
+Use existing buttons/actions/components whenever possible.
+
+Do not create duplicate functionality.
+
+The second row should remain compact and doctor-friendly.
+
+---
+
+# 3. QUEUE SUMMARY
+
+Keep the existing queue information/badge/summary that is already implemented.
+
+Move it into a small, clearly visible Queue Summary area below the top menu rows.
+
+IMPORTANT:
+
+* Do not change queue logic.
+* Do not change queue API.
+* Do not change queue state.
+* Do not create a new queue system.
+* Only reorganize the existing UI presentation.
+
+---
+
+# 4. MAIN TWO-COLUMN LAYOUT
+
+Create the main prescription workspace:
+
+LEFT PANEL
++
+RIGHT PRESCRIPTION PANEL
+
+Desktop:
+
+* Left panel approximately 30–35%
+* Right panel approximately 65–70%
+
+Use a clean responsive layout.
+
+Mobile:
+
+* Columns must stack naturally.
+* No horizontal overflow.
+* Important controls must remain easily accessible.
+* Existing functionality must remain usable.
+
+---
+
+# 5. LEFT PANEL
+
+Organize the existing clinical/patient sections into a logical sidebar.
+
+Preferred order:
+
+1. Patient
+2. Vitals
+3. C/C
+4. O/E
+5. I/X
+6. Drug History
+7. Templates
+
+IMPORTANT:
+
+Do NOT invent new data fields if they do not already exist.
+
+Use existing fields, states, handlers and components discovered during Phase A.
+
+If a section already exists, reorganize it rather than rebuilding its logic.
+
+Each section should be visually separated but compact.
+
+---
+
+# 6. RIGHT PRESCRIPTION PANEL
+
+The right side should be the primary working area for prescription writing.
+
+Organize existing functionality approximately in this order:
+
+### Doctor Header
+
+Existing doctor information area.
+
+### Patient Header
+
+Existing selected patient information.
+
+### Medicine Input
+
+Existing medicine search/add functionality.
+
+### Dose
+
+Existing dose controls.
+
+### Timing
+
+Existing meal timing/instruction controls.
+
+### Duration
+
+Existing duration controls.
+
+### Medicine List
+
+Existing prescribed medicine list.
+
+### Instructions
+
+Existing instruction area.
+
+### Advice
+
+Existing advice area.
+
+### Follow-up
+
+Existing follow-up area.
+
+IMPORTANT:
+
+Do not change the underlying functionality of any of these sections.
+
+This phase is about layout and hierarchy only.
+
+---
+
+# 7. VISUAL DESIGN
+
+Use the existing application's design system and components.
+
+The UI should feel:
+
+* Clean
+* Professional
+* Medical
+* Modern
+* Fast
+* Low clutter
+* Easy for a doctor to scan
+
+Avoid excessive cards, borders, shadows, animations or decorative elements.
+
+Use consistent:
+
+* spacing
+* typography
+* button sizes
+* section headers
+* input heights
+* border radius
+
+Do not introduce a completely different design system.
+
+---
+
+# 8. DO NOT IMPLEMENT PHASE C/D/E YET
+
+This is VERY IMPORTANT.
+
+Do NOT now redesign or add:
+
+* New medicine search logic
+* New medicine master database logic
+* New dose-template system
+* New drag-and-drop system
+* New medicine editor
+* New template engine
+* New doctor header data logic
+* New print/PDF system
+
+Those belong to later phases.
+
+If those features already exist, simply preserve them and place their existing UI into the new skeleton.
+
+---
+
+# 9. FUNCTIONALITY PRESERVATION
+
+The following MUST continue working exactly as before:
+
+* Patient search
+* Patient selection
+* Existing medicine search
+* Existing medicine selection
+* Existing medicine add
+* Existing dose controls
+* Existing template functionality
+* Existing prescription editing
+* Existing save
+* Existing queue functionality
+* Existing observation fields
+* Existing advice/follow-up
+* Existing navigation
+* Existing API calls
+
+Do not rewrite working business logic just to achieve the new layout.
+
+---
+
+# 10. PRINT / PDF
+
+DO NOT modify print/PDF output logic in Phase B.
+
+Do not change:
+
+* print format
+* PDF format
+* print CSS
+* prescription export logic
+
+The current print/export behavior must remain untouched.
+
+---
+
+# 11. RESPONSIVE REQUIREMENT
+
+Desktop:
+
+* Two-column workspace.
+
+Tablet:
+
+* Reduce sidebar width appropriately.
+
+Mobile:
+
+* Stack sections vertically.
+* Preserve all functionality.
+* No horizontal scrolling caused by the new layout.
+* Medicine controls should remain usable.
+
+---
+
+# 12. CODE QUALITY
+
+Before modifying anything:
+
+* Reuse existing components.
+* Reuse existing Tailwind/classes/design tokens.
+* Avoid duplicate state.
+* Avoid duplicate handlers.
+* Avoid duplicate API calls.
+* Do not create unnecessary new files.
+
+Keep the change focused and minimal.
+
+---
+
+# 13. STRICT SCOPE
+
+Allowed:
+
+* New layout wrappers
+* Existing section repositioning
+* Existing component arrangement
+* Responsive classes
+* Spacing/typography improvements
+* Visual hierarchy
+* Minor UI-only adjustments required for the skeleton
+
+Not allowed:
+
+* Database changes
+* API changes
+* Authentication changes
+* Admin changes
+* Appointment changes
+* Queue logic changes
+* Doctor registration changes
+* Subscription changes
+* Homepage changes
+* Deployment changes
+* GitHub push
+* Print/PDF changes
+* Unrelated page changes
+
+---
+
+# 14. VALIDATION
+
+After implementing Phase B:
+
+1. Run TypeScript/typecheck.
+2. Run the RxManager frontend build.
+3. Check for compile errors.
+4. Check that existing handlers remain connected.
+5. Check desktop layout.
+6. Check mobile layout.
+7. Confirm no unrelated files/modules were changed.
+
+If a build error exists because of your Phase B changes, fix it.
+
+Do not fix unrelated pre-existing errors unless they prevent validating this change.
+
+---
+
+# FINAL REPORT
+
+At the end report:
+
+1. Files changed
+2. What UI sections were reorganized
+3. Whether existing functionality was preserved
+4. Typecheck result
+5. RxManager build result
+6. Any remaining issue
+
+DO NOT push to GitHub.
+DO NOT deploy.
+
+Implement ONLY PHASE B UI SKELETON now.

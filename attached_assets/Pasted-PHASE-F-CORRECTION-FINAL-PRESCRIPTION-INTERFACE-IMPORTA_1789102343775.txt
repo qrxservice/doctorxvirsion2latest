@@ -1,0 +1,785 @@
+PHASE F CORRECTION — FINAL PRESCRIPTION INTERFACE
+
+IMPORTANT:
+This is a UI correction/refinement task for the existing DoctorX Prescription Page.
+
+DO NOT redesign the application from scratch.
+DO NOT create a new prescription page.
+DO NOT change unrelated pages or modules.
+DO NOT change authentication, database schema, API contracts, routing, backend logic, print/PDF logic, or deployment configuration.
+
+PRIMARY FILE:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Only modify directly related UI/component files if absolutely necessary.
+
+I have provided demo screenshots/reference images in this conversation.
+Use those screenshots together with the original prescription interface requirements below as the visual and UX target.
+
+==================================================
+1. ORIGINAL TARGET INTERFACE
+==================================================
+
+The prescription page should feel like a professional doctor's fast-working prescription workspace.
+
+Desktop target:
+
+TOP MENU ROW 1
+TOP MENU ROW 2
+QUEUE SUMMARY
+
+--------------------------------------------------
+
+LEFT CLINICAL PANEL          RIGHT PRESCRIPTION PANEL
+
+Patient                      Doctor Header
+Vitals                       Patient Header
+C/C                          Diagnosis
+O/E                          Medicine Input
+I/X                          Dose
+Drug History                 Timing
+Templates                    Duration
+                             Prescribed Medicine List
+                             Instructions
+                             Advice
+                             Advice Templates
+                             Follow-up
+                             Follow-up Templates
+
+--------------------------------------------------
+
+The doctor should be able to work mostly within one screen and scroll naturally only when necessary.
+
+The interface must prioritize:
+1. Patient context
+2. Clinical information
+3. Medicine prescribing
+4. Advice
+5. Follow-up
+
+==================================================
+2. CURRENT PROBLEM TO FIX
+==================================================
+
+The current implementation has some of the structure, but it does NOT yet match the requested doctor-friendly prescription workspace.
+
+The current screenshot shows:
+- Queue Summary taking too much vertical space
+- Doctor Header taking too much vertical space
+- Too much empty/unused vertical space
+- Clinical sections on the left are not sufficiently compact
+- Medicine workflow is not yet presented as a complete fast prescribing workflow
+- Prescribed medicine list is not clearly integrated into the main workflow
+- Advice Template and Follow-up Template sections are missing/not visible at the lower part of the prescription page
+- Lower prescription sections must not disappear because of clipping, fixed-height containers, overflow, or layout issues
+
+Correct these issues while preserving all existing functionality.
+
+==================================================
+3. TOP MENU
+==================================================
+
+Keep the existing top navigation/menu functionality.
+
+Do NOT remove existing buttons.
+
+Keep:
+- New Rx
+- Dashboard
+- Header Settings
+- Page Setup
+- Preview
+- Save & Print
+- Save Draft
+- Save Only
+- Share
+- Take Break
+- Queue
+- Templates
+- Calculator
+- Diagnosis
+
+However, make the top navigation compact and professional.
+
+Do not allow the top menu to consume unnecessary vertical space.
+
+On mobile:
+- keep important actions accessible
+- allow horizontal scrolling/wrapping where appropriate
+- do not create a giant multi-row header
+
+==================================================
+4. QUEUE SUMMARY — COMPACT
+==================================================
+
+Keep Queue Summary functionality.
+
+Current Queue Summary is too tall.
+
+Make it compact.
+
+Required information:
+- Now Serving
+- Next
+- Waiting
+- Completed
+- Total Today
+- Available / LIVE status
+- Next button
+
+Target:
+The queue summary should be a compact dashboard strip, not a large card.
+
+Reduce:
+- padding
+- row height
+- unnecessary empty space
+- oversized buttons
+- oversized typography
+
+Keep it readable.
+
+Do NOT change queue API or queue business logic.
+
+==================================================
+5. MAIN WORKSPACE
+==================================================
+
+Create a clean responsive two-column workspace.
+
+Desktop:
+LEFT = approximately 28–32%
+RIGHT = approximately 68–72%
+
+Use the available viewport efficiently.
+
+The right prescription workspace is the primary working area.
+
+Do not make the left panel unnecessarily wide.
+
+Avoid excessive gaps between sections.
+
+Use consistent:
+- border radius
+- spacing
+- section headers
+- typography
+- input height
+- button height
+
+The interface should look like a real clinical application, not a collection of large cards.
+
+==================================================
+6. LEFT PANEL
+==================================================
+
+The left panel must contain compact clinical sections:
+
+1. Patient
+2. Vitals
+3. C/C — Chief Complaint
+4. O/E — On Examination
+5. I/X — Investigations
+6. Drug History
+7. Templates / Rx Quick Tools
+
+Each section should be compact and easy to scan.
+
+Existing data and handlers must continue working.
+
+Do not create fake data.
+
+If a section is empty, show a clean placeholder.
+
+Use collapsible sections where this improves usability, but do not hide important information by default unnecessarily.
+
+The doctor should be able to quickly enter/edit:
+- BP
+- Weight
+- Height
+- Temperature
+- Pulse
+- Sugar
+- Hb
+- BMI
+
+ONLY for fields that already exist in the current implementation.
+
+Do not introduce new backend fields.
+
+==================================================
+7. RIGHT PANEL — HEADER
+==================================================
+
+Make Doctor Header compact.
+
+It should display available existing information such as:
+- Doctor name
+- Degree
+- Specialty
+- BMDC
+- Chamber
+- Address
+- Mobile
+
+Do not show empty labels.
+
+Keep the existing doctor/profile/settings data source.
+
+Do NOT create new API calls.
+
+Use a compact professional header.
+
+Patient header should appear immediately below or integrated with the doctor header.
+
+Patient header should show available existing information:
+- Patient name
+- Age
+- Gender
+- Patient ID
+- Mobile
+- Blood group
+- Address
+
+Again:
+ONLY show data that already exists.
+
+Do not create fake values.
+
+==================================================
+8. DIAGNOSIS
+==================================================
+
+Keep the existing Diagnosis (DX) functionality.
+
+Make it compact and visually integrated into the prescription workspace.
+
+It should appear before medicine prescribing.
+
+Do not break existing diagnosis save/load behavior.
+
+==================================================
+9. MEDICINE INPUT — IMPORTANT
+==================================================
+
+The medicine entry area must follow this workflow:
+
+BRAND NAME
+
+[ Search / type medicine ]
+
+After typing approximately 2–3 characters:
+show existing medicine suggestions.
+
+Example:
+
+Napa 500 mg
+Omeprazole 20 mg
+Amlodipine 5 mg
+
+Selecting a medicine should populate the existing form.
+
+Keep the current medicine search implementation and handlers.
+
+DO NOT create a new backend medicine API.
+
+If the existing system supports adding a new medicine to the database/master list:
+keep that functionality accessible from this same screen.
+
+The doctor should NOT have to leave the prescription page.
+
+==================================================
+10. DOSE
+==================================================
+
+Use compact quick-select buttons/chips.
+
+Examples:
+
+[1+0+0]
+[0+0+1]
+[1+0+1]
+[1+1+1]
+
+Also preserve the existing dose/custom input capability.
+
+Doctor should be able to:
+- click a quick dose
+- modify it
+- enter a custom value
+
+Do not remove existing dose logic.
+
+==================================================
+11. TIMING
+==================================================
+
+Provide compact quick-select buttons.
+
+Examples:
+
+[খাবারের আগে]
+[খাবারের পরে]
+
+Preserve existing timing/custom functionality.
+
+==================================================
+12. DURATION
+==================================================
+
+Provide quick duration options.
+
+Examples:
+
+[3 দিন]
+[5 দিন]
+[7 দিন]
+[10 দিন]
+[15 দিন]
+[21 দিন]
+[30 দিন]
+[3 মাস]
+[চলবে]
+
+Preserve existing custom duration capability.
+
+==================================================
+13. ADD MEDICINE
+==================================================
+
+Make:
+
+[ + ওষুধ যোগ করুন ]
+
+very obvious.
+
+After adding:
+- medicine should immediately appear in the prescribed list
+- form should behave naturally for adding the next medicine
+- avoid unnecessary page movement
+- keep doctor focus in the prescription workflow
+
+Keyboard-friendly behavior is preferred.
+
+==================================================
+14. PRESCRIBED MEDICINE LIST — MUST BE VISIBLE
+==================================================
+
+This is a critical part of the final interface.
+
+Below the medicine entry form, show the prescribed medicine list.
+
+Each medicine should look approximately like:
+
+⠿  1. Napa 500 mg                    ✏  🗑
+      1+0+1 • খাবারের পরে • 5 দিন
+
+⠿  2. Omeprazole 20 mg               ✏  🗑
+      1+0+0 • খাবারের আগে • 7 দিন
+
+Requirements:
+- serial number
+- drag handle
+- medicine name
+- strength if available
+- generic if available
+- dose
+- timing
+- duration
+- edit button
+- delete button
+
+Existing drag-and-drop/reorder functionality must continue working.
+
+Do NOT create a new medicine data model.
+
+Use the existing prescription medicine state/data structure.
+
+==================================================
+15. EDIT MEDICINE
+==================================================
+
+Clicking Edit should load the medicine into the same medicine entry form.
+
+Doctor must be able to change:
+- medicine
+- dose
+- timing
+- duration
+
+Then save/update it.
+
+Do not open an unnecessarily large modal unless the existing architecture requires it.
+
+Prefer inline/same-form editing.
+
+==================================================
+16. DRAG & DROP
+==================================================
+
+Preserve and improve existing medicine reorder functionality.
+
+The doctor must be able to drag medicines to change position.
+
+The serial number must update automatically.
+
+Do not change backend data structure unless absolutely required.
+
+==================================================
+17. INSTRUCTIONS
+==================================================
+
+Keep an Instructions section below the prescribed medicine list.
+
+It should be compact.
+
+Use existing state/handlers.
+
+Do not create new backend functionality.
+
+==================================================
+18. ADVICE — MUST BE VISIBLE
+==================================================
+
+Add/restore a clearly visible Advice section below Instructions / Medicine List.
+
+The doctor should be able to enter advice easily.
+
+Example:
+
+ADVICE
+
+[ Enter advice... ]
+
+If the existing implementation already has advice state/handlers, reuse them.
+
+Do NOT create a second conflicting advice system.
+
+==================================================
+19. ADVICE TEMPLATE — MUST BE ADDED
+==================================================
+
+This is specifically missing from the current visible interface.
+
+Add a compact:
+
+ADVICE TEMPLATES
+
+section immediately associated with the Advice section.
+
+It must show the existing Advice Templates if they already exist in the application.
+
+Example visual concept:
+
+ADVICE
+[ Advice text/input area ]
+
+ADVICE TEMPLATES
+[ Diet ] [ Rest ] [ Hydration ] [ Medication compliance ]
+[ Custom existing templates... ]
+
+Clicking a template should insert/apply its existing content to the Advice field.
+
+IMPORTANT:
+- Reuse existing template state/data/handlers if available.
+- Do NOT create fake template data if the system already has a template source.
+- If existing templates are stored elsewhere in the current prescription implementation, connect the UI to that existing source.
+- Loading/applying an advice template must NOT overwrite unrelated prescription data.
+- Doctor must be able to edit the inserted advice.
+
+==================================================
+20. FOLLOW-UP — MUST BE VISIBLE
+==================================================
+
+Add/restore a clearly visible Follow-up section after Advice.
+
+Example:
+
+FOLLOW-UP
+
+[ Follow-up instruction / date / note ]
+
+Use the existing follow-up functionality/state if available.
+
+Do not create new backend APIs.
+
+==================================================
+21. FOLLOW-UP TEMPLATE — MUST BE ADDED
+==================================================
+
+This is another specifically missing section.
+
+Add:
+
+FOLLOW-UP TEMPLATES
+
+below/near the Follow-up section.
+
+It must show the existing Follow-up Templates if they already exist.
+
+Example visual concept:
+
+FOLLOW-UP TEMPLATES
+[ 7 days ] [ 15 days ] [ 1 month ] [ As needed ]
+[ Existing custom templates... ]
+
+Clicking a template should apply/populate the existing Follow-up field.
+
+IMPORTANT:
+- Reuse existing template logic.
+- Do NOT create a second template system.
+- Do NOT create fake backend data.
+- Doctor must be able to edit the result.
+- Applying a follow-up template must not alter medicines or other clinical information.
+
+==================================================
+22. VERY IMPORTANT — LOWER CONTENT MUST NOT DISAPPEAR
+==================================================
+
+The Advice, Advice Templates, Follow-up, and Follow-up Templates sections must actually be reachable and visible.
+
+Audit the current CSS/layout for:
+- fixed heights
+- max-height
+- overflow-hidden
+- clipping
+- absolute positioning
+- sticky containers
+- nested scroll containers
+
+Do not allow the lower prescription content to disappear.
+
+The entire prescription page must have natural vertical scrolling.
+
+Avoid multiple confusing nested scrollbars.
+
+On desktop:
+the main page/workspace should scroll naturally.
+
+On mobile:
+all sections must remain accessible by normal vertical scrolling.
+
+==================================================
+23. MOBILE RESPONSIVE
+==================================================
+
+Mobile layout is important.
+
+Desktop:
+two columns.
+
+Mobile:
+stack into one column.
+
+Preferred order:
+
+Queue Summary
+
+Patient / Doctor context
+
+Clinical Information
+
+Diagnosis
+
+Medicine Entry
+
+Prescribed Medicines
+
+Instructions
+
+Advice
+
+Advice Templates
+
+Follow-up
+
+Follow-up Templates
+
+Save actions
+
+Do not make medicine controls too tiny.
+
+Quick buttons should wrap naturally.
+
+Avoid horizontal overflow.
+
+==================================================
+24. VISUAL DESIGN
+==================================================
+
+Use the existing DoctorX visual language.
+
+Target:
+- clean
+- compact
+- modern
+- clinical
+- professional
+- fast to operate
+
+Avoid:
+- giant cards
+- excessive whitespace
+- oversized headings
+- unnecessary decorative elements
+- too many borders
+- excessive shadows
+- huge vertical padding
+
+The doctor should be able to understand the page at a glance.
+
+Use strong visual hierarchy.
+
+Medicine prescribing should be the visual priority.
+
+==================================================
+25. DO NOT BREAK EXISTING FUNCTIONALITY
+==================================================
+
+Before changing anything, inspect the current implementation.
+
+Preserve:
+- patient loading
+- patient search
+- queue behavior
+- medicine search
+- medicine selection
+- medicine add
+- medicine edit
+- medicine delete
+- medicine reorder
+- dose
+- timing
+- duration
+- templates
+- diagnosis
+- save prescription
+- edit existing prescription
+- draft/save behavior
+- existing profile data
+- existing clinical data
+- existing advice/follow-up state if present
+
+Do not replace working logic simply for visual reasons.
+
+==================================================
+26. NO BACKEND / DATABASE CHANGES
+==================================================
+
+For this task:
+
+DO NOT:
+- modify database schema
+- create migrations
+- create new API endpoints
+- change API contracts
+- change authentication
+- change routes
+- modify unrelated server code
+
+Only use existing data/state/handlers.
+
+If a desired visual section already has no backend support, create only the UI using the existing local/state capability and clearly report that limitation rather than modifying backend architecture.
+
+==================================================
+27. PRINT / PDF
+==================================================
+
+DO NOT redesign or modify Print/PDF output in this task.
+
+Screen UI only.
+
+Existing print/PDF behavior must remain unchanged.
+
+==================================================
+28. IMPORTANT REFERENCE RULE
+==================================================
+
+The screenshots I provided are the current/demo interface reference.
+
+Compare the final implementation against the original target structure and screenshots.
+
+Do not interpret the existing screenshot as the final desired design.
+
+The screenshot shows what is currently missing and what needs correction.
+
+==================================================
+29. FINAL QA
+==================================================
+
+After implementation, verify:
+
+1. Desktop layout
+2. Mobile layout
+3. Queue Summary compactness
+4. Doctor Header compactness
+5. Patient Header
+6. Left clinical panel
+7. Diagnosis
+8. Medicine search
+9. Medicine suggestion after 2–3 characters
+10. Dose buttons
+11. Timing buttons
+12. Duration buttons
+13. Add Medicine
+14. Prescribed medicine list
+15. Edit medicine
+16. Delete medicine
+17. Drag/drop reorder
+18. Instructions
+19. Advice
+20. Advice Templates
+21. Follow-up
+22. Follow-up Templates
+23. Lower sections are not clipped/hidden
+24. Existing save/edit functionality
+25. Existing template functionality
+26. Existing patient/queue functionality
+27. Existing print/PDF behavior remains untouched
+
+Run the appropriate existing TypeScript/build checks.
+
+Do not make unrelated changes.
+
+==================================================
+30. FINAL SUCCESS CRITERIA
+==================================================
+
+The final page should visually and functionally feel like:
+
+--------------------------------------------------
+TOP MENU
+--------------------------------------------------
+COMPACT QUEUE SUMMARY
+--------------------------------------------------
+
+LEFT CLINICAL PANEL     RIGHT PRESCRIPTION PANEL
+
+Patient                  Doctor Header
+Vitals                   Patient Header
+C/C                      Diagnosis
+O/E                      Medicine Search
+I/X                      Dose
+Drug History             Timing
+Templates                Duration
+                         + Add Medicine
+                         ----------------------
+                         Prescribed Medicines
+                         ----------------------
+                         Instructions
+                         Advice
+                         Advice Templates
+                         Follow-up
+                         Follow-up Templates
+
+--------------------------------------------------
+
+The doctor should not need to hunt for Advice, Follow-up, or their templates.
+
+The medicine workflow must be the primary focus.
+
+The entire screen must feel compact, fast, flexible, and practical for daily doctor use.
+
+IMPORTANT:
+Do not start another phase.
+Complete this as the FINAL PRESCRIPTION INTERFACE CORRECTION.
