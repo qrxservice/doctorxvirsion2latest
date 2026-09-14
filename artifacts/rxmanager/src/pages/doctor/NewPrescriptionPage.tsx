@@ -2154,6 +2154,13 @@ export default function NewPrescriptionPage() {
     setMode("saved");
   };
 
+  const closeMobileMenu = () => setShowMobileMenu(false);
+
+  const handleMobileAction = (action: () => void) => {
+    action();
+    closeMobileMenu();
+  };
+
   const handleNewRx = () => {
     clearLocalDraft();
     setMode("write");
@@ -2330,22 +2337,22 @@ export default function NewPrescriptionPage() {
          </Button>
          <NavBtn href="/doctor/dashboard" icon={<LayoutDashboard className="h-3 w-3" />} label={L.navDashboard} />
           <NavBtn href="/doctor/prescriptions" icon={<ClipboardList className="h-3 w-3" />} label="Prescription Management" />
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => setShowHeaderDlg(true)}>
+         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => setShowHeaderDlg(true))}>
            <Settings2 className="h-3.5 w-3.5" /><span>{L.headerSettings}</span>
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => setShowPageDlg(true)}>
+         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => setShowPageDlg(true))}>
            <FileCog className="h-3.5 w-3.5" /><span>{L.pageSetup}</span>
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={handlePreview}>
+         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(handlePreview)}>
            <Eye className="h-3.5 w-3.5" />{L.preview}
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleSave(true, "final")} disabled={createRx.isPending || updateRx.isPending}>
+         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(true, "final"))} disabled={createRx.isPending || updateRx.isPending}>
            <Printer className="h-3.5 w-3.5" />{savePrintLabel}
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleSave(false, "final")} disabled={createRx.isPending || updateRx.isPending}>
+         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(false, "final"))} disabled={createRx.isPending || updateRx.isPending}>
            <Save className="h-3.5 w-3.5" />{saveOnlyLabel}
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleSave(false, "draft")} disabled={createRx.isPending || updateRx.isPending}>
+         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(false, "draft"))} disabled={createRx.isPending || updateRx.isPending}>
            <Save className="h-3.5 w-3.5" />{saveDraftLabel}
          </Button>
          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" aria-label={lang === "en" ? "Switch to Bangla" : "Switch to English"} onClick={() => setLang(lang === "en" ? "bn" : "en")}>
