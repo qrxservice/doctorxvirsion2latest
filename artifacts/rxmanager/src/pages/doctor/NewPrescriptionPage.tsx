@@ -145,6 +145,33 @@ type QuickToolDefinition = {
   calculate: (values: Record<string, string>) => string | null;
 };
 
+type ExternalToolDefinition = {
+  key: string;
+  kind: "tool" | "calculator";
+  label: string;
+  description?: string;
+  fields: QuickToolField[];
+  code: string;
+};
+
+const runExternalTool = (code: string, values: Record<string, string>) => {
+  try {
+    const calculate = new Function("values", `"use strict";\n${code}`) as (input: Record<string, string>) => unknown;
+    const result = calculate(values);
+    return result == null ? null : String(result);
+  } catch (error) {
+    return `Code error: ${error instanceof Error ? error.message : "Unable to run this code."}`;
+  }
+};
+
+const toRuntimeTool = (definition: ExternalToolDefinition): QuickToolDefinition => ({
+  key: definition.key,
+  label: definition.label,
+  description: definition.description,
+  fields: definition.fields,
+  calculate: values => runExternalTool(definition.code, values),
+});
+
 // Add future clinical calculators here. The generic renderer below handles
 // their fields and output without changes to the prescription page layout.
 const QUICK_TOOL_REGISTRY: QuickToolDefinition[] = [];
@@ -853,6 +880,13 @@ export default function NewPrescriptionPage() {
   const [patientSearch, setPatientSearch] = useState("");
   const [showTemplates, setShowTemplates] = useState(false);
   const [activeCalculatorKey, setActiveCalculatorKey] = useState<string | null>(null);
+  const [customTools, setCustomTools] = useState<ExternalToolDefinition[]>([]);
+  const [showNewToolDialog, setShowNewToolDialog] = useState(false);
+  const [newToolKind, setNewToolKind] = useState<ExternalToolDefinition["kind"]>("calculator");
+  const [newToolLabel, setNewToolLabel] = useState("");
+  const [newToolDescription, setNewToolDescription] = useState("");
+  const [newToolFields, setNewToolFields] = useState('[{"key":"value","label":"Value","placeholder":"10"}]');
+  const [newToolCode, setNewToolCode] = useState('return Number(values.value) || 0;');
   const [showQuickTools, setShowQuickTools] = useState(true);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showNewToolNotice, setShowNewToolNotice] = useState(false);
@@ -881,6 +915,21 @@ export default function NewPrescriptionPage() {
   const prescriptionDraftStorageKey = doctor?.id ? `doctorx:prescription-draft:${doctor.id}` : null;
   const followUpPresetStorageKey = `doctorx:follow-up-options:${doctor?.id ?? "default"}`;
   const defaultTemplateStorageKey = `doctorx:default-templates:${doctor?.id ?? "default"}`;
+  const customToolsStorageKey = `doctorx:custom-tools:${doctor?.id ?? "default"}`;
+
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem(customToolsStorageKey) ?? "[]");
+      if (Array.isArray(stored)) {
+        setCustomTools(stored.filter((tool): tool is ExternalToolDefinition =>
+          tool && typeof tool.key === "string" && (tool.kind === "tool" || tool.kind === "calculator") &&
+          typeof tool.label === "string" && Array.isArray(tool.fields) && typeof tool.code === "string"
+        ));
+      }
+    } catch {
+      setCustomTools([]);
+    }
+  }, [customToolsStorageKey]);
 
   const persistManagedDefaultTemplates = useCallback((next: RxTemplate[]) => {
     setManagedDefaultTemplates(next);
@@ -949,7 +998,23 @@ export default function NewPrescriptionPage() {
   const queueServing = queueData?.serving?.[0] ?? null;
   const queueWaiting = queueData?.waiting ?? [];
   const allQueue = [...(queueData?.serving ?? []), ...(queueData?.waiting ?? [])];
-  const activeCalculator = CALCULATOR_REGISTRY.find(calculator => calculator.key === activeCalculatorKey) ?? null;
+  const customCalculators = useMemo(
+    () => customTools.filter(tool => tool.kind === "calculator").map(toRuntimeTool),
+    [customTools],
+  );
+  const customQuickTools = useMemo(
+    () => customTools.filter(tool => tool.kind === "tool").map(toRuntimeTool),
+    [customTools],
+  );
+  const calculatorRegistry = useMemo(
+    () => [...CALCULATOR_REGISTRY, ...customCalculators],
+    [customCalculators],
+  );
+  const quickToolRegistry = useMemo(
+    () => [...QUICK_TOOL_REGISTRY, ...customQuickTools],
+    [customQuickTools],
+  );
+  const activeCalculator = calculatorRegistry.find(calculator => calculator.key === activeCalculatorKey) ?? null;
   const quickToolItems = [
     {
       key: "templates",
@@ -962,10 +1027,64 @@ export default function NewPrescriptionPage() {
       key: "new-tool",
       label: isBn ? "নতুন টুল" : "New Tool",
       icon: Plus,
-      onClick: () => setShowNewToolNotice(v => !v),
+      onClick: () => {
+        setShowNewToolNotice(true);
+        setNewToolKind("tool");
+        setShowNewToolDialog(true);
+      },
       indicator: "+",
     },
   ];
+
+  const openNewToolDialog = (kind: ExternalToolDefinition["kind"]) => {
+    setNewToolKind(kind);
+    setNewToolLabel("");
+    setNewToolDescription("");
+    setNewToolFields('[{"key":"value","label":"Value","placeholder":"10"}]');
+    setNewToolCode("return Number(values.value) || 0;");
+    setShowNewToolDialog(true);
+  };
+
+  const saveExternalTool = () => {
+    const label = newToolLabel.trim();
+    if (!label || !newToolCode.trim()) {
+      toast({ title: isBn ? "নাম ও কোড দিন" : "Add a name and code first", variant: "destructive" });
+      return;
+    }
+    let fields: QuickToolField[];
+    try {
+      const parsed = JSON.parse(newToolFields);
+      if (!Array.isArray(parsed) || parsed.some(field => !field || typeof field.key !== "string" || typeof field.label !== "string")) {
+        throw new Error("Fields must be an array of objects with key and label.");
+      }
+      fields = parsed.map(field => ({
+        key: field.key.trim(),
+        label: field.label.trim(),
+        ...(typeof field.placeholder === "string" ? { placeholder: field.placeholder } : {}),
+      }));
+      if (fields.length === 0) throw new Error("Add at least one field.");
+    } catch (error) {
+      toast({ title: isBn ? "Fields JSON ঠিক করুন" : error instanceof Error ? error.message : "Invalid fields JSON", variant: "destructive" });
+      return;
+    }
+    const definition: ExternalToolDefinition = {
+      key: `custom-${newToolKind}-${Date.now()}`,
+      kind: newToolKind,
+      label,
+      description: newToolDescription.trim() || undefined,
+      fields,
+      code: newToolCode.trim(),
+    };
+    setCustomTools(previous => {
+      const next = [...previous, definition];
+      try { localStorage.setItem(customToolsStorageKey, JSON.stringify(next)); } catch { /* local storage is optional */ }
+      return next;
+    });
+    setShowNewToolDialog(false);
+    setShowNewToolNotice(true);
+    toast({ title: isBn ? "নতুন টুল যোগ হয়েছে" : `${label} added` });
+  };
+
   const savePrintLabel = editingId != null ? (isBn ? "আপডেট ও প্রিন্ট" : "Update & Print") : L.savePrint;
   const saveOnlyLabel = editingId != null ? (isBn ? "আপডেট" : "Update") : L.saveOnly;
   const saveDraftLabel = editingId != null ? (isBn ? "ড্রাফট আপডেট" : "Update Draft") : L.saveDraft;
@@ -2249,6 +2368,45 @@ export default function NewPrescriptionPage() {
     } catch { toast({ title: "Failed to end break", variant: "destructive" }); }
   };
 
+  const breakControls = isOnBreak ? (
+    <Button
+      type="button"
+      size="sm"
+      variant="outline"
+      className="h-7 px-2 text-xs gap-1 shrink-0 border-green-400 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400"
+      onClick={handleEndBreak}
+      disabled={updateStatusRx.isPending}
+    >
+      <Coffee className="h-3 w-3" />
+      <span>{isBn ? "বিরতি শেষ" : "End Break"}</span>
+    </Button>
+  ) : (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          className="h-7 px-2 text-xs gap-1 shrink-0 border-amber-400 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400"
+          disabled={updateStatusRx.isPending}
+        >
+          <Coffee className="h-3 w-3" />
+          <span>{isBn ? "বিরতি" : "Take Break"}</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuLabel className="text-xs">{isBn ? "বিরতির সময়" : "Break Duration"}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        {[5, 10, 15, 30, 45, 60].map(min => (
+          <DropdownMenuItem key={min} className="text-sm gap-2" onClick={() => handleTakeBreak(min)}>
+            <Timer className="h-3.5 w-3.5 text-muted-foreground" />
+            {min < 60 ? `${min} ${isBn ? "মিনিট" : "minutes"}` : isBn ? "১ ঘণ্টা" : "1 hour"}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   // ── Auth guard
   if (!import.meta.env.DEV && (isLoading || !user)) return <div className="min-h-screen flex items-center justify-center">{L.loading}</div>;
 
@@ -2292,10 +2450,13 @@ export default function NewPrescriptionPage() {
           {screenHPhone && <p className="text-[11px] text-muted-foreground">{screenHPhone}</p>}
           {screenHEmail && <p className="text-[11px] text-muted-foreground">{screenHEmail}</p>}
         </div>
-        <div className="rx-reference-patient-summary grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+        <div className="rx-reference-patient-summary grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]">
           <div className="min-w-0">
             <span className="rx-field-caption">{isBn ? "রোগী" : "Patient"}</span>
             <p className="truncate text-sm font-bold">{patient.name || (isBn ? "রোগীর নাম লিখুন" : "Patient name")}</p>
+          </div>
+          <div className="flex items-center justify-start sm:justify-center">
+            {breakControls}
           </div>
           <div>
             <span className="rx-field-caption">{L.age}</span>
@@ -2365,47 +2526,7 @@ export default function NewPrescriptionPage() {
            Share
          </Button>
        </div>
-        <div className={cn("rx-reference-toolbar-secondary ml-auto flex shrink-0 items-center gap-1 pl-2", showMobileMenu && "is-mobile-open")}>
-        {/* ── Quick break controls ── */}
-        {isOnBreak ? (
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="h-7 px-2 text-xs gap-1 shrink-0 border-green-400 text-green-700 hover:bg-green-50 dark:border-green-700 dark:text-green-400"
-            onClick={handleEndBreak}
-            disabled={updateStatusRx.isPending}
-          >
-            <Coffee className="h-3 w-3" />
-            <span className="hidden sm:inline">End Break</span>
-          </Button>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                className="h-7 px-2 text-xs gap-1 shrink-0 border-amber-400 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400"
-                disabled={updateStatusRx.isPending}
-              >
-                <Coffee className="h-3 w-3" />
-                <span className="hidden sm:inline">Take Break</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuLabel className="text-xs">Break Duration</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {[5, 10, 15, 30, 45, 60].map(min => (
-                <DropdownMenuItem key={min} className="text-sm gap-2" onClick={() => handleTakeBreak(min)}>
-                  <Timer className="h-3.5 w-3.5 text-muted-foreground" />
-                  {min < 60 ? `${min} minutes` : "1 hour"}
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-
+         <div className={cn("rx-reference-toolbar-secondary ml-auto flex shrink-0 items-center gap-1 pl-2", showMobileMenu && "is-mobile-open")}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button type="button" variant="outline" size="sm" className="h-7 px-2 text-xs gap-1 shrink-0">
@@ -2417,8 +2538,8 @@ export default function NewPrescriptionPage() {
           <DropdownMenuContent align="start">
             <DropdownMenuLabel className="text-xs">Calculators</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {CALCULATOR_REGISTRY.length > 0 ? (
-              CALCULATOR_REGISTRY.map(calculator => (
+            {calculatorRegistry.length > 0 ? (
+              calculatorRegistry.map(calculator => (
                 <DropdownMenuItem key={calculator.key} className="text-sm gap-2" onClick={() => setActiveCalculatorKey(calculator.key)}>
                   <Calculator className="h-3.5 w-3.5 text-muted-foreground" />
                   {calculator.label}
@@ -2427,6 +2548,11 @@ export default function NewPrescriptionPage() {
             ) : (
               <div className="px-2 py-1.5 text-xs text-muted-foreground">No calculators configured yet.</div>
             )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-sm gap-2" onClick={() => openNewToolDialog("calculator")}>
+              <Plus className="h-3.5 w-3.5 text-muted-foreground" />
+              {isBn ? "নতুন ক্যালকুলেটর যোগ করুন" : "Add calculator"}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         </div>
@@ -2830,15 +2956,15 @@ export default function NewPrescriptionPage() {
                       );
                     })}
                     {showNewToolNotice && (
-                      QUICK_TOOL_REGISTRY.length > 0 ? (
+                      quickToolRegistry.length > 0 ? (
                         <div className="space-y-1.5">
-                          {QUICK_TOOL_REGISTRY.map(tool => (
+                          {quickToolRegistry.map(tool => (
                             <QuickClinicalTool key={tool.key} tool={tool} />
                           ))}
                         </div>
                       ) : (
                         <div className="rounded border border-dashed border-teal-300 bg-background px-2 py-1.5 text-xs text-muted-foreground dark:border-teal-800">
-                          {isBn ? "নতুন ক্লিনিক্যাল টুল এখানে যোগ করা যাবে।" : "New clinical tools can be added here."}
+                          {isBn ? "নতুন টুল যোগ করতে উপরের New Tool চাপুন।" : "Use New Tool above to paste and add a tool."}
                         </div>
                       )
                     )}
@@ -3484,7 +3610,7 @@ export default function NewPrescriptionPage() {
 
         {/* ── TEMPLATES IN THE LEFT SIDEBAR ─────────────────────────── */}
         {showTemplates && (
-         <aside className="absolute inset-y-2 left-2 right-2 z-40 flex w-auto max-w-none flex-col overflow-hidden rounded-lg border bg-background shadow-xl sm:right-auto sm:w-[min(30%,calc(100vw-1rem))] sm:max-w-[calc(100vw-1rem)]" aria-label={L.templates}>
+         <aside className="rx-template-popover absolute left-2 top-[clamp(0.5rem,12vh,6rem)] z-40 flex h-auto max-h-[min(76vh,44rem)] w-[calc(100%-1rem)] max-w-none flex-col overflow-hidden rounded-lg border bg-background shadow-xl sm:left-[clamp(0.5rem,2vw,2rem)] sm:right-auto sm:w-[min(30rem,calc(100vw-1rem))] sm:max-w-[calc(100vw-1rem)]" aria-label={L.templates}>
           <div className="px-3 py-2 border-b bg-muted/20">
              <div className="flex flex-wrap items-center justify-between gap-1">
                 <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground shrink-0">{L.templates}</h3>
@@ -3510,7 +3636,7 @@ export default function NewPrescriptionPage() {
               </div>
             </div>
           </div>
-          <ScrollArea className="flex-1">
+           <ScrollArea className="min-h-0 flex-1">
              <div className="p-2 space-y-3 text-sm">
 
               {/* Queue Summary — enhanced: break/day-end aware, with stats + efficiency */}
@@ -4122,6 +4248,77 @@ export default function NewPrescriptionPage() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowPageDlg(false)}>{L.cancel}</Button>
             <Button className="bg-teal-600 hover:bg-teal-700" onClick={saveSettings} disabled={updateSettings.isPending}>{L.saveSettings}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showNewToolDialog} onOpenChange={setShowNewToolDialog}>
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              {newToolKind === "calculator"
+                ? (isBn ? "নতুন ক্যালকুলেটর যোগ করুন" : "Add a calculator")
+                : (isBn ? "নতুন টুল যোগ করুন" : "Add a quick tool")}
+            </DialogTitle>
+            <DialogDescription>
+              {isBn
+                ? "নাম, input fields-এর JSON এবং JavaScript code body দিন। কোডে values ব্যবহার করুন।"
+                : "Paste a JavaScript function body. Read inputs from values and return the result, for example: return Number(values.value) * 2;"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-1">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="space-y-1 text-sm">
+                <span className="text-muted-foreground">{isBn ? "ধরন" : "Type"}</span>
+                <select
+                  className="flex h-9 w-full rounded-md border bg-background px-3 py-1 text-sm"
+                  value={newToolKind}
+                  onChange={event => setNewToolKind(event.target.value as ExternalToolDefinition["kind"])}
+                >
+                  <option value="calculator">{isBn ? "ক্যালকুলেটর" : "Calculator"}</option>
+                  <option value="tool">{isBn ? "কুইক টুল" : "Quick tool"}</option>
+                </select>
+              </label>
+              <label className="space-y-1 text-sm">
+                <span className="text-muted-foreground">{isBn ? "নাম" : "Name"}</span>
+                <Input value={newToolLabel} onChange={event => setNewToolLabel(event.target.value)} placeholder="e.g. Dose total" />
+              </label>
+            </div>
+            <label className="block space-y-1 text-sm">
+              <span className="text-muted-foreground">{isBn ? "সংক্ষিপ্ত বিবরণ" : "Description (optional)"}</span>
+              <Input value={newToolDescription} onChange={event => setNewToolDescription(event.target.value)} placeholder="What this tool calculates" />
+            </label>
+            <label className="block space-y-1 text-sm">
+              <span className="text-muted-foreground">{isBn ? "Input fields JSON" : "Input fields JSON"}</span>
+              <Textarea
+                value={newToolFields}
+                onChange={event => setNewToolFields(event.target.value)}
+                className="min-h-24 font-mono text-xs"
+                spellCheck={false}
+              />
+              <span className="text-[11px] text-muted-foreground">
+                Example: [{`{"key":"weight","label":"Weight (kg)","placeholder":"65"}`}]
+              </span>
+            </label>
+            <label className="block space-y-1 text-sm">
+              <span className="text-muted-foreground">{isBn ? "External JavaScript code" : "External JavaScript code body"}</span>
+              <Textarea
+                value={newToolCode}
+                onChange={event => setNewToolCode(event.target.value)}
+                className="min-h-36 font-mono text-xs"
+                spellCheck={false}
+              />
+              <span className="text-[11px] text-muted-foreground">
+                {isBn ? "উদাহরণ: return Number(values.weight) * 2;" : "Example: return Number(values.weight) * 2; — use values.fieldKey for inputs."}
+              </span>
+            </label>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewToolDialog(false)}>{L.cancel}</Button>
+            <Button className="bg-teal-600 hover:bg-teal-700" onClick={saveExternalTool}>
+              <Save className="mr-1.5 h-4 w-4" />{isBn ? "যোগ করুন" : "Add tool"}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
