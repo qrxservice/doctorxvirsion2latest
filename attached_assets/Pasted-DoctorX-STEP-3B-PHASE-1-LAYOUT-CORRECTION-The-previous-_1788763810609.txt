@@ -1,0 +1,383 @@
+DoctorX — STEP 3B
+PHASE 1 LAYOUT CORRECTION
+
+The previous Phase 1 layout pass is visually cleaner, but after reviewing the actual Preview screenshots, several important UX requirements are still missing.
+
+This is NOT a request to change backend, state, APIs, handlers, payloads, or business logic.
+
+Make ONLY the following UI/layout corrections in:
+
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+==================================================
+1. WIDEN THE LEFT PATIENT / CLINICAL SIDEBAR
+==================================================
+
+The current left sidebar is too narrow.
+
+Increase its desktop width so that patient information and clinical fields are comfortable to read and edit.
+
+Target a balanced desktop layout approximately:
+
+LEFT SIDEBAR:
+28–32%
+
+MAIN PRESCRIPTION WORKSPACE:
+68–72%
+
+Do not use a fixed pixel width that causes overflow.
+
+Use a responsive layout.
+
+The main prescription workspace must still have enough width for:
+
+- Diagnosis
+- Medicine search
+- Generic
+- Strength
+- Form
+- Dose
+- Duration
+- Timing
+- Instructions
+- Added medicines
+
+Do not create horizontal overflow.
+
+On tablet/mobile, stack the layout naturally.
+
+==================================================
+2. C/C MUST NO LONGER BE A COLLAPSED DROPDOWN
+==================================================
+
+Current UI shows:
+
+C/C — CHIEF COMPLAINT
+with a collapsed/expand control.
+
+Change this to a directly visible clinical input section.
+
+The C/C field must be visible without clicking a dropdown.
+
+Preserve the existing state variable and handler.
+
+Preserve the existing API/payload field.
+
+Do NOT rename the existing data field.
+
+Do NOT change save logic.
+
+Use the existing C/C input component/logic if available.
+
+Make it an appropriately sized textarea/input that is immediately editable.
+
+Example visual structure:
+
+C/C — CHIEF COMPLAINT
+
+[ multiline editable field ]
+
+The doctor should be able to click and type immediately.
+
+==================================================
+3. O/E MUST NO LONGER BE A COLLAPSED DROPDOWN
+==================================================
+
+Current UI shows:
+
+O/E
+with a collapsed/expand control.
+
+Change it to a directly visible clinical input section.
+
+It must be immediately visible and editable.
+
+Preserve all existing:
+
+- state
+- handler
+- field name
+- API mapping
+- save payload
+- edit/reopen population logic
+
+Do NOT rewrite the underlying logic.
+
+==================================================
+4. I/X — INVESTIGATIONS MUST NO LONGER BE A COLLAPSED DROPDOWN
+==================================================
+
+Current UI shows:
+
+IX — INVESTIGATIONS
+with a collapsed/expand control.
+
+Change it to a directly visible editable section.
+
+The doctor should see the investigation field without needing to open a dropdown.
+
+Preserve all existing state and save behavior.
+
+Do NOT change API or payload structure.
+
+==================================================
+5. LEFT SIDEBAR ORDER
+==================================================
+
+Organize the left side as a real consultation workflow.
+
+Recommended order:
+
+PATIENT
+
+- Patient Name
+- Age
+- Gender
+- Mobile
+- Address
+- Registration No
+- Date
+
+VITALS
+
+- BP
+- Pulse
+- Temperature
+- Weight
+- Height
+- SpO2
+- Hb
+- Sugar
+
+CLINICAL INFORMATION
+
+- C/C — Chief Complaint
+- O/E — On Examination
+- I/X — Investigations
+- Drug History
+
+ATTACHMENTS
+
+- Upload Report
+
+RX QUICK TOOLS
+
+- Rx Templates
+- existing relevant prescription shortcuts/tools already present in the current implementation
+
+Do not invent backend functionality.
+
+Use existing available functionality.
+
+==================================================
+6. RX TEMPLATES SHOULD BE AVAILABLE FROM THE LEFT SIDE
+==================================================
+
+The existing Templates functionality must remain unchanged.
+
+In addition to the existing top Templates action, provide a convenient Templates access point in the lower portion of the left sidebar.
+
+This should be visually grouped under something like:
+
+RX QUICK TOOLS
+
+or
+
+PRESCRIPTION TOOLS
+
+The purpose is quick access during consultation.
+
+IMPORTANT:
+
+Do NOT create a second template system.
+
+Do NOT duplicate template state.
+
+Do NOT create new API calls.
+
+Use the existing Templates toggle/action/handler.
+
+The left-side control should trigger the SAME existing Templates functionality.
+
+==================================================
+7. DO NOT REMOVE EXISTING QUICK ACTIONS
+==================================================
+
+The previous requirement included having useful prescription commands/tools available for the doctor.
+
+Review the EXISTING NewPrescriptionPage implementation and identify existing doctor-facing shortcuts/actions that are currently only accessible from the top bar or hidden areas.
+
+Where appropriate, expose them in the left-side RX QUICK TOOLS area.
+
+Examples may include existing:
+
+- Templates
+- frequently used prescription shortcuts
+- existing medicine shortcuts
+- existing relevant quick actions
+
+IMPORTANT:
+
+Only expose functionality that already exists.
+
+DO NOT invent new business logic.
+
+DO NOT create mock commands.
+
+DO NOT duplicate state.
+
+DO NOT duplicate API calls.
+
+==================================================
+8. MAIN PRESCRIPTION AREA
+==================================================
+
+Keep the center/main prescription workspace as the primary focus.
+
+Maintain:
+
+Diagnosis
+
+Add Medicine
+
+Medicine search
+
+Medicine configuration
+
+Instructions
+
+Add Medicine
+
+Added Medicines
+
+Advice
+
+Treatment Note
+
+Follow-up
+
+Do not change their handlers or data behavior.
+
+==================================================
+9. MEDICINE AREA
+==================================================
+
+Do NOT implement drag and drop yet.
+
+Do NOT implement reorder yet.
+
+Do NOT implement new medicine editing yet.
+
+Only preserve the existing medicine workflow.
+
+The next phase will handle:
+
+- inline medicine editing
+- drag handle
+- drag/drop
+- reorder
+- move up/down
+- flexible medicine management
+
+==================================================
+10. IMPORTANT — PRESERVE EVERYTHING
+==================================================
+
+Do NOT modify:
+
+- API endpoints
+- API hooks
+- backend
+- database
+- schema
+- state logic
+- event handlers
+- payload construction
+- medicine search
+- autocomplete
+- addMedicine
+- removeMed
+- template logic
+- queue logic
+- break logic
+- save logic
+- draft logic
+- preview logic
+- print logic
+- QR logic
+- edit/reopen logic
+- duplicate logic
+- reprint logic
+- routing
+- authentication
+
+Do NOT modify PrintView.
+
+Do NOT modify saved/print mode.
+
+Do NOT modify generated files.
+
+Only change the presentation/layout of the write-mode Prescription page.
+
+==================================================
+11. VISUAL GOAL
+==================================================
+
+The final screen should feel like a professional doctor consultation workstation.
+
+The doctor should be able to see:
+
+LEFT:
+Patient + Vitals + C/C + O/E + I/X + Drug History + Attachments + Rx Tools/Templates
+
+CENTER:
+Diagnosis + Medicine Workspace + Advice + Treatment + Follow-up
+
+TOP:
+Queue + Break + Templates + Settings + Preview + Save actions
+
+The doctor should NOT have to repeatedly open dropdowns just to enter C/C, O/E, or I/X.
+
+==================================================
+12. VERIFY
+==================================================
+
+After implementation verify:
+
+- Left sidebar is visibly wider.
+- No horizontal overflow.
+- C/C is directly visible.
+- O/E is directly visible.
+- I/X is directly visible.
+- All three remain editable.
+- Existing data still populates them when reopening a prescription.
+- Save still persists them.
+- Templates still work.
+- Queue still works.
+- Break still works.
+- Medicine search still works.
+- Medicine add/remove still works.
+- Save Draft works.
+- Save Only works.
+- Save & Print works.
+- Preview works.
+- PrintView is untouched.
+- Backend/API/database/generated files are untouched.
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report:
+
+1. Exact file modified
+2. New left sidebar width/layout
+3. How C/C was changed
+4. How O/E was changed
+5. How I/X was changed
+6. Where Templates/quick tools were placed
+7. Confirmation that existing handlers/state/API/payloads were preserved
+8. Confirmation that PrintView was untouched
+9. Any limitation
+
+STOP after the report and wait for the next instruction.
