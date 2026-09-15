@@ -1,0 +1,59 @@
+Now fix ONLY the Template popup positioning and Template menu behavior on the DoctorX New Prescription page.
+
+IMPORTANT:
+- Do not redesign the whole prescription page.
+- Do not change the Top Header layout.
+- Do not change the Left Clinical/Observation panel.
+- Do not change the Medicine Add/Edit logic.
+- Do not change Save, Preview, Print or Queue logic.
+- Do not change backend/API/database.
+- Do not install dependencies.
+- Do not modify unrelated files.
+- Reuse the existing Template state, handlers and template data.
+
+CURRENT PROBLEM:
+
+The Template menu is located near the lower part of the prescription page.
+
+When the doctor clicks Template, the popup currently opens in a fixed direction/position and may appear outside the visible viewport.
+
+For example:
+- If the Template button is near the bottom of the screen, the popup may open below the button and become invisible.
+- The doctor may not be able to tell that the Template popup has opened.
+
+REQUIRED FIX:
+
+Make the Template popup viewport-aware and flexible.
+
+Behavior:
+1. When the Template menu is clicked, the popup must always remain visible inside the viewport.
+2. If there is enough space below the button, open downward.
+3. If there is not enough space below, automatically open upward.
+4. If horizontal space is limited, adjust the horizontal position so the popup remains fully visible.
+5. The popup must work correctly on desktop, tablet and mobile.
+6. Scrolling the page must not leave the popup visibly detached from the Template button.
+7. The popup should appear close to the triggering Template menu.
+8. Do not make the popup permanently fixed at the bottom/top of the page.
+9. Clicking outside should close it if the existing behavior supports that.
+10. Escape key should close it if the existing menu behavior supports keyboard closing.
+
+IMPORTANT:
+Use the existing Template menu state and existing template handlers.
+
+Do not create a second template system.
+
+MENU CORRECTION:
+
+Keep the existing Template menu/button itself in its current location and preserve its current functionality.
+
+Only correct the popup positioning and visibility behavior.
+
+Do not move or redesign unrelated menu items.
+
+After implementation, report:
+- Files changed
+- The Template popup positioning method used
+- Whether the existing template state/handlers were reused
+- Whether any other part of the page was changed
+
+Make only the minimum required changes.

@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo, type ComponentProps, type KeyboardEvent as ReactKeyboardEvent } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo, type ComponentProps, type CSSProperties, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { Link, useLocation, useSearch } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -879,6 +879,9 @@ export default function NewPrescriptionPage() {
   const [showMedicineComposer, setShowMedicineComposer] = useState(false);
   const [patientSearch, setPatientSearch] = useState("");
   const [showTemplates, setShowTemplates] = useState(false);
+  const templateTriggerRef = useRef<HTMLButtonElement>(null);
+  const templatePopoverRef = useRef<HTMLElement>(null);
+  const [templatePopoverStyle, setTemplatePopoverStyle] = useState<CSSProperties | undefined>();
   const [activeCalculatorKey, setActiveCalculatorKey] = useState<string | null>(null);
   const [customTools, setCustomTools] = useState<ExternalToolDefinition[]>([]);
   const [showNewToolDialog, setShowNewToolDialog] = useState(false);
@@ -904,6 +907,52 @@ export default function NewPrescriptionPage() {
   const [ixOpen, setIxOpen] = useState(false);
   const [loadedApptId, setLoadedApptId] = useState<number | null>(null);
   const [reportUploading, setReportUploading] = useState(false);
+
+  const updateTemplatePopoverPosition = useCallback(() => {
+    const trigger = templateTriggerRef.current;
+    if (!trigger) return;
+
+    const triggerRect = trigger.getBoundingClientRect();
+    const gutter = 8;
+    const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const popupWidth = Math.min(480, Math.max(280, viewportWidth - gutter * 2));
+    const popupHeight = Math.min(
+      Math.max(240, templatePopoverRef.current?.scrollHeight ?? 560),
+      viewportHeight - gutter * 2,
+    );
+    const spaceBelow = viewportHeight - triggerRect.bottom;
+    const openUpward = spaceBelow < popupHeight + gutter && triggerRect.top > spaceBelow;
+    const rawTop = openUpward
+      ? triggerRect.top - popupHeight - gutter
+      : triggerRect.bottom + gutter;
+    const top = Math.max(gutter, Math.min(rawTop, viewportHeight - popupHeight - gutter));
+    const rawLeft = triggerRect.left;
+    const left = Math.max(gutter, Math.min(rawLeft, viewportWidth - popupWidth - gutter));
+
+    setTemplatePopoverStyle({
+      position: "fixed",
+      top,
+      left,
+      width: popupWidth,
+      maxHeight: viewportHeight - gutter * 2,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!showTemplates) {
+      setTemplatePopoverStyle(undefined);
+      return;
+    }
+    const reposition = () => window.requestAnimationFrame(updateTemplatePopoverPosition);
+    reposition();
+    window.addEventListener("resize", reposition);
+    document.addEventListener("scroll", reposition, true);
+    return () => {
+      window.removeEventListener("resize", reposition);
+      document.removeEventListener("scroll", reposition, true);
+    };
+  }, [showTemplates, updateTemplatePopoverPosition]);
   // isRecallMode = true when a patient is loaded from prescription history (not from
   // the live queue).  The queue is NOT touched in recall mode — Now Serving stays
   // unchanged.  The doctor sees a distinct "Recall / Follow-up" indicator instead
@@ -2947,6 +2996,7 @@ export default function NewPrescriptionPage() {
                           variant="outline"
                           size="sm"
                           className="h-7 w-full justify-start gap-1.5 bg-background text-xs"
+                          ref={tool.key === "templates" ? templateTriggerRef : undefined}
                           onClick={tool.onClick}
                         >
                           <ToolIcon className="h-3 w-3" />
@@ -3610,7 +3660,12 @@ export default function NewPrescriptionPage() {
 
         {/* ── TEMPLATES IN THE LEFT SIDEBAR ─────────────────────────── */}
         {showTemplates && (
-         <aside className="rx-template-popover absolute left-2 top-[clamp(0.5rem,12vh,6rem)] z-40 flex h-auto max-h-[min(76vh,44rem)] w-[calc(100%-1rem)] max-w-none flex-col overflow-hidden rounded-lg border bg-background shadow-xl sm:left-[clamp(0.5rem,2vw,2rem)] sm:right-auto sm:w-[min(30rem,calc(100vw-1rem))] sm:max-w-[calc(100vw-1rem)]" aria-label={L.templates}>
+         <aside
+           ref={templatePopoverRef}
+           style={templatePopoverStyle}
+           className="rx-template-popover fixed z-40 flex h-auto max-h-[min(76vh,44rem)] max-w-[calc(100vw-1rem)] flex-col overflow-hidden rounded-lg border bg-background shadow-xl"
+           aria-label={L.templates}
+         >
           <div className="px-3 py-2 border-b bg-muted/20">
              <div className="flex flex-wrap items-center justify-between gap-1">
                 <h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground shrink-0">{L.templates}</h3>
