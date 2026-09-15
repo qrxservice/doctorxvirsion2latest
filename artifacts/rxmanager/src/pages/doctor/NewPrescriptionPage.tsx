@@ -2547,22 +2547,22 @@ export default function NewPrescriptionPage() {
          </Button>
          <NavBtn href="/doctor/dashboard" icon={<LayoutDashboard className="h-3 w-3" />} label={L.navDashboard} />
           <NavBtn href="/doctor/prescriptions" icon={<ClipboardList className="h-3 w-3" />} label="Prescription Management" />
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => setShowHeaderDlg(true))}>
+          <Button type="button" variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => setShowHeaderDlg(true))}>
            <Settings2 className="h-3.5 w-3.5" /><span>{L.headerSettings}</span>
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => setShowPageDlg(true))}>
+          <Button type="button" variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => setShowPageDlg(true))}>
            <FileCog className="h-3.5 w-3.5" /><span>{L.pageSetup}</span>
          </Button>
          <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(handlePreview)}>
            <Eye className="h-3.5 w-3.5" />{L.preview}
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(true, "final"))} disabled={createRx.isPending || updateRx.isPending}>
+          <Button type="button" variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(true, "final"))} disabled={createRx.isPending || updateRx.isPending}>
            <Printer className="h-3.5 w-3.5" />{savePrintLabel}
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(false, "final"))} disabled={createRx.isPending || updateRx.isPending}>
+          <Button type="button" variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(false, "final"))} disabled={createRx.isPending || updateRx.isPending}>
            <Save className="h-3.5 w-3.5" />{saveOnlyLabel}
          </Button>
-         <Button variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(false, "draft"))} disabled={createRx.isPending || updateRx.isPending}>
+          <Button type="button" variant="ghost" size="sm" className="h-7 shrink-0 px-2 text-xs gap-1" onClick={() => handleMobileAction(() => handleSave(false, "draft"))} disabled={createRx.isPending || updateRx.isPending}>
            <Save className="h-3.5 w-3.5" />{saveDraftLabel}
          </Button>
          <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" aria-label={lang === "en" ? "Switch to Bangla" : "Switch to English"} onClick={() => setLang(lang === "en" ? "bn" : "en")}>
@@ -2995,9 +2995,13 @@ export default function NewPrescriptionPage() {
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-7 w-full justify-start gap-1.5 bg-background text-xs"
+                          className={cn(
+                            "h-7 w-full justify-start gap-1.5 bg-background text-xs transition-colors",
+                            tool.key === "templates" && showTemplates && "border-teal-500 bg-teal-50 text-teal-700 dark:border-teal-700 dark:bg-teal-950/30 dark:text-teal-300",
+                          )}
                           ref={tool.key === "templates" ? templateTriggerRef : undefined}
                           onClick={tool.onClick}
+                          aria-expanded={tool.key === "templates" ? showTemplates : undefined}
                         >
                           <ToolIcon className="h-3 w-3" />
                           {tool.label}
