@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "export NODE_ENV=development && export PORT=\"${PORT:-3000}\" && export GEODATADIR=\"${GEODATADIR:-$(node -e 'const path=require(\"path\");const p=require.resolve(\"geoip-lite/package.json\");process.stdout.write(path.join(path.dirname(p),\"data\"))')}\" && pnpm run build && pnpm run start",
     "build": "node ./build.mjs",
-    "start": "export GEODATADIR=\"${GEODATADIR:-$(find ../../node_modules/.pnpm -type d -path '*/node_modules/geoip-lite/data' -print -quit)}\" && node --enable-source-maps ./dist/index.mjs",
+    "start": "ROOT_DIR=\"$(cd ../.. && pwd)\" && export GEODATADIR=\"${GEODATADIR:-$(find \"$ROOT_DIR/node_modules/.pnpm\" -type d -path '*/node_modules/geoip-lite/data' -print -quit)}\" && echo \"GEODATADIR=$GEODATADIR\" && node --enable-source-maps ./dist/index.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
