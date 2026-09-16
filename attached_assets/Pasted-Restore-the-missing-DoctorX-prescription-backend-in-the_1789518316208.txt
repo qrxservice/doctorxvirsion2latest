@@ -1,0 +1,38 @@
+Restore the missing DoctorX prescription backend in the current Replit DEVELOPMENT workspace only.
+
+Important:
+- Do NOT touch production or /var/www/doctorx.
+- Do NOT redesign or rewrite NewPrescriptionPage.tsx.
+- Do NOT use localStorage fallback, mock APIs, fake success responses, fake doctors, hardcoded doctor@example, or mock medicine data.
+- Treat lib/api-spec/openapi.yaml and the already-generated lib/api-client-react client/types as the API contract. Do not invent incompatible request/response shapes.
+- Preserve existing frontend hooks and URLs.
+
+Current verified problem:
+artifacts/api-server/src/routes/index.ts currently registers only health and demo-auth routes, while the frontend/generated client expects real DoctorX endpoints including:
+- POST /api/prescriptions
+- GET /api/doctors/me/rx-settings
+- PUT /api/doctors/me/rx-settings
+- GET /api/doctors/me/profile
+- medicine endpoints used by the generated client / prescription medicine search
+- queue endpoints used by NewPrescriptionPage if their backend implementation is also absent
+
+Task:
+1. Inspect lib/api-spec/openapi.yaml and generated api.ts/api.schemas.ts for the exact endpoint contracts.
+2. Inspect the workspace for the existing database package/schema/configuration and existing authentication/session mechanism.
+3. Restore the missing Express route implementations using those existing contracts and infrastructure.
+4. Mount the restored routers from artifacts/api-server/src/routes/index.ts.
+5. Do not create a second authentication system. Authenticated /doctors/me endpoints must derive the doctor from the existing session/auth identity.
+6. Prescription creation must actually persist through the existing database layer and return the contract-defined Prescription.
+7. RX settings GET/PUT must actually load/persist the authenticated doctor's settings.
+8. Doctor profile must return the authenticated real doctor profile.
+9. Medicine search/list must query the real existing medicine data source/database; never seed fake medicine data merely to make the UI work.
+10. Preserve existing queue/serial behavior and use its real data source if the required schema/service exists.
+11. If a required database schema/table/auth implementation genuinely does not exist in this workspace, STOP for that part and report exactly what is missing instead of inventing a parallel system.
+12. Run typecheck/build/tests relevant to the changed backend and report:
+   - files changed
+   - routes restored
+   - database tables/models used
+   - auth mechanism used
+   - anything still blocked
+
+Make the smallest production-compatible changes necessary. Do not modify unrelated UI.

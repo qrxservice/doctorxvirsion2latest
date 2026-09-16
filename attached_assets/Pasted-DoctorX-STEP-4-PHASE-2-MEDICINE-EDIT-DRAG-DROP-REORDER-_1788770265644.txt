@@ -1,0 +1,249 @@
+DoctorX — STEP 4
+PHASE 2 — MEDICINE EDIT + DRAG/DROP + REORDER
+
+IMPORTANT: LOW-COST PATCH ONLY.
+
+Modify ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+DO NOT:
+
+* inspect the whole project
+* refactor unrelated code
+* install packages
+* modify backend/API/database/schema
+* modify generated API files
+* modify PrintView
+* modify saved/print mode
+* change medicine search/autocomplete
+* change medicine payload structure
+* change existing Save/Preview/Print logic
+
+==================================================
+
+1. MEDICINE CARD
+   ==================================================
+
+Improve the EXISTING Added Medicines list.
+
+Each medicine should appear as a clear card/row containing the existing medicine information:
+
+* Serial/order
+* Brand
+* Generic
+* Strength
+* Dosage form
+* Dose
+* Duration
+* Timing
+* Instructions
+
+Add a visible drag handle:
+
+☰
+
+The drag handle should indicate that the medicine can be moved.
+
+==================================================
+2. DRAG & DROP REORDER
+======================
+
+Implement lightweight native HTML5 drag-and-drop.
+
+DO NOT install a drag/drop library.
+
+Doctor must be able to:
+
+* drag a medicine
+* drop it above/below another medicine
+* change medicine order
+* immediately see the new order
+
+Use the EXISTING medicine array/state.
+
+Do NOT create a second medicine data structure.
+
+The final medicine array order must be the order used by the existing save logic.
+
+==================================================
+3. MOVE UP / MOVE DOWN
+======================
+
+Also provide small:
+
+↑ Move Up
+↓ Move Down
+
+controls on each medicine card.
+
+These controls must modify the EXISTING medicine array/state only.
+
+Disable/hide:
+
+* Move Up for the first medicine
+* Move Down for the last medicine
+
+==================================================
+4. EDIT MEDICINE
+================
+
+Add an Edit button to each existing medicine card.
+
+Clicking Edit should reopen the EXISTING medicine-entry/configuration UI using the existing medicine data.
+
+Doctor must be able to edit:
+
+* Brand
+* Generic
+* Strength
+* Dosage form
+* Dose
+* Duration
+* Timing
+* Instructions
+
+After editing, use the existing medicine state/add/update mechanism where possible.
+
+DO NOT create a separate medicine-edit API.
+
+DO NOT change the medicine payload structure.
+
+DO NOT break the existing Add Medicine workflow.
+
+==================================================
+5. DUPLICATE / DELETE
+=====================
+
+Preserve existing:
+
+* Duplicate
+* Delete/Remove
+
+behavior exactly as currently implemented.
+
+Do not rewrite their underlying logic.
+
+==================================================
+6. REOPEN EXISTING PRESCRIPTION
+===============================
+
+When an existing prescription is opened using the current edit flow:
+
+?id=<id>
+
+all existing medicines must:
+
+* load normally
+* remain editable
+* remain draggable
+* remain reorderable
+* remain removable
+
+After editing/reordering:
+
+existing Save / Update behavior must continue to work.
+
+==================================================
+7. SERIAL NUMBERS
+=================
+
+Serial numbers must automatically reflect the current medicine order.
+
+Example:
+
+01  Omeprazole
+02  Azithromycin
+03  Napa
+
+After moving Napa to the top:
+
+01  Napa
+02  Omeprazole
+03  Azithromycin
+
+Do not store serial numbers as a separate data field unless the existing system already does so.
+
+==================================================
+8. UX
+=====
+
+Medicine cards should make the workflow obvious:
+
+☰  01
+Medicine name
+Generic / Strength
+Dose | Duration | Timing
+Instructions
+
+[Edit] [Duplicate] [Delete]   [↑] [↓]
+
+Keep controls compact.
+
+Do not make the medicine area visually overcrowded.
+
+Maintain dark mode and responsive behavior.
+
+==================================================
+9. CRITICAL PRESERVATION
+========================
+
+DO NOT CHANGE:
+
+* /api/medicines
+* autocomplete
+* debounce
+* medicine search
+* medicine selection
+* addMedicine
+* removeMed
+* existing medicine state model
+* existing save payload
+* Save Draft
+* Save Only
+* Save & Print
+* Preview
+* Print
+* QR
+* template logic
+* queue logic
+* break logic
+* patient loading
+* edit/reopen logic
+* backend
+* database
+* routing
+* authentication
+* PrintView
+
+Only extend the existing medicine UI/state interaction as necessary.
+
+==================================================
+10. CREDIT-SAVING RULE
+======================
+
+This is a focused implementation.
+
+Do the changes directly.
+
+Do not perform project-wide analysis.
+
+Do not install dependencies.
+
+Do not run expensive full-project tests/build/typecheck.
+
+After editing, perform only a quick local sanity check of the modified JSX/logic.
+
+==================================================
+FINAL RESPONSE
+==============
+
+Reply ONLY with:
+
+1. File modified
+2. Drag/drop added
+3. Move Up/Down added
+4. Medicine Edit added
+5. Existing medicine/save/API logic preserved
+6. Any limitation
+
+STOP.

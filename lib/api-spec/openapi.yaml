@@ -1,0 +1,6368 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: QRX API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: departments
+    description: Department operations
+  - name: specialties
+    description: Specialty operations
+  - name: locations
+    description: Location operations
+  - name: doctors
+    description: Doctor operations
+  - name: appointments
+    description: Appointment operations
+  - name: assistants
+    description: Doctor assistant account operations
+  - name: queue
+    description: Smart Queue operations
+  - name: prescriptions
+    description: Prescription operations
+  - name: medicines
+    description: Medicine operations
+  - name: Storage
+    description: Object storage upload and serving endpoints.
+  - name: subscriptions
+    description: Subscription operations
+  - name: admin
+    description: Admin panel operations
+  - name: banners
+    description: Banner/Advertisement operations
+  - name: sliders
+    description: Homepage image slider operations
+  - name: video-promotions
+    description: Homepage video promotion block operations
+  - name: advertisements
+    description: Advertisement block operations
+  - name: migrations
+    description: Data migration center operations
+  - name: audit
+    description: Audit log operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  # ---- AUTH ----
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Unauthorized
+
+  /auth/verify-otp:
+    post:
+      operationId: verifyLoginOtp
+      tags: [auth]
+      summary: Verify Master Admin 2-step login OTP and complete login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyLoginOtpInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid or expired code
+        "401":
+          description: Invalid pending token
+
+  /auth/resend-otp:
+    post:
+      operationId: resendLoginOtp
+      tags: [auth]
+      summary: Resend the Master Admin 2-step login OTP
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResendLoginOtpInput"
+      responses:
+        "200":
+          description: Code resent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "401":
+          description: Invalid pending token
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+
+  /auth/register:
+    post:
+      operationId: registerPatient
+      tags: [auth]
+      summary: Register a new patient/visitor account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+        "409":
+          description: Email already in use
+
+  /auth/forgot-password:
+    post:
+      operationId: forgotPassword
+      tags: [auth]
+      summary: Request a password reset link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ForgotPasswordInput"
+      responses:
+        "200":
+          description: Reset requested (always generic)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/reset-password:
+    post:
+      operationId: resetPassword
+      tags: [auth]
+      summary: Reset password using a reset token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetPasswordInput"
+      responses:
+        "200":
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Invalid or expired token
+
+  /auth/change-password:
+    post:
+      operationId: changePassword
+      tags: [auth]
+      summary: Change password for the logged-in user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordInput"
+      responses:
+        "200":
+          description: Password changed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "400":
+          description: Validation error
+        "401":
+          description: Not authenticated or wrong current password
+
+  /admin/users/reset-password:
+    post:
+      operationId: adminResetPassword
+      tags: [admin]
+      summary: Admin manually resets any user's password by email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminResetPasswordInput"
+      responses:
+        "200":
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "403":
+          description: Forbidden
+        "404":
+          description: User not found
+
+  # ---- SHOP ----
+  /shop/products:
+    get:
+      operationId: listShopProducts
+      tags: [shop]
+      summary: List shop products
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: featured
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Products list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopProductsResponse"
+    post:
+      operationId: createShopProduct
+      tags: [shop]
+      summary: Create a product (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShopProductInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopProduct"
+
+  /shop/products/{id}:
+    get:
+      operationId: getShopProduct
+      tags: [shop]
+      summary: Get a single product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Product
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopProduct"
+    put:
+      operationId: updateShopProduct
+      tags: [shop]
+      summary: Update a product (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShopProductInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopProduct"
+    delete:
+      operationId: deleteShopProduct
+      tags: [shop]
+      summary: Delete a product (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /shop/cart:
+    get:
+      operationId: getMyCart
+      tags: [shop]
+      summary: Get current user cart
+      responses:
+        "200":
+          description: Cart items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CartItem"
+    post:
+      operationId: addToCart
+      tags: [shop]
+      summary: Add item to cart
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CartInput"
+      responses:
+        "201":
+          description: Added
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartItem"
+
+  /shop/cart/{id}:
+    put:
+      operationId: updateCartItem
+      tags: [shop]
+      summary: Update cart item quantity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CartInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CartItem"
+    delete:
+      operationId: removeFromCart
+      tags: [shop]
+      summary: Remove item from cart
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /shop/cart/clear:
+    delete:
+      operationId: clearCart
+      tags: [shop]
+      summary: Clear entire cart
+      responses:
+        "200":
+          description: Cleared
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /shop/orders:
+    get:
+      operationId: listMyOrders
+      tags: [shop]
+      summary: List my orders
+      responses:
+        "200":
+          description: Orders list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShopOrder"
+    post:
+      operationId: placeOrder
+      tags: [shop]
+      summary: Place an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PlaceOrderInput"
+      responses:
+        "201":
+          description: Order placed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopOrder"
+
+  /shop/orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [shop]
+      summary: Get a single order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopOrder"
+
+  /admin/shop/orders:
+    get:
+      operationId: listAllOrders
+      tags: [shop]
+      summary: List all orders (admin)
+      responses:
+        "200":
+          description: All orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ShopOrder"
+
+  /admin/shop/orders/{id}/status:
+    put:
+      operationId: updateOrderStatus
+      tags: [shop]
+      summary: Update order status (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShopOrder"
+
+  # ---- DEPARTMENTS ----
+  /departments:
+    get:
+      operationId: listDepartments
+      tags: [departments]
+      summary: List all departments
+      responses:
+        "200":
+          description: List of departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [departments]
+      summary: Create department (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+
+  /departments/{id}:
+    patch:
+      operationId: updateDepartment
+      tags: [departments]
+      summary: Update department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+    delete:
+      operationId: deleteDepartment
+      tags: [departments]
+      summary: Delete department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- SPECIALTIES ----
+  /specialties:
+    get:
+      operationId: listSpecialties
+      tags: [specialties]
+      summary: List all specialties
+      parameters:
+        - name: departmentId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of specialties
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Specialty"
+    post:
+      operationId: createSpecialty
+      tags: [specialties]
+      summary: Create specialty
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpecialtyInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Specialty"
+
+  /specialties/{id}:
+    delete:
+      operationId: deleteSpecialty
+      tags: [specialties]
+      summary: Delete specialty
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- LOCATIONS ----
+  /locations:
+    get:
+      operationId: listLocations
+      tags: [locations]
+      summary: List all locations
+      responses:
+        "200":
+          description: List of locations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Location"
+    post:
+      operationId: createLocation
+      tags: [locations]
+      summary: Create location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LocationInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Location"
+
+  /locations/{id}:
+    delete:
+      operationId: deleteLocation
+      tags: [locations]
+      summary: Delete location
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- DOCTORS ----
+  /doctors:
+    get:
+      operationId: listDoctors
+      tags: [doctors]
+      summary: List approved doctors (public)
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: departmentId
+          in: query
+          schema:
+            type: integer
+        - name: specialtyId
+          in: query
+          schema:
+            type: integer
+        - name: locationId
+          in: query
+          schema:
+            type: integer
+        - name: featured
+          in: query
+          schema:
+            type: boolean
+        - name: onlineOnly
+          in: query
+          schema:
+            type: string
+        - name: countryId
+          in: query
+          schema:
+            type: integer
+        - name: cityId
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of doctors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorListResponse"
+    post:
+      operationId: registerDoctor
+      tags: [doctors]
+      summary: Register a new doctor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorRegistrationInput"
+      responses:
+        "201":
+          description: Doctor registered (pending approval)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/{id}:
+    get:
+      operationId: getDoctor
+      tags: [doctors]
+      summary: Get doctor profile (public)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Doctor profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateDoctor
+      tags: [doctors]
+      summary: Update doctor profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/{id}/approve:
+    post:
+      operationId: approveDoctor
+      tags: [doctors]
+      summary: Approve doctor (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Doctor approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/{id}/reject:
+    post:
+      operationId: rejectDoctor
+      tags: [doctors]
+      summary: Reject doctor (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Doctor rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/{id}/feature:
+    post:
+      operationId: featureDoctor
+      tags: [doctors]
+      summary: Toggle doctor featured status (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FeatureToggleInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/{id}/senior:
+    post:
+      operationId: markSeniorDoctor
+      tags: [doctors]
+      summary: Toggle doctor senior status (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SeniorToggleInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/me/profile:
+    get:
+      operationId: getDoctorProfile
+      tags: [doctors]
+      summary: Get authenticated doctor profile
+      responses:
+        "200":
+          description: Doctor profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Doctor"
+
+  /doctors/me/subscription:
+    get:
+      operationId: getDoctorSubscription
+      tags: [doctors]
+      summary: Get authenticated doctor's own subscription details
+      responses:
+        "200":
+          description: Subscription details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+        "404":
+          description: Not found
+
+  # ---- APPOINTMENTS ----
+  /appointments:
+    get:
+      operationId: listAppointments
+      tags: [appointments]
+      summary: List appointments
+      parameters:
+        - name: doctorId
+          in: query
+          schema:
+            type: integer
+        - name: date
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: donationPaid
+          in: query
+          schema:
+            type: boolean
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of appointments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentListResponse"
+    post:
+      operationId: createAppointment
+      tags: [appointments]
+      summary: Book an appointment (public, no login required)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentInput"
+      responses:
+        "201":
+          description: Appointment booked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+
+  /appointments/{id}:
+    get:
+      operationId: getAppointment
+      tags: [appointments]
+      summary: Get appointment details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+    patch:
+      operationId: updateAppointment
+      tags: [appointments]
+      summary: Update appointment status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+
+  /appointments/track:
+    get:
+      operationId: trackAppointment
+      tags: [appointments]
+      summary: Track appointment by phone number
+      parameters:
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: doctorId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Appointment tracking info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppointmentTrackResponse"
+
+  /appointments/{id}/add-to-queue:
+    post:
+      operationId: addToQueue
+      tags: [appointments]
+      summary: Add appointment to today's queue
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Added to queue
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+
+  # ---- ASSISTANTS ----
+  /assistants:
+    get:
+      operationId: listAssistants
+      tags: [assistants]
+      summary: List assistant accounts for the logged-in doctor
+      responses:
+        "200":
+          description: List of assistants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Assistant"
+    post:
+      operationId: createAssistant
+      tags: [assistants]
+      summary: Create an assistant account (doctor only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssistantInput"
+      responses:
+        "201":
+          description: Assistant created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Assistant"
+  /assistants/{id}:
+    delete:
+      operationId: deleteAssistant
+      tags: [assistants]
+      summary: Remove an assistant account (doctor only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /assistants/{id}/reset-password:
+    post:
+      operationId: resetAssistantPassword
+      tags: [assistants]
+      summary: Doctor resets an assistant's password (doctor only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetUserPasswordInput"
+      responses:
+        "200":
+          description: Password reset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "403":
+          description: Forbidden
+        "404":
+          description: Assistant not found
+
+  # ---- QUEUE ----
+  /queue:
+    get:
+      operationId: listQueue
+      tags: [queue]
+      summary: Get today's queue for a doctor
+      parameters:
+        - name: doctorId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: date
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Queue entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueResponse"
+
+  /queue/{id}/call-next:
+    post:
+      operationId: callNextPatient
+      tags: [queue]
+      summary: Call next patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Called next
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+
+  /queue/{id}/seen:
+    post:
+      operationId: markPatientSeen
+      tags: [queue]
+      summary: Mark patient as seen
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Marked seen
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+
+  /queue/{id}/skip:
+    post:
+      operationId: skipPatient
+      tags: [queue]
+      summary: Skip patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Skipped
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+
+  /queue/{id}/recall:
+    post:
+      operationId: recallPatient
+      tags: [queue]
+      summary: Recall skipped patient
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Recalled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+
+  /queue/{id}/serve:
+    post:
+      operationId: serveQueueEntry
+      tags: [queue]
+      summary: Mark a specific queue entry as now serving
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Patient marked as serving
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueEntry"
+
+  /queue/display:
+    get:
+      operationId: getQueueDisplay
+      tags: [queue]
+      summary: Get queue display data (TV/kiosk)
+      parameters:
+        - name: doctorId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Display data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QueueDisplayData"
+
+  # ---- PRESCRIPTIONS ----
+  /prescriptions:
+    get:
+      operationId: listPrescriptions
+      tags: [prescriptions]
+      summary: List prescriptions
+      parameters:
+        - name: doctorId
+          in: query
+          schema:
+            type: integer
+        - name: patientPhone
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of prescriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Prescription"
+    post:
+      operationId: createPrescription
+      tags: [prescriptions]
+      summary: Create a prescription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrescriptionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prescription"
+
+  /prescriptions/{id}:
+    get:
+      operationId: getPrescription
+      tags: [prescriptions]
+      summary: Get prescription details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Prescription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prescription"
+    put:
+      operationId: updatePrescription
+      tags: [prescriptions]
+      summary: Update a prescription
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PrescriptionInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Prescription"
+
+  /prescriptions/verify/{ref}:
+    get:
+      operationId: verifyPrescription
+      tags: [prescriptions]
+      summary: Public verification of a prescription by reference number
+      parameters:
+        - name: ref
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Verification result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PrescriptionVerification"
+
+  /doctors/me/rx-settings:
+    get:
+      operationId: getMyRxSettings
+      tags: [prescriptions]
+      summary: Get authenticated doctor's prescription settings
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorRxSettings"
+        "401":
+          description: Not authenticated
+    put:
+      operationId: updateMyRxSettings
+      tags: [prescriptions]
+      summary: Update authenticated doctor's prescription settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorRxSettingsInput"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorRxSettings"
+        "401":
+          description: Not authenticated
+
+  /app-settings:
+    get:
+      operationId: getAppSettings
+      tags: [prescriptions]
+      summary: Get global app settings (public, non-sensitive)
+      responses:
+        "200":
+          description: App settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+
+  /pricing:
+    get:
+      operationId: getPricing
+      tags: [prescriptions]
+      summary: Get auto-detected currency and admin-configured pricing for the requester's country (public)
+      responses:
+        "200":
+          description: Detected currency and pricing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pricing"
+
+  /admin/app-settings:
+    put:
+      operationId: updateAppSettings
+      tags: [admin]
+      summary: Update global app settings (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppSettingsInput"
+      responses:
+        "200":
+          description: Updated app settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AppSettings"
+        "403":
+          description: Forbidden
+
+  # ---- MEDICINES ----
+  /medicines:
+    get:
+      operationId: listMedicines
+      tags: [medicines]
+      summary: List/search medicines (autocomplete)
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Medicine suggestions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Medicine"
+    post:
+      operationId: createMedicine
+      tags: [medicines]
+      summary: Add medicine to database (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicineInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+
+  /medicines/{id}:
+    put:
+      operationId: updateMedicine
+      tags: [medicines]
+      summary: Update a medicine (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MedicineInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Medicine"
+        "403":
+          description: Forbidden
+        "404":
+          description: Not found
+    delete:
+      operationId: deleteMedicine
+      tags: [medicines]
+      summary: Delete a medicine (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+        "403":
+          description: Forbidden
+
+  # ---- SUBSCRIPTIONS ----
+  /subscriptions:
+    get:
+      operationId: listSubscriptions
+      tags: [subscriptions]
+      summary: List subscriptions (admin only)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: doctorId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Subscriptions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subscription"
+
+  /subscriptions/pay:
+    post:
+      operationId: paySubscription
+      tags: [subscriptions]
+      summary: Record subscription payment and auto-extend validity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscriptionPayInput"
+      responses:
+        "200":
+          description: Payment recorded, validity extended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+
+  /subscriptions/{id}:
+    patch:
+      operationId: updateSubscription
+      tags: [subscriptions]
+      summary: Update subscription (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscriptionUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+
+  /subscriptions/{id}/renew:
+    post:
+      operationId: renewSubscription
+      tags: [subscriptions]
+      summary: Renew subscription by adding months
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscriptionRenewInput"
+      responses:
+        "200":
+          description: Subscription renewed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+
+  # ---- BANNERS ----
+  /banners:
+    get:
+      operationId: listBanners
+      tags: [banners]
+      summary: List active banners (public)
+      parameters:
+        - name: position
+          in: query
+          schema:
+            type: string
+        - name: all
+          in: query
+          description: Admin only — include inactive banners
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Banner list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Banner"
+    post:
+      operationId: createBanner
+      tags: [banners]
+      summary: Create banner (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+
+  /banners/{id}:
+    patch:
+      operationId: updateBanner
+      tags: [banners]
+      summary: Update banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BannerInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+    delete:
+      operationId: deleteBanner
+      tags: [banners]
+      summary: Delete banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- SLIDERS ----
+  /sliders:
+    get:
+      operationId: listSliders
+      tags: [sliders]
+      summary: List active sliders (public); pass all=true for admin
+      parameters:
+        - name: position
+          in: query
+          schema:
+            type: string
+        - name: all
+          in: query
+          description: Admin only — include inactive sliders
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Slider list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Slider"
+    post:
+      operationId: createSlider
+      tags: [sliders]
+      summary: Create slider (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SliderInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Slider"
+
+  /sliders/{id}:
+    patch:
+      operationId: updateSlider
+      tags: [sliders]
+      summary: Update slider (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SliderInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Slider"
+    delete:
+      operationId: deleteSlider
+      tags: [sliders]
+      summary: Delete slider (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- VIDEO PROMOTIONS ----
+  /video-promotions:
+    get:
+      operationId: listVideoPromotions
+      tags: [video-promotions]
+      summary: List active video promotions (public); pass all=true for admin
+      parameters:
+        - name: all
+          in: query
+          schema:
+            type: string
+          description: Admin only — include inactive promotions
+        - name: position
+          in: query
+          schema:
+            type: string
+          description: Filter by position
+      responses:
+        "200":
+          description: Video promotion list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VideoPromotion"
+    post:
+      operationId: createVideoPromotion
+      tags: [video-promotions]
+      summary: Create video promotion (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoPromotionInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoPromotion"
+  /video-promotions/{id}:
+    patch:
+      operationId: updateVideoPromotion
+      tags: [video-promotions]
+      summary: Update video promotion (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VideoPromotionUpdateInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VideoPromotion"
+    delete:
+      operationId: deleteVideoPromotion
+      tags: [video-promotions]
+      summary: Delete video promotion (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- BLOG ----
+  /blog-posts:
+    get:
+      operationId: listBlogPosts
+      tags: [blog]
+      summary: List blog posts (public = published only)
+      parameters:
+        - name: all
+          in: query
+          description: Admin only — include drafts
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blog post list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BlogPost"
+    post:
+      operationId: createBlogPost
+      tags: [blog]
+      summary: Create blog post (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogPostInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+
+  /blog-posts/{id}:
+    get:
+      operationId: getBlogPost
+      tags: [blog]
+      summary: Get a blog post by id (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Blog post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateBlogPost
+      tags: [blog]
+      summary: Update blog post (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BlogPostInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+    delete:
+      operationId: deleteBlogPost
+      tags: [blog]
+      summary: Delete blog post (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /blog-posts/slug/{slug}:
+    get:
+      operationId: getBlogPostBySlug
+      tags: [blog]
+      summary: Get a published blog post by slug (public)
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blog post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlogPost"
+        "404":
+          description: Not found
+
+  # ---- MENU ITEMS ----
+  /menu-items:
+    get:
+      operationId: listMenuItems
+      tags: [menu]
+      summary: List custom menu items (public = active only)
+      parameters:
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: all
+          in: query
+          description: Admin only — include inactive
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Menu item list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MenuItem"
+    post:
+      operationId: createMenuItem
+      tags: [menu]
+      summary: Create menu item (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+
+  /menu-items/{id}:
+    patch:
+      operationId: updateMenuItem
+      tags: [menu]
+      summary: Update menu item (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MenuItemInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MenuItem"
+    delete:
+      operationId: deleteMenuItem
+      tags: [menu]
+      summary: Delete menu item (admin only)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- ADVERTISEMENTS ----
+  /advertisements:
+    get:
+      operationId: listAdvertisements
+      tags: [advertisements]
+      summary: List active advertisements (public)
+      parameters:
+        - name: location
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Advertisement list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Advertisement"
+
+  /admin/advertisements:
+    get:
+      operationId: listAdminAdvertisements
+      tags: [advertisements]
+      summary: List all advertisements (admin)
+      responses:
+        "200":
+          description: Advertisement list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Advertisement"
+        "403":
+          description: Forbidden
+    post:
+      operationId: createAdvertisement
+      tags: [advertisements]
+      summary: Create advertisement (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvertisementInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advertisement"
+        "403":
+          description: Forbidden
+
+  /admin/advertisements/{id}:
+    patch:
+      operationId: updateAdvertisement
+      tags: [advertisements]
+      summary: Update advertisement (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdvertisementInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Advertisement"
+        "403":
+          description: Forbidden
+    delete:
+      operationId: deleteAdvertisement
+      tags: [advertisements]
+      summary: Delete advertisement (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "403":
+          description: Forbidden
+
+  # ---- GOOGLE ADSENSE SLOTS ----
+  /adsense-slots:
+    get:
+      operationId: listAdsenseSlots
+      tags: [adsense]
+      summary: List all AdSense slots (public)
+      responses:
+        "200":
+          description: AdSense slot list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdsenseSlot"
+
+  /admin/adsense-slots/{position}:
+    put:
+      operationId: updateAdsenseSlot
+      tags: [adsense]
+      summary: Update an AdSense slot (admin)
+      parameters:
+        - name: position
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdsenseSlotInput"
+      responses:
+        "200":
+          description: Updated slot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdsenseSlot"
+        "400":
+          description: Invalid position
+        "403":
+          description: Forbidden
+
+  # ---- ADMIN SETTINGS (SMTP / SMS) ----
+  /admin/settings:
+    get:
+      operationId: getAdminSettings
+      tags: [admin]
+      summary: Get admin settings incl. SMTP/SMS config (secrets masked)
+      responses:
+        "200":
+          description: Admin settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSettings"
+        "403":
+          description: Forbidden
+    put:
+      operationId: updateAdminSettings
+      tags: [admin]
+      summary: Update admin settings incl. SMTP/SMS config
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminSettingsInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSettings"
+        "403":
+          description: Forbidden
+
+  # ---- PAYMENT CHECKOUT (live SSLCommerz sandbox integration) ----
+  /doctors/me/subscription/pay/sslcommerz:
+    post:
+      operationId: payDoctorSubscriptionSslcommerz
+      tags: [payments]
+      summary: Start an SSLCommerz checkout session for the authenticated doctor's subscription
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                months:
+                  type: integer
+                  minimum: 1
+                  maximum: 120
+      responses:
+        "200":
+          description: Gateway checkout URL
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, tranId]
+                properties:
+                  url:
+                    type: string
+                  tranId:
+                    type: string
+        "400":
+          description: Gateway not enabled/configured
+        "401":
+          description: Not authenticated
+        "404":
+          description: Not found
+
+  /shop/orders/{id}/pay/sslcommerz:
+    post:
+      operationId: payShopOrderSslcommerz
+      tags: [payments]
+      summary: Start an SSLCommerz checkout session for a shop order
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Gateway checkout URL
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, tranId]
+                properties:
+                  url:
+                    type: string
+                  tranId:
+                    type: string
+        "400":
+          description: Gateway not enabled/configured
+        "401":
+          description: Not authenticated
+        "404":
+          description: Not found
+
+  /payment-gateways/status:
+    get:
+      operationId: getPaymentGatewaysStatus
+      tags: [payments]
+      summary: Public status of which payment gateways are enabled (no secrets)
+      responses:
+        "200":
+          description: Enabled gateway keys
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sslcommerz:
+                    type: boolean
+                  aamarpay:
+                    type: boolean
+                  shurjopay:
+                    type: boolean
+                  bkash:
+                    type: boolean
+                  nagad:
+                    type: boolean
+                  rocket:
+                    type: boolean
+                  bangla_qr:
+                    type: boolean
+
+  # ---- PAYMENT GATEWAYS (config-only, ready for future integration) ----
+  /admin/payment-gateways:
+    get:
+      operationId: listPaymentGateways
+      tags: [payments]
+      summary: List all payment gateway configs (admin)
+      responses:
+        "200":
+          description: Payment gateway list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PaymentGateway"
+        "403":
+          description: Forbidden
+
+  /admin/payment-gateways/{gateway}:
+    put:
+      operationId: updatePaymentGateway
+      tags: [payments]
+      summary: Update a payment gateway config (admin)
+      parameters:
+        - name: gateway
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentGatewayInput"
+      responses:
+        "200":
+          description: Updated gateway config
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentGateway"
+        "400":
+          description: Invalid gateway
+        "403":
+          description: Forbidden
+        "404":
+          description: Gateway not found
+
+  # ---- ADMIN PRESCRIPTION REPOSITORY ----
+  /admin/prescriptions:
+    get:
+      operationId: listAdminPrescriptions
+      tags: [prescriptions]
+      summary: Search all prescriptions (admin repository)
+      parameters:
+        - name: doctorId
+          in: query
+          schema:
+            type: integer
+        - name: departmentId
+          in: query
+          schema:
+            type: integer
+        - name: countryId
+          in: query
+          schema:
+            type: integer
+        - name: locationId
+          in: query
+          schema:
+            type: integer
+        - name: patientName
+          in: query
+          schema:
+            type: string
+        - name: patientPhone
+          in: query
+          schema:
+            type: string
+        - name: referenceNo
+          in: query
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Prescription repository results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminPrescriptionList"
+        "403":
+          description: Forbidden
+
+  # ---- AUDIT LOGS ----
+  /admin/audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: List audit logs (admin)
+      parameters:
+        - name: entityType
+          in: query
+          schema:
+            type: string
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Audit log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AuditLog"
+        "403":
+          description: Forbidden
+
+  # ---- PATIENT TIMELINE ----
+  /admin/patient-timeline:
+    get:
+      operationId: getPatientTimeline
+      tags: [admin]
+      summary: Aggregated timeline for a patient (admin/doctor)
+      parameters:
+        - name: phone
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Patient timeline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientTimeline"
+        "403":
+          description: Forbidden
+
+  # ---- DATA MIGRATION CENTER ----
+  /admin/migrations:
+    get:
+      operationId: listMigrations
+      tags: [migrations]
+      summary: List migration batches (admin)
+      responses:
+        "200":
+          description: Migration batches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MigrationBatch"
+        "403":
+          description: Forbidden
+    post:
+      operationId: importMigration
+      tags: [migrations]
+      summary: Import parsed rows for an entity (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MigrationImportInput"
+      responses:
+        "200":
+          description: Import result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ImportResult"
+        "403":
+          description: Forbidden
+
+  /admin/migrations/{id}/rollback:
+    post:
+      operationId: rollbackMigration
+      tags: [migrations]
+      summary: Roll back a migration batch (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rollback result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MigrationBatch"
+        "403":
+          description: Forbidden
+
+  # ---- ADMIN STATS ----
+  /admin/stats:
+    get:
+      operationId: getAdminStats
+      tags: [admin]
+      summary: Get admin dashboard statistics
+      responses:
+        "200":
+          description: Admin stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+
+  /admin/donations:
+    get:
+      operationId: listDonations
+      tags: [admin]
+      summary: List appointments that included a donation payment (admin only)
+      parameters:
+        - name: dateFrom
+          in: query
+          schema:
+            type: string
+        - name: dateTo
+          in: query
+          schema:
+            type: string
+        - name: doctorId
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Donation history
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDonationListResponse"
+
+  /admin/doctors:
+    get:
+      operationId: listAllDoctors
+      tags: [admin]
+      summary: List all doctors with any status (admin only)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: subscriptionStatus
+          in: query
+          schema:
+            type: string
+        - name: registrationDateFrom
+          in: query
+          schema:
+            type: string
+        - name: registrationDateTo
+          in: query
+          schema:
+            type: string
+        - name: bmdcNumber
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Doctors list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminDoctorListResponse"
+
+
+  # ---- COUNTRIES ----
+  /countries:
+    get:
+      operationId: listCountries
+      tags: [locations]
+      summary: List all countries
+      responses:
+        "200":
+          description: List of countries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Country"
+    post:
+      operationId: createCountry
+      tags: [locations]
+      summary: Create country (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CountryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Country"
+
+  /cities:
+    get:
+      operationId: listCities
+      tags: [locations]
+      summary: List cities (optionally by countryId)
+      parameters:
+        - name: countryId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of cities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/City"
+
+  /locations/detect:
+    get:
+      operationId: detectLocation
+      tags: [locations]
+      summary: Detect visitor location by IP
+      responses:
+        "200":
+          description: Detected location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationDetect"
+
+  # ---- DOCTOR STATUS ----
+  /doctor/status:
+    post:
+      operationId: updateDoctorStatus
+      tags: [doctors]
+      summary: Update own online status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorStatusInput"
+      responses:
+        "200":
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ---- DOCTOR NOTICES ----
+  /doctors/{id}/notices:
+    get:
+      operationId: getDoctorNotices
+      tags: [doctors]
+      summary: Get active notices for a doctor (public)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Active notices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorNotice"
+
+  /doctor/notices:
+    get:
+      operationId: getMyNotices
+      tags: [doctors]
+      summary: Get own notices (authenticated doctor)
+      responses:
+        "200":
+          description: My notices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorNotice"
+    post:
+      operationId: createNotice
+      tags: [doctors]
+      summary: Create a notice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorNoticeInput"
+      responses:
+        "201":
+          description: Notice created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorNotice"
+
+  /doctor/notices/{id}:
+    put:
+      operationId: updateNotice
+      tags: [doctors]
+      summary: Update a notice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorNoticeInput"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorNotice"
+    delete:
+      operationId: deleteNotice
+      tags: [doctors]
+      summary: Delete a notice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- DOCTOR AVAILABILITY ----
+  /doctors/{id}/availability:
+    get:
+      operationId: getDoctorAvailability
+      tags: [doctors]
+      summary: Get doctor availability schedule (public)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Availability slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorAvailability"
+
+  /doctor/availability:
+    get:
+      operationId: getMyAvailability
+      tags: [doctors]
+      summary: Get own availability (authenticated doctor)
+      responses:
+        "200":
+          description: Slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorAvailability"
+    post:
+      operationId: upsertAvailability
+      tags: [doctors]
+      summary: Create or update availability slot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DoctorAvailabilityInput"
+      responses:
+        "201":
+          description: Slot saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorAvailability"
+
+  /doctor/availability/{id}:
+    delete:
+      operationId: deleteAvailability
+      tags: [doctors]
+      summary: Delete an availability slot
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ---- FRIENDS ----
+  /friends:
+    get:
+      operationId: listFriends
+      tags: [friends]
+      summary: List accepted doctor friends
+      responses:
+        "200":
+          description: Friends list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DoctorSummary"
+
+  /friend-requests:
+    get:
+      operationId: listFriendRequests
+      tags: [friends]
+      summary: List pending friend requests
+      responses:
+        "200":
+          description: Pending requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FriendRequestsResponse"
+
+  /doctors/{id}/friend-request:
+    post:
+      operationId: sendFriendRequest
+      tags: [friends]
+      summary: Send friend request to a doctor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "201":
+          description: Request sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorConnection"
+
+  /doctors/{id}/connection-status:
+    get:
+      operationId: getConnectionStatus
+      tags: [friends]
+      summary: Get connection status with a doctor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Connection status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConnectionStatus"
+
+  /friends/{id}/accept:
+    post:
+      operationId: acceptFriendRequest
+      tags: [friends]
+      summary: Accept a friend request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DoctorConnection"
+
+  /friends/{id}/reject:
+    post:
+      operationId: rejectFriendRequest
+      tags: [friends]
+      summary: Reject a friend request
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ---- CHAT ----
+  /chat/conversations:
+    get:
+      operationId: listConversations
+      tags: [chat]
+      summary: List chat conversations
+      responses:
+        "200":
+          description: Conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatConversation"
+    post:
+      operationId: createConversation
+      tags: [chat]
+      summary: Start or get a conversation with a friend doctor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateConversationInput"
+      responses:
+        "201":
+          description: Conversation created/found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatConversation"
+
+  /chat/{conversationId}/messages:
+    get:
+      operationId: listChatMessages
+      tags: [chat]
+      summary: List messages in a conversation
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+    post:
+      operationId: sendMessage
+      tags: [chat]
+      summary: Send a message
+      parameters:
+        - name: conversationId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageInput"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatMessage"
+
+  /chat/messages/{id}:
+    delete:
+      operationId: deleteMessage
+      tags: [chat]
+      summary: Delete own message
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ---- NOTIFICATIONS ----
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications for current user
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NotificationsResponse"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Marked read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications as read
+      responses:
+        "200":
+          description: All read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ---- REVIEWS ----
+  /reviews:
+    post:
+      operationId: submitReview
+      tags: [reviews]
+      summary: Submit a patient review (public)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewInput"
+      responses:
+        "201":
+          description: Review submitted (pending approval)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientReview"
+
+  /doctors/{id}/reviews:
+    get:
+      operationId: getDoctorReviews
+      tags: [reviews]
+      summary: Get approved reviews for a doctor
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Reviews
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewsResponse"
+
+  /admin/reviews:
+    get:
+      operationId: listAllReviews
+      tags: [admin]
+      summary: List all reviews (admin)
+      responses:
+        "200":
+          description: All reviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PatientReview"
+
+  /admin/reviews/{id}/approve:
+    post:
+      operationId: approveReview
+      tags: [admin]
+      summary: Approve a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Approved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatientReview"
+
+  /admin/reviews/{id}/reject:
+    post:
+      operationId: rejectReview
+      tags: [admin]
+      summary: Reject/delete a review
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rejected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  # ---- EMAIL/SMS LOGS ----
+  /admin/email-logs:
+    get:
+      operationId: listEmailLogs
+      tags: [admin]
+      summary: List email notification logs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmailLog"
+
+  /admin/sms-logs:
+    get:
+      operationId: listSmsLogs
+      tags: [admin]
+      summary: List SMS notification logs
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: SMS logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SmsLog"
+
+  /admin/email-settings:
+    get:
+      operationId: getEmailSettings
+      tags: [admin]
+      summary: Get SMTP email settings
+      responses:
+        "200":
+          description: Email settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailSettings"
+
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      summary: Request a presigned URL for file upload
+      description: |
+        Returns a presigned GCS URL for direct upload. The client sends JSON
+        metadata here, then uploads the file directly to the returned URL.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadUrlRequest'
+      responses:
+        '200':
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadUrlResponse'
+        '400':
+          description: Missing or invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Failed to generate upload URL.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /storage/public-objects/{filePath}:
+    get:
+      tags: [Storage]
+      operationId: getPublicObject
+      summary: Serve a public asset from PUBLIC_OBJECT_SEARCH_PATHS
+      description: |
+        Unconditionally public — no authentication or ACL checks.
+        Searches PUBLIC_OBJECT_SEARCH_PATHS for the given file path.
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Relative file path within the public search paths.
+      responses:
+        '200':
+          description: Object content streamed with correct Content-Type.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Failed to serve public object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+  /storage/objects/{objectPath}:
+    get:
+      tags: [Storage]
+      operationId: getStorageObject
+      summary: Serve an object entity from PRIVATE_OBJECT_DIR
+      description: |
+        Serves object entities uploaded via presigned URLs. These can optionally
+        be protected with authentication or ACL checks based on the use case.
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Object path within the private object dir (e.g. `uploads/some-uuid`).
+      responses:
+        '200':
+          description: Object content streamed with correct Content-Type.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: Object not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+        '500':
+          description: Failed to serve object.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorEnvelope'
+
+  # ---- QUEUE DISPLAY DEVICES ----
+  /queue-display-devices/{id}:
+    get:
+      operationId: getQueueDevicePublic
+      tags: [queue]
+      summary: Get a queue display device by id (public, for TV/kiosk display)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Device
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueDisplayDevice'
+    put:
+      operationId: updateQueueDevice
+      tags: [doctors]
+      summary: Update a queue display device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueDisplayDeviceInput'
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueDisplayDevice'
+    delete:
+      operationId: deleteQueueDevice
+      tags: [doctors]
+      summary: Delete a queue display device
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Deleted
+
+  /doctor/queue-display-devices:
+    get:
+      operationId: getMyQueueDevices
+      tags: [doctors]
+      summary: Get own queue display devices (authenticated doctor)
+      responses:
+        '200':
+          description: My queue display devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QueueDisplayDevice'
+    post:
+      operationId: createQueueDevice
+      tags: [doctors]
+      summary: Create a queue display device
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueDisplayDeviceInput'
+      responses:
+        '201':
+          description: Device created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueDisplayDevice'
+
+components:
+  schemas:
+
+    QueueDisplayDevice:
+      type: object
+      required: [id, doctorId, name, displayType, fontSize, layoutSize, fullscreen, orientation]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        name:
+          type: string
+        displayType:
+          type: string
+        width:
+          type: ['integer', 'null']
+        height:
+          type: ['integer', 'null']
+        fontSize:
+          type: integer
+        layoutSize:
+          type: integer
+        fullscreen:
+          type: boolean
+        orientation:
+          type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+
+    QueueDisplayDeviceInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        displayType:
+          type: string
+        width:
+          type: ['integer', 'null']
+        height:
+          type: ['integer', 'null']
+        fontSize:
+          type: integer
+        layoutSize:
+          type: integer
+        fullscreen:
+          type: boolean
+        orientation:
+          type: string
+        isActive:
+          type: boolean
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Original file name.
+        size:
+          type: integer
+          minimum: 1
+          description: File size in bytes.
+        contentType:
+          type: string
+          minLength: 1
+          description: MIME type of the file (e.g. `image/jpeg`).
+        category:
+          type: string
+          enum: [doctors, prescriptions, chat, banners, blog, shop, general]
+          description: |
+            Upload category — determines the storage subdirectory. Defaults to
+            "general" if omitted. Use this to route files to the correct folder:
+            doctors (profile photos), prescriptions (PDFs/lab reports),
+            chat (message attachments), banners (hero/banner images),
+            blog (post cover images), shop (product images).
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL:
+          type: string
+          description: Upload destination URL for PUT upload.
+        objectPath:
+          type: string
+          description: Normalized object path (e.g. `/objects/uploads/doctors/uuid`). Store this in your database.
+        metadata:
+          $ref: '#/components/schemas/UploadUrlRequest'
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required: [message]
+
+    # AUTH
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+
+    ForgotPasswordInput:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+
+    ResetPasswordInput:
+      type: object
+      required: [token, newPassword]
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+
+    ChangePasswordInput:
+      type: object
+      required: [currentPassword, newPassword]
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+
+    AdminResetPasswordInput:
+      type: object
+      required: [email, newPassword]
+      properties:
+        email:
+          type: string
+        newPassword:
+          type: string
+
+    ResetUserPasswordInput:
+      type: object
+      required: [newPassword]
+      properties:
+        newPassword:
+          type: string
+
+    ShopProduct:
+      type: object
+      required: [id, name, price, category, stockQty, isActive]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        price:
+          type: string
+        originalPrice:
+          type: ["string", "null"]
+        category:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        stockQty:
+          type: integer
+        isActive:
+          type: boolean
+        isFeatured:
+          type: boolean
+        rating:
+          type: ["string", "null"]
+        reviewCount:
+          type: integer
+        tags:
+          type: ["string", "null"]
+        createdAt:
+          type: ["string", "null"]
+
+    ShopProductInput:
+      type: object
+      required: [name, price, category]
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: string
+        originalPrice:
+          type: string
+        category:
+          type: string
+        imageUrl:
+          type: string
+        stockQty:
+          type: integer
+        isActive:
+          type: boolean
+        isFeatured:
+          type: boolean
+        tags:
+          type: string
+
+    ShopProductsResponse:
+      type: object
+      required: [products, total]
+      properties:
+        products:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShopProduct"
+        total:
+          type: integer
+
+    CartItem:
+      type: object
+      required: [id, productId, quantity, product]
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        quantity:
+          type: integer
+        product:
+          $ref: "#/components/schemas/ShopProduct"
+
+    CartInput:
+      type: object
+      required: [productId, quantity]
+      properties:
+        productId:
+          type: integer
+        quantity:
+          type: integer
+
+    ShopOrderItem:
+      type: object
+      required: [id, productId, quantity, priceAtPurchase]
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        quantity:
+          type: integer
+        priceAtPurchase:
+          type: string
+        product:
+          $ref: "#/components/schemas/ShopProduct"
+
+    ShopOrder:
+      type: object
+      required: [id, userId, status, totalAmount, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        status:
+          type: string
+        paymentStatus:
+          type: string
+          enum: [unpaid, paid, cod]
+        paymentMethod:
+          type: ["string", "null"]
+        totalAmount:
+          type: string
+        shippingName:
+          type: ["string", "null"]
+        shippingPhone:
+          type: ["string", "null"]
+        shippingAddress:
+          type: ["string", "null"]
+        shippingCity:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ShopOrderItem"
+        createdAt:
+          type: ["string", "null"]
+
+    PlaceOrderInput:
+      type: object
+      required: [shippingName, shippingPhone, shippingAddress, shippingCity]
+      properties:
+        shippingName:
+          type: string
+        shippingPhone:
+          type: string
+        shippingAddress:
+          type: string
+        shippingCity:
+          type: string
+        notes:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+        requiresOtp:
+          type: boolean
+        pendingToken:
+          type: string
+        otpMethod:
+          type: string
+
+    VerifyLoginOtpInput:
+      type: object
+      required: [pendingToken, code]
+      properties:
+        pendingToken:
+          type: string
+        code:
+          type: string
+
+    ResendLoginOtpInput:
+      type: object
+      required: [pendingToken]
+      properties:
+        pendingToken:
+          type: string
+
+    User:
+      type: object
+      required: [id, email, role]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: ["string", "null"]
+        role:
+          type: string
+          enum: [admin, doctor, receptionist, patient, assistant]
+        doctorId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    # DEPARTMENTS
+    Department:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        icon:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        doctorCount:
+          type: integer
+
+    DepartmentInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        icon:
+          type: string
+        description:
+          type: string
+
+    # SPECIALTIES
+    Specialty:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        departmentId:
+          type: ["integer", "null"]
+
+    SpecialtyInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        departmentId:
+          type: integer
+
+    # LOCATIONS
+    Location:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        district:
+          type: ["string", "null"]
+
+    LocationInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        district:
+          type: string
+
+    # DOCTORS
+    Doctor:
+      type: object
+      required: [id, name, email, approvalStatus]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: ["integer", "null"]
+        name:
+          type: string
+        phone:
+          type: ["string", "null"]
+        email:
+          type: string
+        photoUrl:
+          type: ["string", "null"]
+        degree:
+          type: ["string", "null"]
+        departmentId:
+          type: ["integer", "null"]
+        departmentName:
+          type: ["string", "null"]
+        specialtyId:
+          type: ["integer", "null"]
+        specialtyName:
+          type: ["string", "null"]
+        locationId:
+          type: ["integer", "null"]
+        locationName:
+          type: ["string", "null"]
+        experience:
+          type: ["integer", "null"]
+        chamberAddress:
+          type: ["string", "null"]
+        visitingTime:
+          type: ["string", "null"]
+        chamberAddress2:
+          type: ["string", "null"]
+        visitingTime2:
+          type: ["string", "null"]
+        consultationFee:
+          type: ["integer", "null"]
+        bmdcNumber:
+          type: ["string", "null"]
+        bmdcValidityYears:
+          type: ["integer", "null"]
+        subscriptionFee:
+          type: ["integer", "null"]
+        currency:
+          type: string
+          enum: [BDT, USD]
+        approvalStatus:
+          type: string
+          enum: [pending, approved, rejected, expired]
+        isFeatured:
+          type: boolean
+        isSenior:
+          type: boolean
+        about:
+          type: ["string", "null"]
+        services:
+          type: ["string", "null"]
+        education:
+          type: ["string", "null"]
+        onlineStatus:
+          type: ["string", "null"]
+          enum: [online, offline, busy, vacation, null]
+        isVerified:
+          type: boolean
+        onlineConsultationAvailable:
+          type: boolean
+        emergencyAvailable:
+          type: boolean
+        countryId:
+          type: ["integer", "null"]
+        countryName:
+          type: ["string", "null"]
+        cityId:
+          type: ["integer", "null"]
+        cityName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    DoctorListResponse:
+      type: object
+      required: [doctors, total, page, limit]
+      properties:
+        doctors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Doctor"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    AdminDoctor:
+      allOf:
+        - $ref: "#/components/schemas/Doctor"
+        - type: object
+          properties:
+            registrationDate:
+              type: ["string", "null"]
+            subscriptionPaymentStatus:
+              type: ["string", "null"]
+            subscriptionStatus:
+              type: ["string", "null"]
+            subscriptionEndDate:
+              type: ["string", "null"]
+            subscriptionMonths:
+              type: ["integer", "null"]
+            subscriptionMonthlyFee:
+              type: ["integer", "null"]
+
+    AdminDoctorListResponse:
+      type: object
+      required: [doctors, total, page, limit]
+      properties:
+        doctors:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminDoctor"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    DoctorRegistrationInput:
+      type: object
+      required: [name, email, password, degree, bmdcNumber, bmdcValidityYears]
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        photoUrl:
+          type: string
+        degree:
+          type: string
+        departmentId:
+          type: integer
+        specialtyId:
+          type: integer
+        locationId:
+          type: integer
+        experience:
+          type: integer
+        chamberAddress:
+          type: string
+        visitingTime:
+          type: string
+        chamberAddress2:
+          type: string
+        visitingTime2:
+          type: string
+        consultationFee:
+          type: integer
+        bmdcNumber:
+          type: string
+        bmdcValidityYears:
+          type: integer
+        months:
+          type: integer
+          description: Number of subscription months selected during registration
+        countryId:
+          type: integer
+        cityId:
+          type: integer
+        about:
+          type: string
+        services:
+          type: string
+        education:
+          type: string
+
+    DoctorUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        photoUrl:
+          type: string
+        degree:
+          type: string
+        departmentId:
+          type: integer
+        specialtyId:
+          type: integer
+        locationId:
+          type: integer
+        experience:
+          type: integer
+        chamberAddress:
+          type: string
+        visitingTime:
+          type: string
+        chamberAddress2:
+          type: string
+        visitingTime2:
+          type: string
+        consultationFee:
+          type: integer
+        countryId:
+          type: integer
+        cityId:
+          type: integer
+        about:
+          type: string
+        services:
+          type: string
+        education:
+          type: string
+        isFeatured:
+          type: boolean
+        isSenior:
+          type: boolean
+        approvalStatus:
+          type: string
+
+    FeatureToggleInput:
+      type: object
+      required: [isFeatured]
+      properties:
+        isFeatured:
+          type: boolean
+
+    SeniorToggleInput:
+      type: object
+      required: [isSenior]
+      properties:
+        isSenior:
+          type: boolean
+
+    # APPOINTMENTS
+    Appointment:
+      type: object
+      required: [id, doctorId, patientName, patientPhone, appointmentDate, serialNo, status]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        doctorName:
+          type: ["string", "null"]
+        patientName:
+          type: string
+        patientPhone:
+          type: string
+        patientAge:
+          type: ["integer", "null"]
+        patientGender:
+          type: ["string", "null"]
+        complaint:
+          type: ["string", "null"]
+        bp:
+          type: ["string", "null"]
+        pulse:
+          type: ["string", "null"]
+        temp:
+          type: ["string", "null"]
+        weight:
+          type: ["string", "null"]
+        height:
+          type: ["string", "null"]
+        hb:
+          type: ["string", "null"]
+        sugar:
+          type: ["string", "null"]
+        spo2:
+          type: ["string", "null"]
+        medicalHistory:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        labReportUrl:
+          type: ["string", "null"]
+        prescriptionUploadUrl:
+          type: ["string", "null"]
+        bookingSource:
+          type: ["string", "null"]
+        appointmentDate:
+          type: string
+        appointmentTime:
+          type: ["string", "null"]
+        serialNo:
+          type: integer
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled, completed]
+        donationPaid:
+          type: boolean
+        donationAmount:
+          type: ["integer", "null"]
+        donationPaidAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    AppointmentListResponse:
+      type: object
+      required: [appointments, total, page, limit]
+      properties:
+        appointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Appointment"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+
+    AppointmentInput:
+      type: object
+      required: [doctorId, patientName, patientPhone, appointmentDate]
+      properties:
+        doctorId:
+          type: integer
+        patientName:
+          type: string
+        patientPhone:
+          type: string
+        patientAge:
+          type: integer
+        patientGender:
+          type: string
+        complaint:
+          type: string
+        patientEmail:
+          type: string
+        bp:
+          type: string
+        pulse:
+          type: string
+        temp:
+          type: string
+        weight:
+          type: string
+        height:
+          type: string
+        hb:
+          type: string
+        sugar:
+          type: string
+        spo2:
+          type: string
+        medicalHistory:
+          type: string
+        notes:
+          type: string
+        labReportUrl:
+          type: string
+        prescriptionUploadUrl:
+          type: string
+        bookingSource:
+          type: string
+        appointmentDate:
+          type: string
+        appointmentTime:
+          type: string
+
+    AppointmentUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        appointmentDate:
+          type: string
+        appointmentTime:
+          type: string
+        bp:
+          type: string
+        pulse:
+          type: string
+        temp:
+          type: string
+        weight:
+          type: string
+        height:
+          type: string
+        hb:
+          type: string
+        sugar:
+          type: string
+        spo2:
+          type: string
+        medicalHistory:
+          type: string
+        notes:
+          type: string
+        labReportUrl:
+          type: string
+        prescriptionUploadUrl:
+          type: string
+        complaint:
+          type: string
+
+    Assistant:
+      type: object
+      required: [id, name, email, doctorId]
+      properties:
+        id:
+          type: integer
+        name:
+          type: ["string", "null"]
+        email:
+          type: string
+        doctorId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    AssistantInput:
+      type: object
+      required: [name, email, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+
+    AppointmentTrackResponse:
+      type: object
+      required: [appointments]
+      properties:
+        appointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/AppointmentTrackItem"
+
+    AppointmentTrackItem:
+      type: object
+      required: [id, serialNo, status, doctorName, appointmentDate]
+      properties:
+        id:
+          type: integer
+        serialNo:
+          type: integer
+        status:
+          type: string
+        doctorName:
+          type: string
+        appointmentDate:
+          type: string
+        currentServingSerial:
+          type: ["integer", "null"]
+        patientsAhead:
+          type: integer
+        waitingCount:
+          type: ["integer", "null"]
+
+    # QUEUE
+    QueueEntry:
+      type: object
+      required: [id, doctorId, patientName, serialNo, status]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        appointmentId:
+          type: ["integer", "null"]
+        patientName:
+          type: string
+        patientPhone:
+          type: ["string", "null"]
+        serialNo:
+          type: integer
+        status:
+          type: string
+          enum: [waiting, serving, seen, skipped]
+        queueDate:
+          type: string
+        createdAt:
+          type: string
+
+    QueueResponse:
+      type: object
+      required: [waiting, serving, seen, skipped, totalToday]
+      properties:
+        waiting:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueEntry"
+        serving:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueEntry"
+        seen:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueEntry"
+        skipped:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueEntry"
+        totalToday:
+          type: integer
+
+    QueueDisplayData:
+      type: object
+      required: [doctorName, currentSerial, currentPatientName, nextPatients]
+      properties:
+        doctorName:
+          type: string
+        doctorStatus:
+          type: ["string", "null"]
+        breakUntil:
+          type: ["string", "null"]
+        currentSerial:
+          type: ["integer", "null"]
+        currentPatientName:
+          type: ["string", "null"]
+        nextPatients:
+          type: array
+          items:
+            $ref: "#/components/schemas/QueueEntry"
+
+    # PRESCRIPTIONS
+    Prescription:
+      type: object
+      required: [id, doctorId, patientName, createdAt]
+      properties:
+        id:
+          type: integer
+        referenceNo:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, final, pending_investigation]
+        doctorId:
+          type: integer
+        doctorName:
+          type: ["string", "null"]
+        appointmentId:
+          type: ["integer", "null"]
+        patientName:
+          type: string
+        patientPhone:
+          type: ["string", "null"]
+        patientAge:
+          type: ["integer", "null"]
+        patientGender:
+          type: ["string", "null"]
+        patientWeight:
+          type: ["string", "null"]
+        patientHeight:
+          type: ["string", "null"]
+        chiefComplaint:
+          type: ["string", "null"]
+        vitals:
+          type: ["string", "null"]
+        examination:
+          type: ["string", "null"]
+        diagnosis:
+          type: ["string", "null"]
+        investigations:
+          type: ["string", "null"]
+        advice:
+          type: ["string", "null"]
+        followUpDate:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrescriptionItem"
+        createdAt:
+          type: string
+
+    PrescriptionItem:
+      type: object
+      required: [id, medicineName]
+      properties:
+        id:
+          type: integer
+        medicineId:
+          type: ["integer", "null"]
+        medicineName:
+          type: string
+        genericName:
+          type: ["string", "null"]
+        strength:
+          type: ["string", "null"]
+        dosageForm:
+          type: ["string", "null"]
+        dose:
+          type: ["string", "null"]
+        duration:
+          type: ["string", "null"]
+        mealTiming:
+          type: ["string", "null"]
+        instruction:
+          type: ["string", "null"]
+
+    PrescriptionInput:
+      type: object
+      required: [doctorId, patientName, items]
+      properties:
+        status:
+          type: string
+          enum: [draft, final, pending_investigation]
+        doctorId:
+          type: integer
+        appointmentId:
+          type: integer
+        patientName:
+          type: string
+        patientPhone:
+          type: string
+        patientAge:
+          type: integer
+        patientGender:
+          type: string
+        patientWeight:
+          type: string
+        patientHeight:
+          type: string
+        chiefComplaint:
+          type: string
+        vitals:
+          type: string
+        examination:
+          type: string
+        diagnosis:
+          type: string
+        investigations:
+          type: string
+        advice:
+          type: string
+        followUpDate:
+          type: string
+        notes:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/PrescriptionItemInput"
+
+    PrescriptionItemInput:
+      type: object
+      required: [medicineName]
+      properties:
+        medicineId:
+          type: integer
+        medicineName:
+          type: string
+        genericName:
+          type: string
+        strength:
+          type: string
+        dosageForm:
+          type: string
+        dose:
+          type: string
+        duration:
+          type: string
+        mealTiming:
+          type: string
+        instruction:
+          type: string
+
+    PrescriptionVerification:
+      type: object
+      required: [valid]
+      properties:
+        valid:
+          type: boolean
+        referenceNo:
+          type: ["string", "null"]
+        doctorName:
+          type: ["string", "null"]
+        patientName:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+        createdAt:
+          type: ["string", "null"]
+
+    DoctorRxSettings:
+      type: object
+      required: [id, doctorId, pageSize, marginTop, marginRight, marginBottom, marginLeft, showHeader, showQr, showSignature, showFooter]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        headerName:
+          type: ["string", "null"]
+        headerDegree:
+          type: ["string", "null"]
+        headerDesignation:
+          type: ["string", "null"]
+        headerBmdc:
+          type: ["string", "null"]
+        hospitalName:
+          type: ["string", "null"]
+        headerAddress:
+          type: ["string", "null"]
+        headerPhone:
+          type: ["string", "null"]
+        headerEmail:
+          type: ["string", "null"]
+        signatureText:
+          type: ["string", "null"]
+        signatureImage:
+          type: ["string", "null"]
+        pageSize:
+          type: string
+        marginTop:
+          type: integer
+        marginRight:
+          type: integer
+        marginBottom:
+          type: integer
+        marginLeft:
+          type: integer
+        headerHeight:
+          type: integer
+        footerHeight:
+          type: integer
+        showHeader:
+          type: boolean
+        showQr:
+          type: boolean
+        showSignature:
+          type: boolean
+        showFooter:
+          type: boolean
+        footerText:
+          type: ["string", "null"]
+
+    AppSettings:
+      type: object
+      required: [prescriptionQrEnabled]
+      properties:
+        prescriptionQrEnabled:
+          type: boolean
+        noticeText:
+          type: ["string", "null"]
+        noticeEnabled:
+          type: boolean
+        heroImageUrl:
+          type: ["string", "null"]
+        heroOverlayColor:
+          type: string
+        heroOverlayOpacity:
+          type: integer
+        themeColorsEnabled:
+          type: boolean
+        themePrimaryLight:
+          type: ["string", "null"]
+        themePrimaryDark:
+          type: ["string", "null"]
+        themeBgLight:
+          type: ["string", "null"]
+        themeBgDark:
+          type: ["string", "null"]
+        doctorCardLight:
+          type: ["string", "null"]
+        doctorCardDark:
+          type: ["string", "null"]
+        shopEnabled:
+          type: boolean
+        donationEnabled:
+          type: boolean
+        donationAmount:
+          type: integer
+        donationAmountUsd:
+          type: integer
+        donationMessage:
+          type: ["string", "null"]
+        siteLogoUrl:
+          type: ["string", "null"]
+        siteLogoWidth:
+          type: integer
+        siteLogoHeight:
+          type: integer
+        faviconUrl:
+          type: ["string", "null"]
+        footerLogoUrl:
+          type: ["string", "null"]
+        footerSiteName:
+          type: ["string", "null"]
+        footerTagline:
+          type: ["string", "null"]
+        footerCopyrightText:
+          type: ["string", "null"]
+        footerAbout:
+          type: ["string", "null"]
+
+    AppSettingsInput:
+      type: object
+      properties:
+        prescriptionQrEnabled:
+          type: boolean
+        noticeText:
+          type: ["string", "null"]
+        noticeEnabled:
+          type: boolean
+        heroImageUrl:
+          type: ["string", "null"]
+        heroOverlayColor:
+          type: string
+        heroOverlayOpacity:
+          type: integer
+        themeColorsEnabled:
+          type: boolean
+        themePrimaryLight:
+          type: ["string", "null"]
+        themePrimaryDark:
+          type: ["string", "null"]
+        themeBgLight:
+          type: ["string", "null"]
+        themeBgDark:
+          type: ["string", "null"]
+        doctorCardLight:
+          type: ["string", "null"]
+        doctorCardDark:
+          type: ["string", "null"]
+        shopEnabled:
+          type: boolean
+        siteLogoUrl:
+          type: ["string", "null"]
+        siteLogoWidth:
+          type: integer
+        siteLogoHeight:
+          type: integer
+        faviconUrl:
+          type: ["string", "null"]
+        footerLogoUrl:
+          type: ["string", "null"]
+        footerSiteName:
+          type: ["string", "null"]
+        footerTagline:
+          type: ["string", "null"]
+        footerCopyrightText:
+          type: ["string", "null"]
+        footerAbout:
+          type: ["string", "null"]
+
+    DoctorRxSettingsInput:
+      type: object
+      properties:
+        headerName:
+          type: ["string", "null"]
+        headerDegree:
+          type: ["string", "null"]
+        headerDesignation:
+          type: ["string", "null"]
+        headerBmdc:
+          type: ["string", "null"]
+        hospitalName:
+          type: ["string", "null"]
+        headerAddress:
+          type: ["string", "null"]
+        headerPhone:
+          type: ["string", "null"]
+        headerEmail:
+          type: ["string", "null"]
+        signatureText:
+          type: ["string", "null"]
+        signatureImage:
+          type: ["string", "null"]
+        pageSize:
+          type: string
+        marginTop:
+          type: integer
+        marginRight:
+          type: integer
+        marginBottom:
+          type: integer
+        marginLeft:
+          type: integer
+        headerHeight:
+          type: integer
+        footerHeight:
+          type: integer
+        showHeader:
+          type: boolean
+        showQr:
+          type: boolean
+        showSignature:
+          type: boolean
+        showFooter:
+          type: boolean
+        footerText:
+          type: ["string", "null"]
+
+    # MEDICINES
+    Medicine:
+      type: object
+      required: [id, brandName]
+      properties:
+        id:
+          type: integer
+        brandName:
+          type: string
+        genericName:
+          type: ["string", "null"]
+        strength:
+          type: ["string", "null"]
+        dosageForm:
+          type: ["string", "null"]
+        manufacturer:
+          type: ["string", "null"]
+
+    MedicineInput:
+      type: object
+      required: [brandName]
+      properties:
+        brandName:
+          type: string
+        genericName:
+          type: string
+        strength:
+          type: string
+        dosageForm:
+          type: string
+        manufacturer:
+          type: string
+
+    # SUBSCRIPTIONS
+    Subscription:
+      type: object
+      required: [id, doctorId, fee, paymentStatus, status]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        doctorName:
+          type: ["string", "null"]
+        doctorRegisteredAt:
+          type: ["string", "null"]
+        bmdcValidityYears:
+          type: ["integer", "null"]
+        fee:
+          type: integer
+        months:
+          type: ["integer", "null"]
+        monthlyFee:
+          type: ["integer", "null"]
+        currency:
+          type: string
+          enum: [BDT, USD]
+        paymentStatus:
+          type: string
+          enum: [free, paid, unpaid, expired]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [active, inactive, expired]
+
+    SubscriptionUpdate:
+      type: object
+      properties:
+        paymentStatus:
+          type: string
+        status:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+
+    SubscriptionPayInput:
+      type: object
+      required: [doctorId, months]
+      properties:
+        doctorId:
+          type: integer
+        months:
+          type: integer
+        monthlyFeeOverride:
+          type: integer
+          description: Override the global monthly fee (optional)
+
+    SubscriptionRenewInput:
+      type: object
+      required: [months]
+      properties:
+        months:
+          type: integer
+        monthlyFeeOverride:
+          type: integer
+          description: Override the global monthly fee (optional)
+
+    # PRICING (multi-currency)
+    DoctorSubscriptionTier:
+      type: object
+      required: [fee]
+      properties:
+        maxYears:
+          type: ["integer", "null"]
+          description: Inclusive upper bound of BMDC validity years for this tier; null means open-ended (top tier)
+        fee:
+          type: integer
+
+    Pricing:
+      type: object
+      required: [currency, countryCode, currencySymbol, doctorSubscriptionTiers, monthlySubscriptionFee, donation]
+      properties:
+        currency:
+          type: string
+          enum: [BDT, USD]
+        countryCode:
+          type: ["string", "null"]
+        currencySymbol:
+          type: string
+        doctorSubscriptionTiers:
+          type: array
+          items:
+            $ref: "#/components/schemas/DoctorSubscriptionTier"
+        monthlySubscriptionFee:
+          type: integer
+        donation:
+          type: object
+          required: [enabled, amount, message]
+          properties:
+            enabled:
+              type: boolean
+            amount:
+              type: integer
+            message:
+              type: ["string", "null"]
+
+    # BANNERS
+    Banner:
+      type: object
+      required: [id, title, isActive]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        position:
+          type: ["string", "null"]
+        size:
+          type: ["string", "null"]
+        displayOrder:
+          type: ["integer", "null"]
+        priority:
+          type: ["integer", "null"]
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        customWidth:
+          type: ["integer", "null"]
+        customHeight:
+          type: ["integer", "null"]
+        targetCountries:
+          type: ["string", "null"]
+        targetDivisions:
+          type: ["string", "null"]
+        impressions:
+          type: integer
+        clicks:
+          type: integer
+
+    BannerInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        description:
+          type: string
+        position:
+          type: string
+        size:
+          type: string
+        displayOrder:
+          type: integer
+        priority:
+          type: integer
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+
+    # BLOG
+    BlogPost:
+      type: object
+      required: [id, title, slug, status]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: ["string", "null"]
+        content:
+          type: string
+        coverImageUrl:
+          type: ["string", "null"]
+        authorName:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, published]
+        publishedAt:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    BlogPostInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: ["string", "null"]
+        content:
+          type: string
+        coverImageUrl:
+          type: ["string", "null"]
+        authorName:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, published]
+
+    # MENU ITEMS
+    MenuItem:
+      type: object
+      required: [id, label, url, location, isActive]
+      properties:
+        id:
+          type: integer
+        label:
+          type: string
+        url:
+          type: string
+        location:
+          type: string
+          enum: [header, footer, both]
+        displayOrder:
+          type: integer
+        openInNewTab:
+          type: boolean
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+
+    MenuItemInput:
+      type: object
+      required: [label, url]
+      properties:
+        label:
+          type: string
+        url:
+          type: string
+        location:
+          type: string
+          enum: [header, footer, both]
+        displayOrder:
+          type: integer
+        openInNewTab:
+          type: boolean
+        isActive:
+          type: boolean
+
+    Advertisement:
+      type: object
+      required: [id, title, imageUrl, location, isActive]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        imageUrl:
+          type: string
+        linkUrl:
+          type: ["string", "null"]
+        location:
+          type: string
+        priority:
+          type: integer
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+        customWidth:
+          type: ["integer", "null"]
+        customHeight:
+          type: ["integer", "null"]
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+        targetCountries:
+          type: ["string", "null"]
+        targetDivisions:
+          type: ["string", "null"]
+        impressions:
+          type: integer
+        clicks:
+          type: integer
+
+    AdvertisementInput:
+      type: object
+      required: [title, imageUrl]
+      properties:
+        title:
+          type: string
+        imageUrl:
+          type: string
+        linkUrl:
+          type: ["string", "null"]
+        location:
+          type: string
+        priority:
+          type: integer
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        customWidth:
+          type: ["integer", "null"]
+        customHeight:
+          type: ["integer", "null"]
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+        targetCountries:
+          type: ["string", "null"]
+        targetDivisions:
+          type: ["string", "null"]
+
+    AdminSettings:
+      type: object
+      required: [prescriptionQrEnabled, smtpEnabled, smsEnabled, smtpConfigured, smsConfigured, monthlySubscriptionFee, autoApproveOnPayment, manualPaymentEnabled]
+      properties:
+        prescriptionQrEnabled:
+          type: boolean
+        smtpHost:
+          type: ["string", "null"]
+        smtpPort:
+          type: ["integer", "null"]
+        smtpUser:
+          type: ["string", "null"]
+        smtpFromEmail:
+          type: ["string", "null"]
+        smtpFromName:
+          type: ["string", "null"]
+        smtpEnabled:
+          type: boolean
+        smsProvider:
+          type: ["string", "null"]
+        smsSenderId:
+          type: ["string", "null"]
+        smsEnabled:
+          type: boolean
+        smtpConfigured:
+          type: boolean
+        smsConfigured:
+          type: boolean
+        monthlySubscriptionFee:
+          type: integer
+        autoApproveOnPayment:
+          type: boolean
+        manualPaymentEnabled:
+          type: boolean
+        admin2faEnabled:
+          type: boolean
+        admin2faMethod:
+          type: string
+        admin2faOtpExpiryMinutes:
+          type: integer
+        admin2faMobileApiUrl:
+          type: ["string", "null"]
+        admin2faMobileConfigured:
+          type: boolean
+        donationEnabled:
+          type: boolean
+        donationAmount:
+          type: integer
+        donationAmountUsd:
+          type: integer
+        donationMessage:
+          type: ["string", "null"]
+        monthlySubscriptionFeeUsd:
+          type: integer
+        bdtTier1MaxYears:
+          type: integer
+        bdtTier1Fee:
+          type: integer
+        bdtTier2MaxYears:
+          type: integer
+        bdtTier2Fee:
+          type: integer
+        bdtTier3Fee:
+          type: integer
+        usdTier1MaxYears:
+          type: integer
+        usdTier1Fee:
+          type: integer
+        usdTier2MaxYears:
+          type: integer
+        usdTier2Fee:
+          type: integer
+        usdTier3Fee:
+          type: integer
+
+    AdminSettingsInput:
+      type: object
+      properties:
+        prescriptionQrEnabled:
+          type: boolean
+        smtpHost:
+          type: string
+        smtpPort:
+          type: integer
+        smtpUser:
+          type: string
+        smtpPassword:
+          type: string
+        smtpFromEmail:
+          type: string
+        smtpFromName:
+          type: string
+        smtpEnabled:
+          type: boolean
+        smsProvider:
+          type: string
+        smsApiKey:
+          type: string
+        smsSenderId:
+          type: string
+        smsEnabled:
+          type: boolean
+        monthlySubscriptionFee:
+          type: integer
+        autoApproveOnPayment:
+          type: boolean
+        manualPaymentEnabled:
+          type: boolean
+        admin2faEnabled:
+          type: boolean
+        admin2faMethod:
+          type: string
+        admin2faOtpExpiryMinutes:
+          type: integer
+        admin2faMobileApiUrl:
+          type: string
+        admin2faMobileApiKey:
+          type: string
+        donationEnabled:
+          type: boolean
+        donationAmount:
+          type: integer
+        donationAmountUsd:
+          type: integer
+        donationMessage:
+          type: string
+        monthlySubscriptionFeeUsd:
+          type: integer
+        bdtTier1MaxYears:
+          type: integer
+        bdtTier1Fee:
+          type: integer
+        bdtTier2MaxYears:
+          type: integer
+        bdtTier2Fee:
+          type: integer
+        bdtTier3Fee:
+          type: integer
+        usdTier1MaxYears:
+          type: integer
+        usdTier1Fee:
+          type: integer
+        usdTier2MaxYears:
+          type: integer
+        usdTier2Fee:
+          type: integer
+        usdTier3Fee:
+          type: integer
+
+    AuditLog:
+      type: object
+      required: [id, action, entityType, createdAt]
+      properties:
+        id:
+          type: integer
+        actorUserId:
+          type: ["integer", "null"]
+        actorRole:
+          type: ["string", "null"]
+        actorName:
+          type: ["string", "null"]
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: ["integer", "null"]
+        details:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    AdminPrescriptionList:
+      type: object
+      required: [prescriptions, total]
+      properties:
+        total:
+          type: integer
+        prescriptions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Prescription"
+
+    TimelineEvent:
+      type: object
+      required: [id, type, date]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        date:
+          type: string
+        title:
+          type: ["string", "null"]
+        doctorName:
+          type: ["string", "null"]
+        summary:
+          type: ["string", "null"]
+        bp:
+          type: ["string", "null"]
+        pulse:
+          type: ["string", "null"]
+        temp:
+          type: ["string", "null"]
+        weight:
+          type: ["string", "null"]
+        height:
+          type: ["string", "null"]
+        diagnosis:
+          type: ["string", "null"]
+        labReportUrl:
+          type: ["string", "null"]
+        prescriptionUploadUrl:
+          type: ["string", "null"]
+        referenceNo:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    PatientTimeline:
+      type: object
+      required: [patientPhone, events]
+      properties:
+        patientPhone:
+          type: string
+        patientName:
+          type: ["string", "null"]
+        events:
+          type: array
+          items:
+            $ref: "#/components/schemas/TimelineEvent"
+
+    MigrationBatch:
+      type: object
+      required: [id, entityType, status, totalRows, importedRows, skippedRows, createdAt]
+      properties:
+        id:
+          type: integer
+        entityType:
+          type: string
+        fileName:
+          type: ["string", "null"]
+        format:
+          type: ["string", "null"]
+        totalRows:
+          type: integer
+        importedRows:
+          type: integer
+        skippedRows:
+          type: integer
+        status:
+          type: string
+        createdAt:
+          type: string
+
+    MigrationImportInput:
+      type: object
+      required: [entityType, rows]
+      properties:
+        entityType:
+          type: string
+        fileName:
+          type: string
+        format:
+          type: string
+        rows:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    ImportResult:
+      type: object
+      required: [batchId, totalRows, importedRows, skippedRows]
+      properties:
+        batchId:
+          type: integer
+        totalRows:
+          type: integer
+        importedRows:
+          type: integer
+        skippedRows:
+          type: integer
+        duplicates:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            type: string
+
+    # ADMIN STATS
+
+    # ADMIN STATS
+    AdminStats:
+      type: object
+      required: [totalDoctors, pendingDoctors, approvedDoctors, totalAppointments, todayAppointments, activeSubscriptions, pendingPayments, totalRevenue, totalPatients]
+      properties:
+        totalDoctors:
+          type: integer
+        pendingDoctors:
+          type: integer
+        approvedDoctors:
+          type: integer
+        totalAppointments:
+          type: integer
+        todayAppointments:
+          type: integer
+        activeSubscriptions:
+          type: integer
+        pendingPayments:
+          type: integer
+        totalRevenue:
+          type: integer
+        totalPatients:
+          type: integer
+
+    AdminDonationItem:
+      type: object
+      required: [id, doctorId, doctorName, patientName, patientPhone, appointmentDate, donationAmount, donationPaidAt]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        doctorName:
+          type: ["string", "null"]
+        patientName:
+          type: string
+        patientPhone:
+          type: string
+        appointmentDate:
+          type: string
+        serialNo:
+          type: integer
+        donationAmount:
+          type: ["integer", "null"]
+        donationPaidAt:
+          type: ["string", "null"]
+
+    AdminDonationListResponse:
+      type: object
+      required: [donations, total, page, limit, totalCollected, totalCount]
+      properties:
+        donations:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminDonationItem"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        totalCollected:
+          type: integer
+        totalCount:
+          type: integer
+
+    # COUNTRIES / CITIES
+    Country:
+      type: object
+      required: [id, name, code]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        code:
+          type: string
+        dialCode:
+          type: ["string", "null"]
+        flag:
+          type: ["string", "null"]
+
+    CountryInput:
+      type: object
+      required: [name, code]
+      properties:
+        name:
+          type: string
+        code:
+          type: string
+        dialCode:
+          type: string
+        flag:
+          type: string
+
+    City:
+      type: object
+      required: [id, name, countryId]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        countryId:
+          type: integer
+
+    LocationDetect:
+      type: object
+      required: [country, detected]
+      properties:
+        country:
+          type: string
+        countryName:
+          type: ["string", "null"]
+        city:
+          type: ["string", "null"]
+        cityId:
+          type: ["integer", "null"]
+        detected:
+          type: boolean
+
+    # DOCTOR NOTICES
+    DoctorNotice:
+      type: object
+      required: [id, doctorId, title, message, type]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        title:
+          type: string
+        message:
+          type: string
+        type:
+          type: string
+        fromDate:
+          type: ["string", "null"]
+        toDate:
+          type: ["string", "null"]
+        fromTime:
+          type: ["string", "null"]
+        toTime:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+
+    DoctorNoticeInput:
+      type: object
+      required: [title, message]
+      properties:
+        title:
+          type: string
+        message:
+          type: string
+        type:
+          type: string
+        fromDate:
+          type: string
+        toDate:
+          type: string
+        fromTime:
+          type: string
+        toTime:
+          type: string
+        isActive:
+          type: boolean
+
+    # DOCTOR AVAILABILITY
+    DoctorAvailability:
+      type: object
+      required: [id, doctorId, dayOfWeek, startTime, endTime]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        dayOfWeek:
+          type: integer
+        startTime:
+          type: string
+        endTime:
+          type: string
+        breakStart:
+          type: ["string", "null"]
+        breakEnd:
+          type: ["string", "null"]
+        maxAppointments:
+          type: ["integer", "null"]
+        isAvailable:
+          type: boolean
+
+    DoctorAvailabilityInput:
+      type: object
+      required: [dayOfWeek, startTime, endTime]
+      properties:
+        dayOfWeek:
+          type: integer
+        startTime:
+          type: string
+        endTime:
+          type: string
+        breakStart:
+          type: string
+        breakEnd:
+          type: string
+        maxAppointments:
+          type: integer
+        isAvailable:
+          type: boolean
+
+    # DOCTOR STATUS
+    DoctorStatusInput:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [online, offline, busy, vacation]
+        breakUntil:
+          type: ["string", "null"]
+
+    DoctorSummary:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        degree:
+          type: ["string", "null"]
+        photoUrl:
+          type: ["string", "null"]
+        onlineStatus:
+          type: ["string", "null"]
+        specialtyId:
+          type: ["integer", "null"]
+
+    # FRIENDS / CONNECTIONS
+    DoctorConnection:
+      type: object
+      required: [id, requesterDoctorId, receiverDoctorId, status]
+      properties:
+        id:
+          type: integer
+        requesterDoctorId:
+          type: integer
+        receiverDoctorId:
+          type: integer
+        status:
+          type: string
+        createdAt:
+          type: string
+
+    FriendRequestsResponse:
+      type: object
+      required: [received, sent]
+      properties:
+        received:
+          type: array
+          items:
+            type: object
+        sent:
+          type: array
+          items:
+            $ref: "#/components/schemas/DoctorConnection"
+
+    ConnectionStatus:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+        connectionId:
+          type: ["integer", "null"]
+
+    # CHAT
+    ChatConversation:
+      type: object
+      required: [id, doctor1Id, doctor2Id]
+      properties:
+        id:
+          type: integer
+        doctor1Id:
+          type: integer
+        doctor2Id:
+          type: integer
+        lastMessageAt:
+          type: ["string", "null"]
+        otherDoctor:
+          type: object
+          nullable: true
+        lastMessage:
+          type: object
+          nullable: true
+        unreadCount:
+          type: integer
+        createdAt:
+          type: string
+
+    ChatMessage:
+      type: object
+      required: [id, conversationId, senderDoctorId, createdAt]
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        senderDoctorId:
+          type: integer
+        message:
+          type: ["string", "null"]
+        attachmentUrl:
+          type: ["string", "null"]
+        attachmentType:
+          type: ["string", "null"]
+        attachmentName:
+          type: ["string", "null"]
+        attachmentSize:
+          type: ["integer", "null"]
+        isRead:
+          type: boolean
+        isDeleted:
+          type: boolean
+        createdAt:
+          type: string
+
+    CreateConversationInput:
+      type: object
+      required: [otherDoctorId]
+      properties:
+        otherDoctorId:
+          type: integer
+
+    SendMessageInput:
+      type: object
+      properties:
+        message:
+          type: ["string", "null"]
+        attachmentUrl:
+          type: ["string", "null"]
+        attachmentType:
+          type: ["string", "null"]
+        attachmentName:
+          type: ["string", "null"]
+        attachmentSize:
+          type: ["integer", "null"]
+
+    # NOTIFICATIONS
+    NotificationsResponse:
+      type: object
+      required: [notifications, unreadCount]
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+        unreadCount:
+          type: integer
+
+    Notification:
+      type: object
+      required: [id, userId, type, title, message, isRead, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        type:
+          type: string
+        title:
+          type: string
+        message:
+          type: string
+        isRead:
+          type: boolean
+        relatedId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    # REVIEWS
+    PatientReview:
+      type: object
+      required: [id, doctorId, patientName, rating]
+      properties:
+        id:
+          type: integer
+        doctorId:
+          type: integer
+        patientName:
+          type: string
+        patientPhone:
+          type: ["string", "null"]
+        rating:
+          type: integer
+        reviewText:
+          type: ["string", "null"]
+        isApproved:
+          type: boolean
+        appointmentId:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    ReviewInput:
+      type: object
+      required: [doctorId, patientName, rating]
+      properties:
+        doctorId:
+          type: integer
+        patientName:
+          type: string
+        patientPhone:
+          type: string
+        rating:
+          type: integer
+        reviewText:
+          type: string
+        appointmentId:
+          type: integer
+
+    ReviewsResponse:
+      type: object
+      required: [reviews, avgRating, total]
+      properties:
+        reviews:
+          type: array
+          items:
+            $ref: "#/components/schemas/PatientReview"
+        avgRating:
+          type: number
+        total:
+          type: integer
+
+    # EMAIL / SMS LOGS
+    EmailLog:
+      type: object
+      required: [id, recipientEmail, subject, status, createdAt]
+      properties:
+        id:
+          type: integer
+        recipientEmail:
+          type: string
+        subject:
+          type: string
+        body:
+          type: ["string", "null"]
+        status:
+          type: string
+        errorMessage:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    SmsLog:
+      type: object
+      required: [id, phone, message, status, createdAt]
+      properties:
+        id:
+          type: integer
+        phone:
+          type: string
+        message:
+          type: string
+        status:
+          type: string
+        provider:
+          type: ["string", "null"]
+        errorMessage:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    Slider:
+      type: object
+      required: [id, title, position, isActive, autoPlay, slideInterval, showArrows, showDots, priority, displayOrder, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        imageUrl:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        buttonText:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        position:
+          type: string
+        isActive:
+          type: boolean
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        priority:
+          type: integer
+        displayOrder:
+          type: integer
+        autoPlay:
+          type: boolean
+        slideInterval:
+          type: integer
+        showArrows:
+          type: boolean
+        showDots:
+          type: boolean
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+        tabletWidth:
+          type: ["integer", "null"]
+        tabletHeight:
+          type: ["integer", "null"]
+        customWidth:
+          type: ["integer", "null"]
+        customHeight:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+
+    SliderInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        imageUrl:
+          type: string
+        linkUrl:
+          type: string
+        buttonText:
+          type: string
+        description:
+          type: string
+        position:
+          type: string
+        isActive:
+          type: boolean
+        startDate:
+          type: ["string", "null"]
+        endDate:
+          type: ["string", "null"]
+        priority:
+          type: integer
+        displayOrder:
+          type: integer
+        autoPlay:
+          type: boolean
+        slideInterval:
+          type: integer
+        showArrows:
+          type: boolean
+        showDots:
+          type: boolean
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+        tabletWidth:
+          type: ["integer", "null"]
+        tabletHeight:
+          type: ["integer", "null"]
+        customWidth:
+          type: ["integer", "null"]
+        customHeight:
+          type: ["integer", "null"]
+
+    VideoPromotion:
+      type: object
+      required: [id, title, position, isActive, displayOrder, priority, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        videoUrl:
+          type: ["string", "null"]
+        thumbnailUrl:
+          type: ["string", "null"]
+        position:
+          type: string
+        isActive:
+          type: boolean
+        displayOrder:
+          type: integer
+        priority:
+          type: integer
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    VideoPromotionInput:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        videoUrl:
+          type: string
+        thumbnailUrl:
+          type: string
+        position:
+          type: string
+        isActive:
+          type: boolean
+        displayOrder:
+          type: integer
+        priority:
+          type: integer
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+
+    VideoPromotionUpdateInput:
+      type: object
+      properties:
+        title:
+          type: string
+        videoUrl:
+          type: string
+        thumbnailUrl:
+          type: string
+        position:
+          type: string
+        isActive:
+          type: boolean
+        displayOrder:
+          type: integer
+        priority:
+          type: integer
+        desktopWidth:
+          type: ["integer", "null"]
+        desktopHeight:
+          type: ["integer", "null"]
+        mobileWidth:
+          type: ["integer", "null"]
+        mobileHeight:
+          type: ["integer", "null"]
+
+    AdsenseSlot:
+      type: object
+      required: [id, position, code, enabled, updatedAt]
+      properties:
+        id:
+          type: integer
+        position:
+          type: string
+        code:
+          type: string
+        enabled:
+          type: boolean
+        updatedAt:
+          type: string
+
+    AdsenseSlotInput:
+      type: object
+      properties:
+        code:
+          type: string
+        enabled:
+          type: boolean
+
+    PaymentGateway:
+      type: object
+      required: [id, gateway, enabled, mode, secretConfigured, updatedAt]
+      properties:
+        id:
+          type: integer
+        gateway:
+          type: string
+          enum: [sslcommerz, aamarpay, shurjopay, bkash, nagad, rocket, bangla_qr]
+        enabled:
+          type: boolean
+        apiKey:
+          type: ["string", "null"]
+        merchantId:
+          type: ["string", "null"]
+        mode:
+          type: string
+          enum: [sandbox, live]
+        successUrl:
+          type: ["string", "null"]
+        failedUrl:
+          type: ["string", "null"]
+        callbackUrl:
+          type: ["string", "null"]
+        secretConfigured:
+          type: boolean
+        updatedAt:
+          type: string
+
+    PaymentGatewayInput:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        apiKey:
+          type: string
+        secretKey:
+          type: string
+        merchantId:
+          type: string
+        mode:
+          type: string
+          enum: [sandbox, live]
+        successUrl:
+          type: string
+        failedUrl:
+          type: string
+        callbackUrl:
+          type: string
+
+    EmailSettings:
+      type: object
+      required: [enabled, configured]
+      properties:
+        host:
+          type: string
+        port:
+          type: integer
+        username:
+          type: string
+        fromEmail:
+          type: string
+        fromName:
+          type: string
+        enabled:
+          type: boolean
+        configured:
+          type: boolean

@@ -1,0 +1,66 @@
+Modify ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Make these exact changes and nothing else:
+
+1. MEDICINE ENTRY — LANDSCAPE LAYOUT
+- In the Add Medicine section, keep Dose, Timing, and Duration in ONE horizontal row.
+- Order must be:
+  Dose → Timing → Duration
+- They must stay side-by-side on desktop/tablet so the medicine entry uses less vertical/overall space.
+- Keep each as a compact rectangular control.
+- Do NOT stack Dose, Timing, Duration vertically.
+- Preserve the current medicine UI style as much as possible.
+
+2. DOSE TEMPLATE DEFAULTS
+Use these exact Bangla/default values:
+- ১+০+০
+- ০+১+০
+- ০+০+১
+- ১+১+০
+- ১+০+১
+- ১+১+১
+- ১ চামচ দিনে ১ বার
+- ১ চামচ দিনে ২ বার
+- ১ চামচ দিনে ৩ বার
+
+Timing defaults:
+- সকালে খালি পেটে
+- খালি পেটে
+- ভরা পেটে
+- রাতে ঘুমাবার আগে
+
+Duration defaults:
+- ১ দিন
+- ৩ দিন
+- ৫ দিন
+- ৭ দিন
+- ১০ দিন
+- ১৫ দিন
+- ২১ দিন
+- ৩০ দিন
+
+- Dose, Timing and Duration dropdowns must be functional.
+- Selecting a template must populate the editable value.
+- Keep Manual/Custom option available for each.
+- Do not remove existing custom editing behavior.
+
+3. KALPURUSH FONT
+- Every Bangla text/value inside the entire prescription page must use Kalpurush font.
+- This includes all Bangla template values, selected values, labels, inputs, buttons, chips, instructions, advice, C/C, O/E, I/X, Drug History, Treatment Note, Follow-up and other Bangla prescription content.
+- Apply Kalpurush consistently wherever Bangla appears.
+- Do not change the English font unnecessarily.
+
+4. FOLLOW-UP
+- Make the Follow-up button/input area flexible and responsive.
+- It should expand naturally to available width and not waste space.
+- It must work properly on desktop, tablet and mobile.
+- Keep its existing functionality unchanged.
+
+IMPORTANT:
+- Do not change header, queue, patient list, templates manager, existing prescription manager, save/preview/print logic, API, backend, database, or any unrelated feature.
+- Do not redesign other sections.
+- Do not modify any other file.
+- No dependency install.
+- No unnecessary refactor.
+- Only make the above UI/functionality changes in NewPrescriptionPage.tsx.

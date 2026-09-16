@@ -1,0 +1,198 @@
+DoctorX — FIX PRESCRIPTION TEMPLATES ONLY
+
+ONLY MODIFY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+DO NOT TOUCH ANY OTHER FEATURE OR SECTION.
+
+CURRENT PROBLEMS:
+
+1. TEMPLATE ADD DOES NOT WORK
+2. TEMPLATE EDIT DOES NOT WORK
+3. TEMPLATES ARE NOT FLEXIBLE
+4. MEDICINE TEMPLATE-এ Dose / Timing / Duration-এর proper default format নেই
+5. Dose / Timing / Duration সুন্দর, compact এবং readable box format-এ দেখাতে হবে
+
+FIX ONLY THESE.
+
+--------------------------------------------------
+1. MAKE TEMPLATES FULLY WORKING
+--------------------------------------------------
+
+The existing "Templates" feature must actually work.
+
+Doctor must be able to:
+
+- Add a new template
+- Give the template a name
+- Add/select medicines inside the template
+- Set Dose
+- Set Timing
+- Set Duration
+- Save the template
+- See the saved template in the Templates list
+- Click an existing template
+- Edit its medicines/values
+- Save the changes
+- Reuse the template again
+
+Do NOT create a complicated new system.
+
+Use the existing template mechanism/state already present in this file.
+
+If the current Add/Edit buttons have no working handler, connect them to the existing template state/logic so they actually function.
+
+--------------------------------------------------
+2. TEMPLATE MUST BE FLEXIBLE
+--------------------------------------------------
+
+A template must NOT be limited to one fixed medicine format.
+
+Doctor should be able to create templates containing multiple medicines.
+
+Example:
+
+Template: Fever + Gastritis
+
+Medicine 1
+Paracetamol 500 mg
+Dose: 1 tablet
+Timing: 1+1+1
+Duration: 5 days
+
+Medicine 2
+Omeprazole 20 mg
+Dose: 1 capsule
+Timing: 1+0+0
+Duration: 7 days
+
+Doctor should be able to change these values when creating/editing a template.
+
+Do not hard-code a single template.
+
+--------------------------------------------------
+3. DEFAULT DOSE / TIMING / DURATION FORMAT
+--------------------------------------------------
+
+When adding/editing a medicine inside a template, provide clear default values/placeholders for:
+
+DOSE
+Example:
+1 tablet
+
+TIMING
+Example:
+1+0+1
+
+DURATION
+Example:
+5 days
+
+These should be easy to edit.
+
+Do NOT force these values if the doctor wants different values.
+
+--------------------------------------------------
+4. GOOD-LOOKING MEDICINE BOX
+--------------------------------------------------
+
+Make the Dose / Timing / Duration area visually clean and compact.
+
+Use a small medicine information box/card like:
+
+┌─────────────────────────────────────┐
+│ Paracetamol 500 mg                  │
+│                                     │
+│ Dose       Timing       Duration    │
+│ 1 tablet   1+1+1        5 days      │
+└─────────────────────────────────────┘
+
+Use separate compact boxes/columns for:
+
+Dose
+Timing
+Duration
+
+Example visual structure:
+
+[ Dose: 1 tablet ] [ Timing: 1+1+1 ] [ Duration: 5 days ]
+
+Keep it:
+- clean
+- compact
+- modern
+- easy for a doctor to scan
+- good looking
+
+Do NOT make the box large or consume unnecessary vertical space.
+
+--------------------------------------------------
+5. TYPOGRAPHY
+--------------------------------------------------
+
+Do NOT make Dose / Timing / Duration tiny.
+
+Keep them readable around 13–14px body text.
+
+Labels can be slightly smaller/bolder.
+
+Do NOT enlarge unrelated prescription sections.
+
+--------------------------------------------------
+6. IMPORTANT — DO NOT TOUCH ANYTHING ELSE
+--------------------------------------------------
+
+Do NOT modify:
+
+- C/C
+- O/E
+- IX
+- Drug History
+- Advice
+- Instructions
+- Treatment Note
+- RX Quick Tools
+- Existing Prescription Management
+- Queue
+- Patient loading
+- Medicine search outside template editing
+- Medicine drag/drop
+- Medicine reorder
+- Save Draft
+- Save Only
+- Save & Print
+- Preview
+- Print
+- Share
+- Existing prescription edit/reopen
+- Backend
+- API
+- Database
+- PrintView
+
+Do NOT install packages.
+
+Do NOT refactor unrelated code.
+
+Do NOT modify any other file.
+
+Do NOT run full project build/typecheck.
+
+--------------------------------------------------
+FINAL RESULT
+--------------------------------------------------
+
+Only these things should change:
+
+✓ Template Add works
+✓ Template Edit works
+✓ Template Save works
+✓ Templates support multiple medicines
+✓ Dose is editable
+✓ Timing is editable
+✓ Duration is editable
+✓ Default Dose/Timing/Duration values/placeholders exist
+✓ Dose/Timing/Duration shown in clean compact boxes
+✓ Overall template UI remains compact and doctor-friendly
+
+Nothing else should be changed.

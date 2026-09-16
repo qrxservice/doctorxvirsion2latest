@@ -1,0 +1,89 @@
+LOW-COST PATCH — DO NOT ANALYZE OR REFACTOR
+
+Modify ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Do not inspect the whole project.
+Do not search unrelated files.
+Do not refactor.
+Do not install packages.
+Do not run expensive/full-project tests.
+Do not modify backend/API/database/generated files.
+Do not modify PrintView or saved/print mode.
+
+Make ONLY these UI changes using the EXISTING state, handlers and components:
+
+1. Keep the current LEFT SIDEBAR WIDTH exactly as it is.
+
+2. Move the existing Queue Summary UI out of the Templates area and show it as a WIDE SECOND HEADER directly ABOVE DIAGNOSIS.
+
+Layout:
+Top Action Header
+↓
+Wide Queue Summary
+↓
+Diagnosis
+↓
+Medicine
+
+3. Change the existing Templates presentation:
+- No right-side popup.
+- Show Templates inside the existing LEFT SIDEBAR under RX QUICK TOOLS.
+- Use the existing Templates state/toggle/handlers.
+- Do not create a new template system.
+- Do not duplicate API calls.
+- Queue Summary must NOT appear inside Templates.
+
+4. Keep these sections permanently visible instead of collapsed:
+- C/C — CHIEF COMPLAINT
+- O/E — ON EXAMINATION
+- I/X — INVESTIGATIONS
+- DRUG HISTORY
+
+Use their EXISTING fields/state/handlers exactly as they are.
+
+5. Slightly increase readable text size for:
+- section headings
+- field labels
+- input/textarea text
+- medicine text
+- action labels
+
+6. Add a Share button after the existing Save actions.
+Reuse any existing share functionality if present.
+If no share handler exists, use a minimal WhatsApp share link only.
+Do NOT add backend/API work.
+
+7. Do NOT implement:
+- medicine drag/drop
+- medicine reorder
+- medicine editing
+- new save APIs
+- new state systems
+- new components unless absolutely required
+
+8. Do NOT change:
+medicine search/autocomplete,
+addMedicine/removeMed,
+save payload,
+Save Draft,
+Save Only,
+Save & Print,
+Preview,
+edit/reopen,
+queue logic,
+break logic,
+template logic,
+print logic.
+
+IMPORTANT:
+This is a SMALL UI PATCH.
+Do the changes directly.
+Do not spend time explaining or analyzing the project.
+
+After editing, give ONLY:
+- file modified
+- short list of changes
+- confirmation that no backend/API logic was changed
+
+STOP.

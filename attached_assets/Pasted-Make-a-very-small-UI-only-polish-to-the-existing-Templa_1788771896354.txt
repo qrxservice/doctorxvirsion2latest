@@ -1,0 +1,52 @@
+Make a very small UI-only polish to the existing Templates UI.
+
+MODIFY ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+GOAL:
+The text inside the Templates area/popup is currently noticeably smaller than the rest of the Prescription page. Increase the Template-related text size by approximately 2px so it is easier for a doctor to read.
+
+REQUIREMENTS:
+
+1. TEMPLATE TEXT SIZE
+- Increase all user-facing text inside the Templates UI/popup by approximately 2px.
+- This includes:
+  - Template names
+  - Template category/section labels
+  - Template descriptions/details if present
+  - Template action/button text
+  - Any text used when selecting/applying a template
+- Keep the hierarchy clear: headings can remain larger than normal text.
+- Do NOT make the entire Prescription page larger.
+- Only adjust the Templates-related UI.
+
+2. TEMPLATE POPUP CLOSE/CANCEL BUTTON
+- The Template popup/modal currently has a very small close/cancel "X".
+- Make the close/cancel button clearly visible and standard-sized.
+- Use a normal accessible close button size, approximately 32–36px clickable area.
+- The X/icon itself should be clearly visible.
+- Give it comfortable spacing from the popup edges.
+- It must be easy to click/tap.
+- Add an accessible aria-label such as "Close templates" if the existing button does not already have one.
+- Do NOT change the existing close/cancel functionality.
+
+3. POPUP USABILITY
+- Keep the existing Template popup design and behavior.
+- Do not redesign the popup.
+- Do not change template data, template loading, applying templates, saving templates, or any existing handlers.
+- Keep the popup responsive.
+
+STRICT SCOPE:
+- Only modify artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+- Do not modify backend/API/database/generated files.
+- Do not install packages.
+- Do not refactor unrelated code.
+- Do not change medicine, queue, patient, prescription save, preview, print, or Share functionality.
+- Do not run a full project build/typecheck.
+
+FINAL RESPONSE:
+Briefly report:
+1. Template text increased by ~2px.
+2. Template popup close/cancel button made standard visible size.
+3. Existing template behavior preserved.
+4. Only the specified file was modified.

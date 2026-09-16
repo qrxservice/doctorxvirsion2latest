@@ -1,0 +1,218 @@
+DoctorX — STEP 3C — PART 2
+LOW-COST UI PATCH ONLY
+
+Modify ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+IMPORTANT:
+This is a small UI-only patch.
+
+DO NOT inspect the whole project.
+DO NOT refactor.
+DO NOT install packages.
+DO NOT run full-project tests/build/typecheck.
+DO NOT modify backend/API/database/schema/generated files.
+DO NOT modify PrintView or saved/print mode.
+
+==================================================
+1. SECTION SAVE BUTTONS
+==================================================
+
+Add a small, clear "Save" button directly BELOW each existing editable section:
+
+- C/C — CHIEF COMPLAINT
+- O/E — ON EXAMINATION
+- I/X — INVESTIGATIONS
+- DRUG HISTORY
+- INSTRUCTIONS (OPTIONAL)
+- ADVICE
+- TREATMENT NOTE
+
+Visual example:
+
+[ existing textarea ]
+
+                 [ Save ]
+
+The button should be compact and visually secondary to the main Save actions.
+
+IMPORTANT:
+Reuse the existing prescription save/update handler.
+
+DO NOT create:
+- new API
+- new database operation
+- new state system
+- separate section records
+
+If the existing Save Only handler can safely be called, reuse it.
+
+Do not change the existing save payload.
+
+Do not create duplicate prescriptions.
+
+==================================================
+2. INSTRUCTIONS
+==================================================
+
+Keep:
+
+INSTRUCTIONS (OPTIONAL)
+
+[ existing textarea ]
+
+Add the small Save button immediately below it.
+
+Preserve the existing medicine/instruction state and behavior.
+
+==================================================
+3. ADVICE
+==================================================
+
+Keep the existing Advice textarea and all existing quick-advice buttons.
+
+Add:
+
+[ Save ]
+
+directly below the Advice area.
+
+Do not remove or change quick-advice functionality.
+
+==================================================
+4. TREATMENT NOTE
+==================================================
+
+Keep the existing Treatment Note textarea.
+
+Add:
+
+[ Save ]
+
+directly below it.
+
+Preserve existing state and payload.
+
+==================================================
+5. CLINICAL SECTIONS
+==================================================
+
+C/C, O/E, I/X and Drug History must remain directly visible.
+
+Do not convert them back to dropdowns.
+
+Do not change their state or handlers.
+
+==================================================
+6. BUTTON DESIGN
+==================================================
+
+Section Save buttons should:
+
+- be small
+- be easy to click
+- have consistent size
+- have a save icon if an existing icon is already available
+- not compete visually with the main Save & Print button
+- work in dark mode
+- fit mobile/tablet layouts
+
+Do not add a new UI library.
+
+==================================================
+7. TEXT SIZE
+==================================================
+
+Keep the previous modest typography improvement.
+
+Do not make the page oversized.
+
+Use readable text for:
+
+- section headings
+- labels
+- textarea content
+- medicine information
+- buttons
+
+==================================================
+8. DO NOT TOUCH MEDICINE LOGIC
+==================================================
+
+Do NOT implement:
+
+- drag and drop
+- reorder
+- move up/down
+- inline medicine edit
+- duplicate medicine logic
+
+These are for the NEXT phase.
+
+Do not modify:
+
+- medicine search
+- autocomplete
+- addMedicine
+- removeMed
+- medicine state
+- medicine payload
+
+==================================================
+9. PRESERVE EXISTING FEATURES
+==================================================
+
+Do not change:
+
+- Queue
+- Queue Summary
+- Break
+- Templates
+- Patient loading
+- Save Draft
+- Save Only
+- Save & Print
+- Preview
+- Print
+- QR
+- edit/reopen
+- duplicate
+- reprint
+
+Do not change API endpoints.
+
+Do not change backend/database.
+
+Do not modify generated files.
+
+Do not modify PrintView.
+
+==================================================
+10. FINAL CHECK — ONLY LOCAL
+==================================================
+
+After editing, quickly verify the modified JSX has:
+
+C/C → Save
+O/E → Save
+I/X → Save
+Drug History → Save
+Instructions → Save
+Advice → Save
+Treatment Note → Save
+
+Do NOT run expensive project-wide checks.
+
+==================================================
+FINAL RESPONSE
+==================================================
+
+Reply with ONLY:
+
+1. File modified
+2. Section Save buttons added
+3. Confirmation existing save logic was reused
+4. Confirmation medicine/backend/API/PrintView were untouched
+5. Any limitation
+
+STOP.
