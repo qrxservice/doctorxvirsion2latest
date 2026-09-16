@@ -1,0 +1,175 @@
+DoctorX — PRESCRIPTION TEMPLATE + MEDICINE FORMAT CORRECTION ONLY
+
+MODIFY ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+IMPORTANT:
+This is a focused correction only.
+Do NOT redesign the prescription page.
+Do NOT modify unrelated sections, backend, API, database, PrintView, or other files.
+
+PROBLEMS TO FIX:
+
+1. PRESCRIPTION TEMPLATES CANNOT BE ADDED OR EDITED
+
+Fix the existing Templates functionality so the doctor can:
+
+- Add a new prescription template
+- Edit an existing prescription template
+- Save the edited template
+- Reuse/select the saved template normally
+
+IMPORTANT:
+Reuse the existing template state, handlers, storage/API and data structure wherever they already exist.
+
+Do NOT create a new template system if an existing one is already present.
+
+Make sure:
+- Add Template works
+- Edit Template works
+- Save works
+- Cancel works
+- Existing templates are not lost
+- Selecting a template still populates the appropriate prescription fields
+
+Do not change the visual design more than necessary to make Add/Edit work correctly.
+
+2. MEDICINE TEMPLATE STANDARD FORMAT
+
+Correct the medicine/template display format so these labels are clearly separated and standardized:
+
+Dose
+Duration
+Timing
+
+Use a compact standard prescription format such as:
+
+Medicine Name
+Dose: 1 tablet
+Timing: 1+0+1
+Duration: 5 days
+
+OR, where the existing data structure supports it, a compact single-line format:
+
+Medicine Name — Dose: 1 tablet | Timing: 1+0+1 | Duration: 5 days
+
+IMPORTANT:
+Do NOT merge Dose, Duration and Timing into confusing text.
+
+Each value must remain clearly identifiable.
+
+3. KEEP THE FORMAT COMPACT — BUT NOT TOO SMALL
+
+The previous prescription layout was compact and doctor-friendly.
+
+Keep it compact, but DO NOT make Dose / Duration / Timing text excessively small.
+
+Use the existing prescription typography and spacing as the baseline.
+
+Target:
+- clear readable text
+- approximately 13–14px for medicine information/body text where appropriate
+- labels such as Dose, Timing, Duration should be visually distinct
+- avoid oversized cards or excessive vertical spacing
+
+The goal is:
+COMPACT + READABLE + STANDARD PRESCRIPTION FORMAT
+
+Do NOT enlarge the whole page.
+
+4. TEMPLATE MEDICINE DATA
+
+When a template contains medicines, make sure the following fields remain correctly mapped and displayed:
+
+- Medicine name
+- Dose
+- Timing
+- Duration
+
+Do not accidentally swap:
+- Dose ↔ Timing
+- Timing ↔ Duration
+- Duration ↔ Dose
+
+When a template is selected, these values must populate the medicine fields correctly.
+
+5. EXISTING MEDICINE FUNCTIONALITY MUST REMAIN
+
+Do NOT break or change:
+
+- Medicine search/autocomplete
+- Add medicine
+- Edit medicine
+- Delete medicine
+- Drag/drop reorder
+- Move Up / Move Down
+- Medicine state/model
+- Save Draft
+- Save Only
+- Save & Print
+- Preview
+- Print
+- Share
+- Existing Prescription reopening/editing
+- Existing Prescription Management
+- Queue
+- Patient loading
+- C/C
+- O/E
+- IX — INVESTIGATIONS
+- DRUG HISTORY
+- RX QUICK TOOLS
+- Advice
+- Instructions
+- Treatment Note
+
+6. NO BACKEND CHANGES
+
+Do NOT:
+- modify backend
+- modify API
+- modify database
+- add database fields
+- install packages
+- create new dependencies
+- modify PrintView
+- modify generated files
+
+Reuse the existing data/API/state.
+
+7. SCOPE CONTROL
+
+Only modify:
+
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Do not refactor unrelated code.
+
+Do not run a full project build/typecheck.
+
+Do not make any other UI changes.
+
+FINAL CHECK:
+
+Verify specifically:
+
+✓ New prescription template can be added
+✓ Existing template can be edited
+✓ Edited template can be saved
+✓ Selecting a template still works
+✓ Medicine Name displays correctly
+✓ Dose displays correctly
+✓ Timing displays correctly
+✓ Duration displays correctly
+✓ Dose / Timing / Duration are clearly separated
+✓ Format remains compact and readable
+✓ No existing prescription functionality is broken
+
+FINAL REPORT:
+Briefly report only:
+- Template Add fixed
+- Template Edit fixed
+- Dose/Timing/Duration format corrected
+- Compact readable formatting preserved
+- Existing functionality preserved
+- Only NewPrescriptionPage.tsx modified

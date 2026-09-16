@@ -1,0 +1,104 @@
+DoctorX — PHASE 3: BETTER REOPEN / EDIT PRESCRIPTION WORKFLOW
+
+Make a small, focused improvement to the existing Prescription reopen/edit workflow.
+
+MODIFY ONLY:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+IMPORTANT:
+Do NOT build a new prescription/edit system.
+Use the existing prescription loading, state, handlers, and save/update flow.
+
+GOAL:
+When an existing prescription is opened/reopened for editing, the doctor should be able to clearly review and modify the complete prescription before saving the update.
+
+REQUIREMENTS:
+
+1. EXISTING PRESCRIPTION LOAD
+- Preserve the existing `?id=<id>` / reopen mechanism.
+- When an existing prescription is loaded, populate the existing fields exactly as currently supported.
+- Do not change the API or database structure.
+
+2. ALL PRESCRIPTION CONTENT MUST REMAIN EDITABLE
+When reopening an old prescription, ensure the doctor can edit:
+- Patient information where currently editable
+- Diagnosis
+- C/C — Chief Complaint
+- O/E
+- IX — Investigations
+- Drug History
+- Medicines
+- Medicine dose
+- Duration
+- Timing
+- Instructions
+- Advice
+- Treatment Note
+- Follow-up date
+- Existing other editable prescription fields
+
+Use the existing state and handlers.
+
+3. MEDICINES IN EDIT MODE
+For every previously saved medicine:
+- Edit must work.
+- Delete must work.
+- Duplicate must remain available if already supported.
+- Drag/drop reorder must work.
+- Move Up / Move Down must work.
+- Serial numbers must update according to the current order.
+
+Do NOT create a second medicine state system.
+
+4. SAVE UPDATE
+- Use the existing prescription update/save handler and existing payload.
+- When editing an existing prescription, make the primary save action clearly indicate that the doctor is updating an existing prescription where the current UI already supports this distinction.
+- Do NOT create a new API endpoint.
+- Do NOT change database schema.
+- Do NOT change the existing save payload unless absolutely required for the already-existing edit flow.
+
+5. PRESERVE EXISTING ACTIONS
+Do NOT break or redesign:
+- Save & Print
+- Save Only
+- Save Draft
+- Preview
+- Print
+- Share
+- Templates
+- Queue
+- Take Break
+- Patient loading
+- Medicine search/autocomplete
+- Add Medicine
+- Existing template save/apply behavior
+
+6. DOCTOR-FRIENDLY UX
+Make sure edit mode is visually obvious enough that the doctor knows:
+"This is an existing prescription being edited."
+
+Keep this subtle and compact.
+Do not redesign the entire page.
+
+7. STRICT SCOPE
+Only modify:
+artifacts/rxmanager/src/pages/doctor/NewPrescriptionPage.tsx
+
+Do NOT:
+- modify backend/API/database
+- modify generated files
+- install packages
+- create new components unless absolutely necessary
+- refactor unrelated code
+- run full project build/typecheck
+- change PrintView
+
+This is a SMALL targeted patch.
+
+FINAL RESPONSE:
+Report only:
+- Existing prescription reopen/edit workflow improved
+- Existing medicines remain editable/reorderable/removable
+- Existing save/update flow preserved
+- Existing Preview/Print/Template/Queue functionality preserved
+- Only NewPrescriptionPage.tsx was modified

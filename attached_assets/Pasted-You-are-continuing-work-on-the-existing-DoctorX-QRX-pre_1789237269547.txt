@@ -1,0 +1,451 @@
+You are continuing work on the existing DoctorX / QRX prescription application.
+
+IMPORTANT:
+Do NOT redesign the entire application.
+Do NOT add new features.
+Do NOT modify backend, database, API, authentication, routes, save logic, print logic, PDF logic, medicine logic, patient logic, or existing prescription functionality.
+
+Your task is ONLY to fix the exact UI/UX issues listed below.
+
+Before making changes:
+
+1. Inspect the current implementation.
+2. Identify the exact component(s) responsible for:
+   - Top navigation
+   - Queue Summary
+   - Doctor Header
+   - Patient Header
+   - Prescription page layout
+   - Clinical input sections
+   - Advice section
+   - Follow-up section
+   - Theme handling
+3. Reuse existing components and logic wherever possible.
+4. Do not create duplicate UI.
+5. Do not change functionality unless absolutely necessary to fix the UI issue.
+
+==================================================
+STRICT SCOPE
+==================================================
+
+ONLY complete the following observations.
+
+Do not perform unrelated cleanup.
+Do not refactor unrelated files.
+Do not rename unrelated components.
+Do not change backend/API.
+Do not change database schema.
+Do not change existing business logic.
+
+==================================================
+FIX 1 — REMOVE TEMPLATES FROM TOP HEADER MENU
+==================================================
+
+The current top header/navigation contains a "Templates" menu/button.
+
+Remove ONLY the Templates menu/button from the TOP HEADER.
+
+IMPORTANT:
+
+- Do NOT remove the existing template functionality.
+- Do NOT delete template components.
+- Do NOT delete template data or handlers.
+- Keep Templates / Quick Tools in their existing prescription workflow location.
+- Existing prescription templates must continue working.
+
+Only remove the duplicate/unnecessary top navigation entry.
+
+==================================================
+FIX 2 — REMOVE DIAGNOSIS (DX) FROM TOP HEADER MENU
+==================================================
+
+The current top navigation contains:
+
+"Diagnosis (Dx)"
+
+Remove ONLY this top navigation item.
+
+IMPORTANT:
+
+- Do NOT remove the Diagnosis section from the prescription form.
+- Do NOT remove diagnosis input.
+- Do NOT remove diagnosis functionality.
+- Do NOT remove diagnosis save/load logic.
+
+Diagnosis must remain available inside the prescription workspace.
+
+Only remove the unnecessary TOP HEADER menu item.
+
+==================================================
+FIX 3 — REMOVE THE SEPARATE QUEUE MENU FROM TOP HEADER
+==================================================
+
+The current top header has a separate Queue menu/button.
+
+Remove the separate Queue navigation/menu from the top header.
+
+IMPORTANT:
+
+Do NOT remove queue functionality.
+
+The queue workflow must remain available through the Queue Summary area.
+
+==================================================
+FIX 4 — INTEGRATE QUEUE ACTIONS WITH QUEUE SUMMARY
+==================================================
+
+Queue functionality should be visually organized with the Queue Summary.
+
+The Queue Summary should remain the primary queue area.
+
+Keep existing queue data and functionality.
+
+The Queue Summary area should contain or logically support:
+
+- Next Patient action
+- Now Serving
+- Next
+- Waiting
+- In Consultation
+- Completed
+- Total Today
+
+IMPORTANT:
+
+- Reuse existing queue handlers.
+- Do not create a second queue system.
+- Do not change API calls.
+- Do not change queue business logic.
+- Do not break existing queue workflow.
+
+The goal is simply:
+
+REMOVE duplicate Queue navigation
+and
+KEEP queue actions logically associated with Queue Summary.
+
+==================================================
+FIX 5 — DOCTOR HEADER MUST NOT WASTE PRESCRIPTION SPACE
+==================================================
+
+This is a MAJOR ISSUE.
+
+Currently the Doctor Header occupies significant vertical space.
+
+It appears fixed/sticky or remains visible while scrolling.
+
+This reduces the usable prescription workspace.
+
+Fix this.
+
+Required behavior:
+
+- Doctor Header must NOT remain permanently fixed while the prescription page scrolls.
+- Doctor Header must NOT consume unnecessary vertical space.
+- Doctor Header should scroll naturally with the page.
+
+Do NOT make the doctor header sticky.
+
+Do NOT make the doctor header fixed.
+
+Do NOT create a floating duplicate doctor header.
+
+Make the existing doctor information area compact and flexible.
+
+The doctor information must still show existing information.
+
+Do NOT remove doctor data.
+
+Do NOT remove:
+
+- Doctor Name
+- Degree
+- Specialty
+- BMDC
+- Chamber
+- Contact
+
+The goal is:
+
+KEEP doctor information
+but
+REDUCE unnecessary vertical space
+and
+ALLOW the prescription workspace to use more screen space.
+
+==================================================
+FIX 6 — PRESCRIPTION WORKSPACE MUST HAVE MORE VERTICAL SPACE
+==================================================
+
+After fixing the Doctor Header:
+
+The prescription page must provide more usable vertical space.
+
+The main prescription workspace should feel comfortable for doctors.
+
+Do NOT artificially increase the height of cards.
+
+Do NOT add unnecessary blank space.
+
+Do NOT add large decorative headers.
+
+Reduce unnecessary vertical spacing.
+
+Improve layout efficiency.
+
+Priority:
+
+MORE USABLE PRESCRIPTION AREA
+LESS WASTED HEADER SPACE
+
+==================================================
+FIX 7 — INCREASE CLINICAL INPUT TEXT SIZE
+==================================================
+
+Currently several prescription input areas have text that is too small.
+
+Increase typography to a comfortable professional clinical size.
+
+Apply this to the existing input areas including:
+
+- Diagnosis (Dx)
+- C/C — Chief Complaint
+- O/E — On Examination
+- I/X — Investigations
+- Drug History
+- Advice
+- Treatment Note
+- Follow-up
+
+IMPORTANT:
+
+Do not randomly enlarge the entire interface.
+
+Only improve readability for:
+
+- Input text
+- Typed text
+- Placeholder text where necessary
+- Section labels where necessary
+
+The goal is comfortable doctor use on desktop and tablet.
+
+Use a consistent professional typography scale.
+
+Do NOT make text excessively large.
+
+Do NOT change the content.
+
+Do NOT change field functionality.
+
+==================================================
+FIX 8 — KEEP THE CURRENT PRESCRIPTION STRUCTURE
+==================================================
+
+Do NOT move or remove existing prescription sections.
+
+The existing workflow must remain.
+
+Keep:
+
+- Patient Information
+- Vitals
+- Diagnosis
+- C/C
+- O/E
+- I/X
+- Drug History
+- Medicine
+- Advice
+- Treatment Note
+- Follow-up
+
+Do NOT redesign the workflow in this phase.
+
+==================================================
+FIX 9 — ADVICE TEMPLATE MUST REMAIN AVAILABLE
+==================================================
+
+Verify the Advice section.
+
+The existing Advice Template functionality must remain accessible.
+
+Do NOT remove Advice Templates.
+
+Do NOT replace Advice Templates with a new unrelated system.
+
+If the current Advice Template control is hidden, misplaced, or not clearly visible:
+
+Make the EXISTING Advice Template control visible and accessible.
+
+Reuse existing functionality.
+
+Do not change backend logic.
+
+Do not create duplicate template buttons.
+
+==================================================
+FIX 10 — FOLLOW-UP TEMPLATE MUST REMAIN AVAILABLE
+==================================================
+
+Verify the Follow-up section.
+
+The Follow-up Template functionality must remain accessible.
+
+The Follow-up Template controls must be visible and usable.
+
+Existing functionality must be reused.
+
+Do NOT create duplicate follow-up systems.
+
+Do NOT modify follow-up backend logic.
+
+Do NOT remove:
+
+- Follow-up Date
+- Follow-up Type
+- Follow-up Notes
+- Existing Follow-up Template functionality
+
+Only ensure the existing Follow-up Template UI is properly visible and usable.
+
+==================================================
+FIX 11 — CHECK LIGHT MODE AND DARK MODE
+==================================================
+
+Do NOT redesign the theme.
+
+Only verify consistency.
+
+Check both:
+
+- Light Mode
+- Dark Mode
+
+Ensure the UI changes made in this task work correctly in both modes.
+
+Specifically check:
+
+- Top navigation
+- Queue Summary
+- Doctor Header
+- Prescription workspace
+- Input fields
+- Text readability
+- Advice section
+- Follow-up section
+
+Requirements:
+
+- No invisible text
+- No low-contrast text
+- No broken borders
+- No unreadable input fields
+- No overlapping elements
+- No incorrect background colors caused by the changes
+
+Do not introduce a new theme system.
+
+Use the existing theme implementation.
+
+==================================================
+RESPONSIVE REQUIREMENTS
+==================================================
+
+Verify:
+
+DESKTOP:
+- Prescription workspace gets more usable vertical space.
+- No unnecessary fixed Doctor Header.
+- Queue Summary remains clean.
+
+TABLET:
+- No overlapping headers or input fields.
+
+MOBILE:
+- Existing responsive behavior must not break.
+- Do not redesign mobile unless required to prevent a layout break.
+
+==================================================
+DO NOT TOUCH
+==================================================
+
+DO NOT modify:
+
+- Backend
+- Database
+- API endpoints
+- Authentication
+- Authorization
+- Routes
+- Login
+- Registration
+- Subscription
+- Payment
+- Medicine search logic
+- Medicine database
+- Medicine suggestion logic
+- Prescription save logic
+- Prescription edit logic
+- Prescription load logic
+- Prescription reorder logic
+- Drag and drop logic
+- Template data logic
+- Patient loading logic
+- Print logic
+- PDF logic
+
+DO NOT add unrelated features.
+
+DO NOT perform a large refactor.
+
+DO NOT replace working components unnecessarily.
+
+==================================================
+VALIDATION REQUIRED
+==================================================
+
+After completing ONLY the requested changes:
+
+1. Check for duplicate navigation items.
+2. Verify Templates still work in their existing workflow location.
+3. Verify Diagnosis still works inside the prescription workspace.
+4. Verify queue functionality still works.
+5. Verify Doctor Header is NOT sticky/fixed.
+6. Verify Doctor Header scrolls naturally.
+7. Verify prescription workspace has more usable vertical space.
+8. Verify clinical input text is comfortably readable.
+9. Verify Advice Template is visible and usable.
+10. Verify Follow-up Template is visible and usable.
+11. Check Light Mode.
+12. Check Dark Mode.
+13. Run TypeScript check.
+14. Run production build.
+15. Run git diff --check.
+
+==================================================
+FINAL REPORT
+==================================================
+
+After completion, provide a SHORT report.
+
+Use this format:
+
+COMPLETED:
+- ...
+
+UNCHANGED:
+- ...
+
+VALIDATION:
+- TypeScript:
+- Build:
+- git diff --check:
+- Light Mode:
+- Dark Mode:
+
+DO NOT claim unrelated improvements.
+
+DO NOT report work that was not actually completed.
+
+STOP after completing this exact scope.

@@ -1,0 +1,2091 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --color-sidebar: hsl(var(--sidebar));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-primary-border: var(--sidebar-primary-border);
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-accent-border: var(--sidebar-accent-border);
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* LIGHT MODE */
+:root {
+  --button-outline: rgba(0, 0, 0, 0.1);
+  --badge-outline: rgba(0, 0, 0, 0.05);
+
+  /* Automatic computation of border around primary / danger buttons */
+  --opaque-button-border-intensity: -8; /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(0, 0, 0, 0.03);
+  --elevate-2: rgba(0, 0, 0, 0.08);
+
+  --background: 196 33% 96%;
+
+  --foreground: 204 33% 18%;
+
+  --border: 195 21% 85%;
+
+  --card: 0 0% 100%;
+
+  --card-foreground: 204 33% 18%;
+
+  --card-border: 195 21% 85%;
+
+  --sidebar: 203 38% 16%;
+
+  --sidebar-foreground: 192 26% 90%;
+
+  --sidebar-border: 201 27% 27%;
+
+  --sidebar-primary: 171 44% 43%;
+
+  --sidebar-primary-foreground: 204 40% 12%;
+
+  --sidebar-accent: 201 31% 23%;
+
+  --sidebar-accent-foreground: 192 26% 94%;
+
+  --sidebar-ring: 171 44% 43%;
+
+  --popover: 0 0% 100%;
+
+  --popover-foreground: 204 33% 18%;
+
+  --popover-border: 195 21% 85%;
+
+  --primary: 171 44% 37%;
+
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 191 39% 91%;
+
+  --secondary-foreground: 201 34% 24%;
+
+  --muted: 193 24% 91%;
+
+  --muted-foreground: 201 17% 45%;
+
+  --accent: 37 82% 67%;
+
+  --accent-foreground: 28 38% 20%;
+
+  --destructive: 2 61% 49%;
+
+  --destructive-foreground: 0 0% 100%;
+
+  --input: 195 21% 80%;
+  --ring: 171 44% 37%;
+  --chart-1: 171 44% 37%;
+  --chart-2: 199 53% 45%;
+  --chart-3: 37 82% 57%;
+  --chart-4: 2 61% 49%;
+  --chart-5: 272 31% 52%;
+
+  --app-font-sans: 'DM Sans', ui-sans-serif, sans-serif;
+  --app-font-serif: Georgia, serif;
+  --app-font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --radius: 0.625rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
+  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0); /*replace with H S L */
+  --shadow-sm:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-md:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-lg:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-xl:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
+
+  /* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(
+    from hsl(var(--sidebar-primary)) h s
+      calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(
+    from hsl(var(--sidebar-accent)) h s
+      calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(
+    from hsl(var(--primary)) h s
+      calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(
+    from hsl(var(--secondary)) h s
+      calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(
+    from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) /
+      alpha
+  );
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(
+    from hsl(var(--accent)) h s
+      calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(
+    from hsl(var(--destructive)) h s
+      calc(l + var(--opaque-button-border-intensity)) / alpha
+  );
+}
+
+.dark {
+  --button-outline: rgba(255, 255, 255, 0.1);
+  --badge-outline: rgba(255, 255, 255, 0.05);
+
+  --opaque-button-border-intensity: 9; /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(255, 255, 255, 0.04);
+  --elevate-2: rgba(255, 255, 255, 0.09);
+
+  --background: 199 30% 10%;
+
+  --foreground: 192 25% 91%;
+
+  --border: 201 27% 25%;
+
+  --card: 202 29% 14%;
+
+  --card-foreground: 192 25% 91%;
+
+  --card-border: 201 27% 25%;
+
+  --sidebar: 204 40% 9%;
+
+  --sidebar-foreground: 192 25% 91%;
+
+  --sidebar-border: 201 27% 20%;
+
+  --sidebar-primary: 171 44% 48%;
+
+  --sidebar-primary-foreground: 204 40% 10%;
+
+  --sidebar-accent: 201 28% 18%;
+
+  --sidebar-accent-foreground: 192 25% 95%;
+
+  --sidebar-ring: 171 44% 48%;
+
+  --popover: 202 29% 14%;
+
+  --popover-foreground: 192 25% 91%;
+
+  --popover-border: 201 27% 25%;
+
+  --primary: 171 44% 48%;
+
+  --primary-foreground: 204 40% 10%;
+
+  --secondary: 201 28% 19%;
+
+  --secondary-foreground: 192 25% 91%;
+
+  --muted: 201 28% 19%;
+
+  --muted-foreground: 198 17% 67%;
+
+  --accent: 37 73% 58%;
+
+  --accent-foreground: 28 42% 14%;
+
+  --destructive: 2 61% 57%;
+
+  --destructive-foreground: 0 0% 100%;
+
+  /* Used as the border around inputs. Dark mode: Should be a border that is light enough to have high contrast when rendered on a --card background. More contrast than standard --border */
+  --input: 201 27% 31%;
+  --ring: 171 44% 48%;
+  --chart-1: 171 44% 48%;
+  --chart-2: 199 65% 60%;
+  --chart-3: 37 73% 58%;
+  --chart-4: 2 61% 57%;
+  --chart-5: 272 42% 64%;
+
+  --shadow-2xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-xs: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-sm:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 1px 2px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-md:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 2px 4px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-lg:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 4px 6px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-xl:
+    0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0),
+    0px 8px 10px -1px hsl(202.8169 89.1213% 53.1373% / 0);
+  --shadow-2xl: 0px 2px 0px 0px hsl(202.8169 89.1213% 53.1373% / 0);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/**
+ * Using the elevate system.
+ * Automatic contrast adjustment.
+ *
+ * <element className="hover-elevate" />
+ * <element className="active-elevate-2" />
+ *
+ * // Using the tailwind utility when a data attribute is "on"
+ * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
+ * // Or manually controlling the toggle state
+ * <element className="toggle-elevate toggle-elevated" />
+ *
+ * Elevation systems have to handle many states.
+ * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
+ * - toggled or not
+ * - focused or not (this is not handled with these utilities)
+ *
+ * Even without handling focused or not, this is six possible combinations that
+ * need to be distinguished from eachother visually.
+ */
+@layer utilities {
+  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  input[type='search']::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  /* Placeholder styling for contentEditable div */
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
+   * buttons/badges can remove the automatic brightness adjustment on interactions
+   * and program their own. */
+  .no-default-hover-elevate {
+  }
+
+  .no-default-active-elevate {
+  }
+
+  /**
+   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
+   * This way they can stack/compound. Both will overlap the parent's borders!
+   * So borders will be automatically adjusted both on toggle, and hover/active,
+   * and they will be compounded.
+   */
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: -1;
+    /* sits behind content but above backdrop */
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  /* Does not work on elements with overflow:hidden! */
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: 999;
+    /* sits in front of content */
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+    inset: -1px;
+  }
+}
+
+/* Doctor prescription workspace */
+.rx-shell {
+  --rx-ink: #163b45;
+  --rx-teal: #0d766e;
+  --rx-paper: #fffefa;
+  font-family: "Noto Sans Bengali", "Kalpurush", "DM Sans", ui-sans-serif, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--rx-ink);
+}
+
+/* Keep the screen workspace readable without changing the print preview. */
+.rx-shell :where(button, [role="button"], label, h1, h2, h3, h4, p, span) {
+  font-weight: 600;
+}
+
+.rx-shell :where(h1, h2, h3, h4) {
+  line-height: 1.25;
+}
+
+.rx-shell :where(input, textarea, select) {
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.rx-shell :where(input, textarea)::placeholder {
+  font-weight: 400;
+}
+
+/* The page intentionally uses compact Tailwind utilities; lift only the
+   screen-facing microcopy to a normal readable size. */
+.rx-shell .text-\[9px\] {
+  font-size: 0.7rem !important;
+}
+
+.rx-shell .text-\[10px\] {
+  font-size: 0.75rem !important;
+}
+
+.rx-shell .text-\[11px\] {
+  font-size: 0.78rem !important;
+}
+
+.rx-shell .text-xs {
+  font-size: 0.8rem !important;
+}
+
+.rx-shell .rx-topbar {
+  background:
+    linear-gradient(90deg, rgba(13, 118, 110, 0.05), transparent 38%),
+    hsl(var(--background));
+}
+
+.rx-shell .rx-toolbar {
+  background: linear-gradient(90deg, rgba(13, 118, 110, 0.08), rgba(13, 118, 110, 0.025));
+}
+
+.rx-shell .rx-workspace {
+  background:
+    radial-gradient(circle at 80% 8%, rgba(13, 118, 110, 0.06), transparent 26rem),
+    hsl(var(--background));
+}
+
+.rx-shell .rx-context-panel {
+  background: rgba(241, 247, 247, 0.72);
+}
+
+.dark .rx-shell .rx-context-panel {
+  background: rgba(15, 36, 42, 0.5);
+}
+
+.rx-shell .rx-prescription-panel {
+  background-color: #edf5f4;
+}
+
+.dark .rx-shell .rx-prescription-panel {
+  background-color: #11262b;
+}
+
+.rx-shell .rx-prescription-sheet {
+  position: relative;
+}
+
+.rx-shell .rx-stethoscope-watermark {
+  position: absolute;
+  z-index: 0;
+  top: 5.5rem;
+  right: clamp(1rem, 7vw, 5rem);
+  width: min(34vw, 21rem);
+  max-width: 42%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.16;
+  filter: sepia(0.35) saturate(0.65) hue-rotate(125deg) contrast(1.35)
+    drop-shadow(0 12px 12px rgba(13, 88, 90, 0.24));
+  mix-blend-mode: multiply;
+  transform: rotate(-8deg);
+}
+
+.dark .rx-shell .rx-stethoscope-watermark {
+  opacity: 0.13;
+  filter: sepia(0.25) saturate(0.7) hue-rotate(125deg) contrast(1.25)
+    drop-shadow(0 12px 12px rgba(0, 0, 0, 0.42));
+  mix-blend-mode: screen;
+}
+
+.rx-shell .rx-prescription-sheet > :not(.rx-stethoscope-watermark) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 900px) {
+  .rx-shell .rx-stethoscope-watermark {
+    top: 7rem;
+    right: 1.5rem;
+    width: min(40vw, 15rem);
+    opacity: 0.11;
+  }
+}
+
+@media print {
+  .rx-shell .rx-stethoscope-watermark {
+    display: none;
+  }
+}
+
+.rx-shell .rx-prescription-sheet::before {
+  position: absolute;
+  inset: 1rem 1rem auto auto;
+  content: "Rx";
+  pointer-events: none;
+  color: rgba(13, 118, 110, 0.045);
+  font-family: Georgia, serif;
+  font-size: 10rem;
+  font-weight: 700;
+  line-height: 1;
+  transform: rotate(-10deg);
+}
+
+.rx-shell .rx-queue-summary,
+.rx-shell .rx-medicine-entry,
+.rx-shell .rx-notes-card,
+.rx-shell .rx-followup-card {
+  position: relative;
+  z-index: 1;
+  border-color: rgba(13, 118, 110, 0.2);
+  background: var(--rx-paper);
+}
+
+.dark .rx-shell .rx-queue-summary,
+.dark .rx-shell .rx-medicine-entry,
+.dark .rx-shell .rx-notes-card,
+.dark .rx-shell .rx-followup-card {
+  background: hsl(var(--card));
+}
+
+.rx-shell .rx-queue-summary {
+  box-shadow: 0 8px 24px rgba(16, 71, 77, 0.05);
+}
+
+.rx-shell .rx-medicine-entry {
+  box-shadow: 0 12px 28px rgba(16, 71, 77, 0.08);
+}
+
+.rx-shell .rx-medicine-entry-header {
+  background: linear-gradient(115deg, #0d766e 0%, #155e75 100%);
+}
+
+.rx-shell .rx-medicine-suggestions {
+  max-height: 16rem;
+}
+
+.rx-shell .rx-selected-medicine {
+  box-shadow: inset 3px 0 0 rgba(13, 118, 110, 0.65);
+}
+
+.rx-shell .rx-quick-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  min-height: 2rem;
+}
+
+.rx-shell .rx-quick-option {
+  min-height: 2rem;
+  border: 1px solid rgba(13, 118, 110, 0.2);
+  border-radius: 0.45rem;
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.15;
+  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.rx-shell .rx-quick-option:hover {
+  border-color: rgba(13, 118, 110, 0.55);
+  background: rgba(13, 118, 110, 0.08);
+}
+
+.rx-shell .rx-quick-option.is-active {
+  border-color: #0d766e;
+  background: #0d766e;
+  color: white;
+  box-shadow: 0 2px 5px rgba(13, 118, 110, 0.2);
+}
+
+.dark .rx-shell .rx-quick-option {
+  border-color: rgba(93, 203, 193, 0.25);
+}
+
+.dark .rx-shell .rx-quick-option:hover {
+  background: rgba(93, 203, 193, 0.12);
+}
+
+.rx-shell .rx-prescribed-list {
+  border-color: rgba(13, 118, 110, 0.18);
+  background: var(--rx-paper);
+}
+
+.dark .rx-shell .rx-prescribed-list {
+  background: hsl(var(--card));
+}
+
+.rx-shell .rx-prescribed-list-header {
+  background: linear-gradient(90deg, rgba(13, 118, 110, 0.08), rgba(21, 94, 117, 0.03));
+}
+
+.rx-shell .rx-prescribed-row {
+  border-color: rgba(13, 118, 110, 0.14);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.rx-shell .rx-prescribed-row:hover {
+  border-color: rgba(13, 118, 110, 0.32);
+  background: rgba(239, 248, 247, 0.72);
+}
+
+.dark .rx-shell .rx-prescribed-row {
+  background: rgba(13, 118, 110, 0.06);
+}
+
+.dark .rx-shell .rx-prescribed-row:hover {
+  background: rgba(13, 118, 110, 0.13);
+}
+
+.rx-shell .rx-prescribed-row.is-dragged {
+  border-style: dashed;
+  border-color: #0d766e;
+  background: rgba(13, 118, 110, 0.1);
+  opacity: 0.65;
+}
+
+.rx-shell .rx-prescribed-drag-handle {
+  touch-action: none;
+}
+
+.rx-shell .rx-prescribed-drag-handle:hover,
+.rx-shell .rx-prescribed-drag-handle:focus-visible {
+  background: rgba(13, 118, 110, 0.1);
+  color: #0d766e;
+  outline: none;
+}
+
+.rx-shell .rx-prescribed-number {
+  background: rgba(13, 118, 110, 0.1);
+  color: #0d766e;
+}
+
+.dark .rx-shell .rx-prescribed-number {
+  background: rgba(93, 203, 193, 0.15);
+  color: #8ce0d5;
+}
+
+.rx-shell .rx-prescribed-name {
+  color: var(--rx-ink);
+}
+
+.dark .rx-shell .rx-prescribed-name {
+  color: hsl(var(--foreground));
+}
+
+.rx-shell .rx-prescribed-detail {
+  border-radius: 999px;
+  background: rgba(13, 118, 110, 0.08);
+  color: hsl(var(--foreground));
+  padding: 0.24rem 0.55rem;
+  font-weight: 600;
+}
+
+.dark .rx-shell .rx-prescribed-detail {
+  background: rgba(93, 203, 193, 0.12);
+}
+
+.rx-shell .rx-prescribed-actions {
+  margin-left: auto;
+}
+
+.rx-shell .rx-doctor-patient-header {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border: 1px solid rgba(13, 118, 110, 0.18);
+  border-radius: 0.85rem;
+  background: var(--rx-paper);
+  box-shadow: 0 8px 20px rgba(16, 71, 77, 0.04);
+}
+
+.dark .rx-shell .rx-doctor-patient-header {
+  background: hsl(var(--card));
+}
+
+.rx-shell .rx-doctor-header {
+  background: linear-gradient(110deg, rgba(13, 118, 110, 0.09), rgba(21, 94, 117, 0.04));
+}
+
+.rx-shell .rx-doctor-mark {
+  box-shadow: 0 5px 12px rgba(13, 118, 110, 0.2);
+}
+
+.rx-shell .rx-patient-header {
+  border-top: 1px solid rgba(13, 118, 110, 0.13);
+  background: rgba(239, 248, 247, 0.65);
+}
+
+.dark .rx-shell .rx-patient-header {
+  background: rgba(13, 118, 110, 0.08);
+}
+
+.rx-shell .rx-field-caption {
+  display: block;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.rx-shell .rx-symbol {
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
+}
+
+.rx-shell .rx-diagnosis-field {
+  position: relative;
+  z-index: 1;
+}
+
+.rx-shell .rx-dose-grid > label {
+  padding: 0.7rem;
+  border: 1px solid rgba(13, 118, 110, 0.14);
+  border-radius: 0.65rem;
+  background: rgba(239, 248, 247, 0.58);
+}
+
+.dark .rx-shell .rx-dose-grid > label {
+  background: rgba(13, 118, 110, 0.08);
+}
+
+.rx-shell .rx-add-medicine {
+  box-shadow: 0 7px 14px rgba(13, 118, 110, 0.2);
+}
+
+.rx-reference-mode {
+  --rx-reference-green: #0d8a78;
+  --rx-reference-border: #c7dfd6;
+  --rx-reference-header-bg: linear-gradient(90deg, #f1fbfb 0%, #edf8f7 50%, #f1fbfb 100%);
+  --rx-reference-header-ink: #17353d;
+  --rx-reference-header-muted: #526a72;
+  --rx-reference-header-accent: #0f5c75;
+  --rx-reference-queue-rule: rgba(13, 118, 110, 0.24);
+  background: #eef7f6;
+}
+
+.rx-reference-mode .rx-reference-header {
+  order: 2;
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) minmax(22rem, 34rem) minmax(14rem, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 4.35rem;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+  background: var(--rx-reference-header-bg);
+  color: var(--rx-reference-header-ink);
+  overflow: visible;
+}
+
+.rx-reference-mode .rx-doctor-identity {
+  line-height: 1.18;
+}
+
+.rx-reference-mode .rx-doctor-identity p {
+  margin: 0.08rem 0;
+}
+
+.rx-reference-mode .rx-doctor-identity-left p:first-child,
+.rx-reference-mode .rx-doctor-identity-right p:first-child {
+  color: var(--rx-reference-header-accent);
+}
+
+.rx-reference-mode .rx-reference-header .text-muted-foreground {
+  color: var(--rx-reference-header-muted);
+}
+
+.rx-reference-mode .rx-reference-header .text-\[11px\] {
+  font-size: 0.84rem !important;
+  line-height: 1.3;
+}
+
+.rx-reference-mode .rx-screen-clinic-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.rx-reference-mode .rx-reference-patient-summary {
+  grid-column: 1 / -1;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-top: 1px solid rgba(13, 118, 110, 0.13);
+  background: rgba(244, 251, 247, 0.86);
+}
+
+.rx-reference-mode .rx-queue-summary-inline {
+  align-self: stretch;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--rx-reference-header-ink);
+  box-shadow: none;
+}
+
+.rx-reference-mode .rx-queue-summary-inline-title {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.2rem 0 0.35rem;
+  color: var(--rx-reference-header-accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.rx-reference-mode .rx-queue-inline-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--rx-reference-queue-rule);
+}
+
+.rx-reference-mode .rx-queue-inline-stats > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  padding: 0.35rem 0.55rem 0.4rem;
+  border-right: 1px solid var(--rx-reference-queue-rule);
+}
+
+.rx-reference-mode .rx-queue-inline-stats > div:last-child {
+  border-right: 0;
+}
+
+.rx-reference-mode .rx-queue-inline-stats span {
+  overflow: hidden;
+  max-width: 100%;
+  color: var(--rx-reference-header-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rx-reference-mode .rx-queue-inline-stats strong {
+  color: var(--rx-reference-header-ink);
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.rx-reference-mode .rx-reference-toolbar {
+  order: 1;
+  min-height: 2.35rem;
+  background: rgba(255, 255, 255, 0.84);
+}
+
+.rx-reference-mode .rx-reference-toolbar-scroll {
+  scrollbar-width: none;
+}
+
+.rx-reference-mode .rx-reference-toolbar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.rx-reference-mode .rx-reference-toolbar-secondary {
+  display: flex;
+}
+
+.rx-reference-mode .rx-workspace {
+  order: 3;
+  background: #eef7f6;
+  flex: none;
+  overflow: visible;
+}
+
+.rx-reference-mode .rx-context-scroll,
+.rx-reference-mode .rx-prescription-scroll {
+  height: auto;
+  flex: none;
+  overflow: visible;
+}
+
+.rx-reference-mode .rx-context-scroll > [data-radix-scroll-area-viewport],
+.rx-reference-mode .rx-prescription-scroll > [data-radix-scroll-area-viewport] {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.rx-reference-mode .rx-context-panel {
+  width: 29%;
+  background: #eef8e8;
+  border-right: 1px solid #c9ded1;
+  font-size: 0.875rem;
+  overflow: visible;
+}
+
+.rx-reference-mode .rx-context-panel .text-\[9px\] {
+  font-size: 0.75rem !important;
+}
+
+.rx-reference-mode .rx-context-panel .text-\[10px\] {
+  font-size: 0.8rem !important;
+}
+
+.rx-reference-mode .rx-context-panel .text-\[11px\] {
+  font-size: 0.84rem !important;
+}
+
+.rx-reference-mode .rx-context-panel .text-xs {
+  font-size: 0.84rem !important;
+}
+
+.rx-reference-mode .rx-context-panel > [data-radix-scroll-area-viewport] > div,
+.rx-reference-mode .rx-context-panel .p-2 {
+  padding: 0.5rem;
+}
+
+.rx-reference-mode .rx-context-panel input,
+.rx-reference-mode .rx-context-panel textarea,
+.rx-reference-mode .rx-context-panel select {
+  border-color: #d1e3d4;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.rx-reference-mode .rx-context-panel > [data-radix-scroll-area-viewport] > div > div {
+  border-color: rgba(13, 118, 110, 0.12);
+}
+
+.rx-reference-mode .rx-patient-info-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 0.55rem 0.65rem;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid #d4e5d1;
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.rx-reference-mode .rx-patient-info-card > div:first-child {
+  grid-column: 1 / -1;
+}
+
+.rx-reference-mode .rx-patient-info-card > div:not(:first-child) {
+  grid-column: 1 / -1;
+}
+
+.rx-reference-mode .rx-patient-info-card input,
+.rx-reference-mode .rx-patient-info-card select {
+  min-height: 2rem;
+  height: 2rem;
+  padding-inline: 0.55rem;
+  font-size: 0.86rem !important;
+}
+
+.rx-reference-mode .rx-patient-info-card label {
+  display: block;
+  margin-bottom: 0.22rem;
+  font-size: 0.74rem !important;
+  line-height: 1.2;
+}
+
+.rx-reference-mode .rx-vitals-card {
+  padding: 0.55rem 0.6rem;
+  border: 1px solid rgba(13, 118, 110, 0.16);
+  border-radius: 0.55rem;
+  background: rgba(222, 242, 218, 0.5);
+}
+
+.rx-reference-mode .rx-vitals-card > div:nth-child(2) {
+  gap: 0.2rem;
+}
+
+.rx-reference-mode .rx-vitals-card input {
+  min-height: 1.9rem;
+  height: 1.9rem;
+  padding-inline: 0.45rem;
+  font-size: 0.78rem !important;
+}
+
+.rx-reference-mode .rx-clinical-section {
+  padding: 0.25rem 0.35rem;
+  border-radius: 0.35rem;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.rx-reference-mode .rx-clinical-section textarea {
+  min-height: 2rem;
+  height: auto;
+  padding: 0.3rem 0.4rem;
+  overflow-y: auto;
+  resize: vertical;
+}
+
+/* Clinical notes need a comfortable reading size without enlarging the
+   surrounding navigation and utility controls. */
+.rx-reference-mode .rx-clinical-section :where(input, textarea),
+.rx-reference-mode .rx-diagnosis-field input,
+.rx-reference-mode .rx-notes-card textarea,
+.rx-reference-mode .rx-followup-card :where(input, select) {
+  font-size: 1rem !important;
+  line-height: 1.45;
+}
+
+.rx-reference-mode .rx-clinical-section :where(input, textarea)::placeholder,
+.rx-reference-mode .rx-diagnosis-field input::placeholder,
+.rx-reference-mode .rx-notes-card textarea::placeholder,
+.rx-reference-mode .rx-followup-card input::placeholder {
+  font-size: 0.95rem;
+  opacity: 0.78;
+}
+
+.rx-reference-mode .rx-clinical-section > label,
+.rx-reference-mode .rx-clinical-section > div > span,
+.rx-reference-mode .rx-diagnosis-field label,
+.rx-reference-mode .rx-notes-card h3,
+.rx-reference-mode .rx-followup-card label {
+  font-size: 0.9rem;
+}
+
+.rx-reference-mode .rx-clinical-section .mt-1.flex.justify-end {
+  display: none;
+}
+
+.rx-reference-mode .rx-cc-section textarea,
+.rx-reference-mode .rx-oe-section textarea,
+.rx-reference-mode .rx-drug-history-section textarea {
+  min-height: 3rem;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.rx-reference-mode .rx-prescription-panel {
+  background: #eef7f6;
+}
+
+.rx-reference-mode .rx-prescription-sheet {
+  max-width: none;
+  padding: 0.6rem 0.7rem 1.5rem;
+}
+
+.rx-reference-mode .rx-doctor-patient-header {
+  border-radius: 0;
+  border-color: var(--rx-reference-border);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: none;
+}
+
+.rx-reference-mode .rx-doctor-header {
+  padding: 0.8rem 1rem;
+  background: linear-gradient(90deg, #f7fcf8, #e6f4ef);
+}
+
+.rx-reference-mode .rx-patient-header {
+  padding: 0.45rem 1rem;
+  background: rgba(244, 251, 247, 0.86);
+}
+
+.rx-reference-mode .rx-medicine-entry {
+  border-color: var(--rx-reference-border);
+  border-radius: 0;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+.rx-reference-mode .rx-medicine-entry-header {
+  min-height: 3.25rem;
+  background: #ffffff;
+  color: #147d69;
+  border-bottom: 1px solid #d4e7df;
+}
+
+.rx-reference-mode .rx-medicine-entry-header .rx-symbol {
+  color: #149b79;
+  text-shadow: none;
+}
+
+.rx-reference-mode .rx-medicine-entry-header h2 {
+  color: #147d69;
+}
+
+.rx-reference-mode .rx-inline-medicine-search .border-white\/60 {
+  border-color: #d7e7e1;
+}
+
+.rx-reference-mode .rx-inline-medicine-search .border-white\/70 {
+  border-color: #b9d9cd;
+}
+
+.rx-reference-mode .rx-inline-suggestions {
+  color: hsl(var(--foreground));
+}
+
+.rx-reference-mode .rx-medicine-composer-body {
+  display: none;
+  background: #f8fcfa;
+  color: #17353d;
+}
+
+.rx-reference-mode .rx-medicine-entry.is-composer-open .rx-medicine-composer-body {
+  display: block;
+}
+
+.rx-reference-mode .rx-prescribed-list {
+  border-radius: 0;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: none;
+}
+
+.rx-reference-mode .rx-prescribed-list-header {
+  padding: 0.45rem 0.7rem;
+  background: #f5fbf7;
+}
+
+.rx-reference-mode .rx-prescribed-row {
+  min-height: 3.2rem;
+  border-radius: 0.35rem;
+  background: #ffffff;
+}
+
+.rx-reference-mode .rx-reference-add-medicine {
+  align-self: flex-start;
+}
+
+.rx-reference-mode .rx-template-group {
+  padding: 0.35rem 0.45rem;
+  border: 1px solid #d9e8e1;
+  border-radius: 0.35rem;
+  background: #f7fcf8;
+}
+
+.rx-reference-mode .rx-template-group-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: #147d69;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rx-reference-mode .rx-followup-card {
+  padding: 0.6rem 0.7rem;
+  border-radius: 0.45rem;
+  border-color: var(--rx-reference-border);
+}
+
+.rx-reference-mode .rx-followup-card .rx-template-group {
+  margin-top: 0.15rem;
+}
+
+.rx-reference-mode .rx-diagnosis-field {
+  padding: 0.45rem 0.7rem;
+  border-radius: 0.3rem;
+}
+
+.rx-reference-mode .rx-diagnosis-field input {
+  height: 1.9rem;
+}
+
+.rx-reference-mode .rx-prescription-sheet::before {
+  inset: 9rem 1rem auto auto;
+  color: rgba(13, 118, 110, 0.06);
+  font-size: 14rem;
+}
+
+.rx-shell input,
+.rx-shell textarea,
+.rx-shell select {
+  font-size: 0.8rem;
+}
+
+.rx-print-patient-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(5.25rem, 1fr) minmax(5.25rem, 1fr) minmax(0, 1.5fr);
+  gap: 0.4rem 0.9rem;
+}
+
+.rx-print-patient-item {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #15252a;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.rx-print-patient-label {
+  color: #6b7280;
+  margin-right: 0.25rem;
+}
+
+/* The preview is white paper in both app themes. Keep its ink independent
+   from the surrounding dark-mode foreground so medicine details stay visible. */
+.rx-print-preview {
+  color: #15252a;
+  background: #fff;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.dark .rx-print-preview {
+  color: #15252a;
+  background: #fff;
+}
+
+.rx-print-preview .rx-print-header {
+  background: linear-gradient(120deg, #0f766e 0%, #155e75 52%, #164e63 100%);
+  color: #fff;
+  border-bottom: 4px solid #0b5f5a;
+}
+
+.rx-print-header-content {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.rx-print-doctor {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.rx-print-doctor > div:last-child,
+.rx-print-contact {
+  min-width: 0;
+}
+
+.rx-print-mark {
+  display: grid;
+  width: 3.6rem;
+  height: 3.6rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 2px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  color: #d9fffa;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 2.45rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rx-print-header h1 {
+  color: #fff;
+  font-size: 1.4rem;
+}
+
+.rx-print-header p {
+  margin: 0.12rem 0;
+}
+
+.rx-print-header .text-teal-100,
+.rx-print-header .text-teal-200,
+.rx-print-contact {
+  color: #d9f5f1 !important;
+}
+
+.rx-print-header .text-white {
+  color: #fff !important;
+}
+
+.rx-print-contact {
+  flex: 0 1 18rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.rx-print-preview .text-sm {
+  font-size: 0.98rem !important;
+  line-height: 1.45;
+}
+
+.rx-print-preview .text-xs {
+  font-size: 0.84rem !important;
+  line-height: 1.35;
+}
+
+.rx-print-preview .rx-print-medicine-name {
+  color: #102a30;
+  font-size: 1.06rem !important;
+  line-height: 1.4;
+}
+
+.rx-print-preview .rx-print-medicine-details {
+  color: #2d454b !important;
+  font-size: 0.98rem !important;
+  line-height: 1.45;
+}
+
+.rx-print-preview .rx-print-medicine-details .italic {
+  color: #40575c !important;
+}
+
+.rx-print-preview .rx-print-clinical {
+  color: #233a40;
+}
+
+.rx-print-preview .rx-print-clinical .text-gray-500,
+.rx-print-preview .rx-print-clinical .text-gray-700,
+.rx-print-preview .rx-print-medicines .text-gray-700,
+.rx-print-preview .rx-print-medicines .text-gray-800 {
+  color: #2d454b !important;
+}
+
+.rx-print-symbol {
+  width: 4rem;
+  height: 2rem;
+  color: #0d766e;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.dark .rx-reference-mode {
+  --rx-reference-header-bg: linear-gradient(90deg, #102b31 0%, #14383e 50%, #102b31 100%);
+  --rx-reference-header-ink: #edf9fa;
+  --rx-reference-header-muted: #b6d0d4;
+  --rx-reference-header-accent: #8ed9e8;
+  --rx-reference-queue-rule: rgba(167, 231, 228, 0.28);
+  background: #0f172a;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-reference-header,
+.dark .rx-reference-mode .rx-reference-toolbar {
+  background: var(--rx-reference-header-bg);
+}
+
+.dark .rx-reference-mode .rx-reference-header .text-muted-foreground {
+  color: var(--rx-reference-header-muted);
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary,
+.dark .rx-reference-mode .rx-doctor-header,
+.dark .rx-reference-mode .rx-patient-header {
+  background: #132a30;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry {
+  border-color: #28545a;
+  background: #0f242a;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header {
+  background: linear-gradient(110deg, #102b31, #14383e);
+  color: #9be7d5;
+  border-bottom-color: #28545a;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header .rx-symbol,
+.dark .rx-reference-mode .rx-medicine-entry-header h2 {
+  color: #9be7d5;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header h2 span {
+  color: #b6d0d4;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header input {
+  border-color: #4a8584 !important;
+  background: #0b1f24 !important;
+  color: #e5f3f1 !important;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header input::placeholder {
+  color: #9bb8bd;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header button {
+  border-color: #4a8584 !important;
+  background: #173b41 !important;
+  color: #d7f4ef !important;
+}
+
+.dark .rx-reference-mode .rx-medicine-entry-header button:hover {
+  background: #20535a !important;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body {
+  background: #0f242a;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body input,
+.dark .rx-reference-mode .rx-medicine-composer-body textarea,
+.dark .rx-reference-mode .rx-medicine-composer-body select {
+  border-color: #37646a;
+  background: #112c31;
+  color: #e5f3f1;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body input::placeholder,
+.dark .rx-reference-mode .rx-medicine-composer-body textarea::placeholder {
+  color: #9bb8bd;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option {
+  border-color: #376b6c;
+  background: #173b41;
+  color: #d7f4ef;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option:hover {
+  border-color: #6ccfc0;
+  background: #20535a;
+}
+
+.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option.is-active {
+  border-color: #72d8c9;
+  background: #0f8f83;
+  color: #f4fffd;
+}
+
+.dark .rx-reference-mode .rx-prescribed-list {
+  border-color: #28545a;
+  background: #0f242a;
+}
+
+.dark .rx-reference-mode .rx-prescribed-list-header {
+  background: #132f35;
+  border-bottom-color: #28545a;
+}
+
+.dark .rx-reference-mode .rx-prescribed-row {
+  border-color: #28545a;
+  background: #112c31;
+}
+
+.dark .rx-reference-mode .rx-prescribed-row:hover {
+  border-color: #4a8584;
+  background: #173b41;
+}
+
+.dark .rx-reference-mode .rx-prescribed-detail {
+  background: #1c4a4e;
+  color: #d7f4ef;
+}
+
+.dark .rx-reference-mode .rx-prescribed-actions button:hover {
+  background: #20535a;
+  color: #f4fffd;
+}
+
+.dark .rx-reference-mode .rx-workspace,
+.dark .rx-reference-mode .rx-prescription-panel {
+  background: #0f242a;
+}
+
+.dark .rx-reference-mode .rx-context-panel {
+  background: #0b1f24;
+  border-color: #24454b;
+}
+
+.dark .rx-reference-mode .rx-patient-info-card,
+.dark .rx-reference-mode .rx-clinical-section,
+.dark .rx-reference-mode .rx-vitals-card,
+.dark .rx-reference-mode .rx-template-group {
+  background: rgba(17, 46, 51, 0.82);
+  border-color: #28545a;
+}
+
+.dark .rx-reference-mode .rx-context-panel input,
+.dark .rx-reference-mode .rx-context-panel textarea,
+.dark .rx-reference-mode .rx-context-panel select {
+  background: #112c31;
+  border-color: #37646a;
+  color: #e5f3f1;
+}
+
+@media print {
+  .rx-print-patient-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(5.25rem, 1fr) minmax(5.25rem, 1fr) minmax(0, 1.5fr);
+  }
+
+  .rx-print-body {
+    display: flex !important;
+    flex-direction: row !important;
+    min-height: 120mm !important;
+  }
+
+  .rx-print-clinical {
+    width: 33.333333% !important;
+    border-right: 1px solid #d1d5db !important;
+    border-bottom: 0 !important;
+  }
+
+  .rx-print-medicines {
+    width: 66.666667% !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .rx-reference-mode .rx-reference-header {
+    grid-template-columns: minmax(11rem, 1fr) minmax(16rem, 1.35fr);
+  }
+
+  .rx-reference-mode .rx-doctor-identity-right {
+    display: none;
+  }
+
+  .rx-shell .rx-context-panel {
+    border-right: 0;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  .rx-shell .rx-prescription-sheet::before {
+    font-size: 7rem;
+  }
+}
+
+@media print {
+  .rx-shell .rx-prescription-sheet::before {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .rx-reference-mode .rx-reference-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.45rem;
+    min-height: auto;
+    padding: 0.45rem 0.55rem;
+  }
+
+  .rx-reference-mode .rx-doctor-identity-left {
+    flex: 1 1 9.5rem;
+    min-width: 0;
+  }
+
+  .rx-reference-mode .rx-doctor-identity-left p:first-child {
+    font-size: 0.82rem;
+  }
+
+  .rx-reference-mode .rx-queue-summary-inline {
+    flex: 1 1 100%;
+    min-width: 0;
+    order: 3;
+  }
+
+  .rx-reference-mode .rx-reference-patient-summary {
+    flex: 1 1 100%;
+    min-width: 0;
+    order: 4;
+    padding-inline: 0.55rem;
+  }
+
+  .rx-reference-mode .rx-queue-inline-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .rx-reference-mode .rx-queue-inline-stats span {
+    font-size: 0.55rem;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar {
+    overflow: hidden;
+    padding-inline: 0.35rem;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .rx-reference-mode .rx-context-panel,
+  .rx-reference-mode .rx-prescription-panel {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .rx-reference-mode .rx-patient-info-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .rx-reference-mode .rx-patient-info-card > div:not(:first-child) {
+    grid-column: 1 / -1;
+  }
+
+  .rx-reference-mode .rx-doctor-header {
+    padding: 0.6rem 0.7rem;
+  }
+
+  .rx-reference-mode .rx-patient-header {
+    padding-inline: 0.7rem;
+  }
+
+  .rx-reference-mode .rx-medicine-entry-header {
+    flex-wrap: wrap;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .rx-reference-mode .rx-inline-medicine-search {
+    flex-basis: 100%;
+    max-width: none;
+    margin-left: 0;
+  }
+
+  .rx-reference-mode .rx-prescription-sheet {
+    padding-inline: 0.55rem;
+  }
+
+  .rx-print-page {
+    padding: 0.5rem !important;
+  }
+
+  .rx-print-preview {
+    border-radius: 0.65rem;
+  }
+
+  .rx-print-patient-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem 0.65rem;
+  }
+
+  .rx-print-body {
+    flex-direction: column;
+    min-height: auto !important;
+  }
+
+  .rx-print-clinical,
+  .rx-print-medicines {
+    width: 100% !important;
+  }
+
+  .rx-print-clinical {
+    padding-right: 0 !important;
+    padding-bottom: 0.85rem;
+    border-right: 0 !important;
+    border-bottom: 1px solid #d1d5db;
+  }
+
+  .rx-print-medicines {
+    padding-left: 0 !important;
+    padding-top: 0.85rem;
+  }
+
+  .rx-print-preview .p-5 {
+    padding: 0.9rem !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .rx-print-patient-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .rx-print-header-content {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .rx-print-contact {
+    width: 100%;
+    flex-basis: auto;
+    text-align: left !important;
+  }
+
+  .rx-print-mark {
+    width: 3rem;
+    height: 3rem;
+    font-size: 2rem;
+  }
+
+  .rx-print-header h1 {
+    font-size: 1.15rem;
+  }
+}
+
+/* Readability and responsive navigation refinements. The imported screen uses
+   compact utility classes in many places, so these screen-only overrides keep
+   clinical text readable without changing the print document. */
+.rx-shell {
+  font-size: 1rem;
+}
+
+.rx-shell :where(input, textarea, select) {
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.rx-shell .text-\[9px\] {
+  font-size: 0.82rem !important;
+}
+
+.rx-shell .text-\[10px\] {
+  font-size: 0.86rem !important;
+}
+
+.rx-shell .text-\[11px\] {
+  font-size: 0.9rem !important;
+}
+
+.rx-shell .text-xs {
+  font-size: 0.92rem !important;
+}
+
+.rx-reference-mode .rx-context-panel {
+  color: hsl(var(--foreground));
+}
+
+.rx-reference-mode .rx-context-panel :where(label, [role="button"], button) {
+  font-size: 0.95rem;
+}
+
+.rx-reference-mode .rx-context-panel :where(input, textarea, select) {
+  min-height: 2.35rem;
+  font-size: 1rem !important;
+}
+
+.rx-reference-mode .rx-context-panel :where(input, textarea)::placeholder {
+  font-size: 0.95rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-patient-info-card label,
+.rx-reference-mode .rx-context-panel .rx-vitals-card label {
+  font-size: 0.86rem !important;
+}
+
+.rx-reference-mode .rx-context-panel .rx-patient-info-card,
+.rx-reference-mode .rx-context-panel .rx-vitals-card {
+  font-size: 0.96rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-patient-info-card input,
+.rx-reference-mode .rx-context-panel .rx-patient-info-card select {
+  min-height: 2.45rem;
+  height: 2.45rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-vitals-card input {
+  min-height: 2.2rem;
+  height: 2.2rem;
+}
+
+.rx-reference-mode .rx-context-panel .rx-clinical-section :where(input, textarea),
+.rx-reference-mode .rx-context-panel .rx-diagnosis-field input {
+  font-size: 1rem !important;
+}
+
+.rx-reference-mode .rx-reference-toolbar {
+  position: relative;
+  z-index: 20;
+}
+
+.rx-mobile-toolbar-head {
+  display: none;
+}
+
+.rx-mobile-menu-toggle {
+  display: none;
+}
+
+.rx-management-page {
+  color: hsl(var(--foreground));
+}
+
+.rx-management-page .rx-management-header {
+  min-width: 0;
+}
+
+.rx-management-page .rx-management-menu-toggle {
+  display: none;
+}
+
+.dark .rx-management-page header {
+  border-color: #243e45;
+  background: #0d1d22;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.dark .rx-management-page main > section {
+  border-color: #28464c;
+  background: #12272d;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+}
+
+.dark .rx-management-page input {
+  border-color: #3a6268;
+  background: #0d2025;
+  color: #e8f7f5;
+}
+
+.dark .rx-management-page input::placeholder {
+  color: #9eb8bc;
+}
+
+.dark .rx-management-page article {
+  border-color: #2d5056;
+  background: #132a30;
+}
+
+.dark .rx-management-page article:hover {
+  border-color: #4a8584;
+  background: #17343a;
+}
+
+.dark .rx-management-page .text-muted-foreground {
+  color: #aac2c5;
+}
+
+.dark .rx-management-page .rx-management-menu-toggle {
+  border-color: #4a8584;
+  background: #16343a;
+  color: #d8f5f0;
+}
+
+/* Stronger dark-mode surfaces for the complete prescription workspace. */
+.dark .rx-reference-mode {
+  background: #0b171b;
+  color: #e7f4f2;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar {
+  border-color: #27474d;
+  background: #0d2025;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar button {
+  color: #dcefeb;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar button:hover {
+  background: #1a3c42;
+}
+
+.dark .rx-reference-mode .rx-reference-header {
+  border-color: #27474d;
+  background: linear-gradient(105deg, #0d2025 0%, #102d33 52%, #0d2025 100%);
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary {
+  border-color: #27474d;
+  background: #10272c;
+}
+
+.dark .rx-reference-mode .rx-workspace,
+.dark .rx-reference-mode .rx-prescription-panel {
+  background:
+    radial-gradient(circle at 78% 12%, rgba(64, 174, 165, 0.08), transparent 26rem),
+    #0b1b20;
+}
+
+.dark .rx-reference-mode .rx-context-panel {
+  background: #0a1b20;
+  border-color: #294850;
+}
+
+.dark .rx-reference-mode .rx-context-panel > [data-radix-scroll-area-viewport] > div {
+  background: transparent;
+}
+
+.dark .rx-reference-mode .rx-context-panel .rx-patient-info-card,
+.dark .rx-reference-mode .rx-context-panel .rx-vitals-card,
+.dark .rx-reference-mode .rx-context-panel .rx-clinical-section,
+.dark .rx-reference-mode .rx-context-panel .rx-diagnosis-field {
+  border-color: #2b555c;
+  background: #10272d;
+  color: #e7f4f2;
+}
+
+.dark .rx-reference-mode .rx-context-panel .rx-patient-info-card label,
+.dark .rx-reference-mode .rx-context-panel .rx-vitals-card label,
+.dark .rx-reference-mode .rx-context-panel .rx-clinical-section label {
+  color: #b8d4d5;
+}
+
+.dark .rx-reference-mode .rx-context-panel :where(input, textarea, select) {
+  border-color: #416b70;
+  background: #0d2025;
+  color: #e7f4f2;
+  color-scheme: dark;
+}
+
+.dark .rx-reference-mode .rx-context-panel :where(input, textarea)::placeholder {
+  color: #99b6ba;
+}
+
+.dark .rx-reference-mode .rx-context-panel .text-muted-foreground {
+  color: #a9c2c5;
+}
+
+.dark .rx-reference-mode .rx-context-panel .border-b,
+.dark .rx-reference-mode .rx-context-panel .border-t,
+.dark .rx-reference-mode .rx-context-panel [class*="border-border"] {
+  border-color: #294850;
+}
+
+.dark .rx-reference-mode .rx-context-panel .bg-background {
+  background: #10272d;
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary .rx-field-caption {
+  color: #a9c7ca;
+}
+
+.dark .rx-reference-mode .rx-reference-patient-summary p {
+  color: #e7f4f2;
+}
+
+@media (max-width: 640px) {
+  .rx-reference-mode .rx-reference-toolbar {
+    display: block;
+    padding: 0.45rem;
+  }
+
+  .rx-mobile-toolbar-head {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  .rx-mobile-menu-toggle {
+    display: inline-flex;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll {
+    display: none;
+    width: 100%;
+    max-width: none;
+    margin-top: 0.45rem;
+    padding: 0.35rem;
+    overflow: visible;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.65rem;
+    background: hsl(var(--card));
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll.is-mobile-open {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 0.35rem;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll > * {
+    width: 100%;
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-scroll .rx-desktop-new-rx {
+    display: none;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-secondary {
+    display: none;
+    width: 100%;
+    margin: 0.45rem 0 0;
+    padding: 0.35rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.65rem;
+    background: hsl(var(--card));
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-secondary.is-mobile-open {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .rx-reference-mode .rx-reference-toolbar-secondary > * {
+    flex: 1 1 calc(50% - 0.35rem);
+    min-width: 0;
+    justify-content: center;
+  }
+
+  .dark .rx-reference-mode .rx-reference-toolbar-scroll,
+  .dark .rx-reference-mode .rx-reference-toolbar-secondary {
+    border-color: #31565c;
+    background: #10272d;
+  }
+
+  .dark .rx-reference-mode .rx-reference-toolbar-scroll button,
+  .dark .rx-reference-mode .rx-reference-toolbar-secondary button {
+    border-color: #3b686d;
+    background: #16353b;
+    color: #e0f4f1;
+  }
+
+  .dark .rx-reference-mode .rx-reference-toolbar-scroll button:hover,
+  .dark .rx-reference-mode .rx-reference-toolbar-secondary button:hover {
+    background: #205057;
+  }
+
+  .rx-management-page .rx-management-header {
+    align-items: center;
+  }
+
+  .rx-management-page .rx-management-menu-toggle {
+    display: inline-flex;
+  }
+
+  .rx-management-page .rx-management-nav {
+    display: none;
+    width: 100%;
+    margin-left: 0;
+    padding-top: 0.4rem;
+    border-top: 1px solid hsl(var(--border));
+  }
+
+  .rx-management-page .rx-management-nav.is-mobile-open {
+    display: flex;
+  }
+
+  .rx-management-page .rx-management-nav > * {
+    flex: 1 1 auto;
+  }
+}
