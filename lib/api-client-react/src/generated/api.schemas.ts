@@ -19,11 +19,6 @@ export interface QueueDisplayDevice {
   fullscreen: boolean;
   orientation: string;
   isActive?: boolean;
-  showPatientName?: boolean;
-  showDoctorName?: boolean;
-  voiceEnabled?: boolean;
-  voiceLanguage?: string;
-  theme?: string;
   createdAt?: string;
 }
 
@@ -39,12 +34,27 @@ export interface QueueDisplayDeviceInput {
   fullscreen?: boolean;
   orientation?: string;
   isActive?: boolean;
-  showPatientName?: boolean;
-  showDoctorName?: boolean;
-  voiceEnabled?: boolean;
-  voiceLanguage?: string;
-  theme?: string;
 }
+
+/**
+ * Upload category — determines the storage subdirectory. Defaults to
+ * "general" if omitted. Use this to route files to the correct folder:
+ * doctors (profile photos), prescriptions (PDFs/lab reports),
+ * chat (message attachments), banners (hero/banner images),
+ * blog (post cover images), shop (product images).
+ */
+export type UploadUrlRequestCategory = typeof UploadUrlRequestCategory[keyof typeof UploadUrlRequestCategory];
+
+
+export const UploadUrlRequestCategory = {
+  doctors: 'doctors',
+  prescriptions: 'prescriptions',
+  chat: 'chat',
+  banners: 'banners',
+  blog: 'blog',
+  shop: 'shop',
+  general: 'general',
+} as const;
 
 export interface UploadUrlRequest {
   /**
@@ -62,12 +72,20 @@ export interface UploadUrlRequest {
      * @minLength 1
      */
   contentType: string;
+  /**
+     * Upload category — determines the storage subdirectory. Defaults to
+     * "general" if omitted. Use this to route files to the correct folder:
+     * doctors (profile photos), prescriptions (PDFs/lab reports),
+     * chat (message attachments), banners (hero/banner images),
+     * blog (post cover images), shop (product images).
+     */
+  category?: UploadUrlRequestCategory;
 }
 
 export interface UploadUrlResponse {
-  /** Presigned GCS URL for PUT upload. */
+  /** Upload destination URL for PUT upload. */
   uploadURL: string;
-  /** Normalized object path (e.g. `/objects/uploads/uuid`). Store this in your database. */
+  /** Normalized object path (e.g. `/objects/uploads/doctors/uuid`). Store this in your database. */
   objectPath: string;
   metadata?: UploadUrlRequest;
 }
@@ -229,7 +247,6 @@ export const UserRole = {
   receptionist: 'receptionist',
   patient: 'patient',
   assistant: 'assistant',
-  driver: 'driver',
 } as const;
 
 export interface User {
@@ -887,7 +904,6 @@ export interface AppSettings {
   footerCopyrightText?: string | null;
   /** @nullable */
   footerAbout?: string | null;
-  doctorTemplateManagementEnabled?: boolean;
 }
 
 export interface AppSettingsInput {
@@ -929,7 +945,6 @@ export interface AppSettingsInput {
   footerCopyrightText?: string | null;
   /** @nullable */
   footerAbout?: string | null;
-  doctorTemplateManagementEnabled?: boolean;
 }
 
 export interface DoctorRxSettingsInput {
@@ -1544,6 +1559,16 @@ export interface LocationDetect {
   countryName?: string | null;
   /** @nullable */
   city?: string | null;
+  /** @nullable */
+  cityId?: number | null;
+  /** @nullable */
+  districtId?: number | null;
+  /** @nullable */
+  districtName?: string | null;
+  /** @nullable */
+  divisionId?: number | null;
+  /** @nullable */
+  divisionName?: string | null;
   detected: boolean;
 }
 
@@ -2018,6 +2043,7 @@ featured?: boolean;
 onlineOnly?: string;
 countryId?: number;
 cityId?: number;
+divisionId?: number;
 page?: number;
 limit?: number;
 };
@@ -2199,89 +2225,3 @@ export type ListSmsLogsParams = {
 page?: number;
 };
 
-
-// ─── Network Types ────────────────────────────────────────────────────────
-export type NetworkStats = {
-  totalConnections: number;
-  pendingRequestsReceived: number;
-  pendingRequestsSent: number;
-  referralsSent: number;
-  referralsReceived: number;
-  consultationsSent: number;
-  consultationsPending: number;
-  unreadMessages: number;
-};
-
-export type ReferralDoctor = {
-  id: number;
-  name: string;
-  degree?: string | null;
-  photoUrl?: string | null;
-  isVerified?: boolean | null;
-};
-
-export type PatientReferralItem = {
-  id: number;
-  referrerDoctorId: number;
-  receiverDoctorId: number;
-  patientName: string;
-  patientPhone?: string | null;
-  patientAge?: number | null;
-  patientGender?: string | null;
-  referralReason: string;
-  notes?: string | null;
-  status: string;
-  createdAt?: string;
-  doctor?: ReferralDoctor | null;
-};
-
-export type ReferralsListResponse = {
-  sent: PatientReferralItem[];
-  received: PatientReferralItem[];
-};
-
-export type CreateReferralInput = {
-  receiverDoctorId: number;
-  patientName: string;
-  patientPhone?: string;
-  patientAge?: number;
-  patientGender?: string;
-  referralReason: string;
-  notes?: string;
-};
-
-export type DoctorConsultationItem = {
-  id: number;
-  requesterDoctorId: number;
-  consultantDoctorId: number;
-  patientInfo?: string | null;
-  caseNotes: string;
-  attachmentUrl?: string | null;
-  attachmentType?: string | null;
-  attachmentName?: string | null;
-  attachmentSize?: number | null;
-  responseNotes?: string | null;
-  status: string;
-  createdAt?: string;
-  doctor?: ReferralDoctor | null;
-};
-
-export type ConsultationsListResponse = {
-  sent: DoctorConsultationItem[];
-  received: DoctorConsultationItem[];
-};
-
-export type CreateConsultationInput = {
-  consultantDoctorId: number;
-  patientInfo?: string;
-  caseNotes: string;
-  attachmentUrl?: string | null;
-  attachmentType?: string | null;
-  attachmentName?: string | null;
-  attachmentSize?: number | null;
-};
-
-export type UpdateConsultationInput = {
-  responseNotes?: string;
-  status?: string;
-};

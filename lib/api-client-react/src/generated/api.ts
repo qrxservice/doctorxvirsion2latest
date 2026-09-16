@@ -163,7 +163,7 @@ import type {
   VerifyLoginOtpInput,
   VideoPromotion,
   VideoPromotionInput,
-  VideoPromotionUpdateInput,
+  VideoPromotionUpdateInput
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -12799,5 +12799,4 @@ export const useCreateQueueDevice = <TError = ErrorType<unknown>,
       > => {
       return useMutation(getCreateQueueDeviceMutationOptions(options));
     }
-
 

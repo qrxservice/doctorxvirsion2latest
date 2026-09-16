@@ -1,5 +1,9 @@
-import app from "./app";
+import http from "node:http";
+import app, { allowedOrigins } from "./app";
 import { logger } from "./lib/logger";
+import { seedDefaultUsers } from "./lib/seed";
+import { handleWsUpgrade } from "./lib/wsManager";
+import { initSocketIO } from "./lib/socketManager";
 
 const rawPort = process.env["PORT"];
 
@@ -15,11 +19,21 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
-    process.exit(1);
-  }
+const server = http.createServer(app);
 
+// Socket.IO for real-time display screens (TVs, kiosks, mobile)
+initSocketIO(server, allowedOrigins);
+
+server.on("upgrade", (req, socket, head) => {
+  if (!handleWsUpgrade(req, socket, head)) {
+    socket.destroy();
+  }
+});
+
+server.listen(port, () => {
   logger.info({ port }, "Server listening");
+
+  seedDefaultUsers().catch((err: unknown) => {
+    logger.warn({ err }, "Background seed failed (non-fatal)");
+  });
 });

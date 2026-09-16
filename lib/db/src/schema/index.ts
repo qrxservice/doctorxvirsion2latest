@@ -1,20 +1,43 @@
-// Export your models here. Add one export per file
-// export * from "./posts";
-//
-// Each model/table should ideally be split into different files.
-// Each model/table should define a Drizzle table, insert schema, and types:
-//
-//   import { pgTable, text, serial } from "drizzle-orm/pg-core";
-//   import { createInsertSchema } from "drizzle-zod";
-//   import { z } from "zod/v4";
-//
-//   export const postsTable = pgTable("posts", {
-//     id: serial("id").primaryKey(),
-//     title: text("title").notNull(),
-//   });
-//
-//   export const insertPostSchema = createInsertSchema(postsTable).omit({ id: true });
-//   export type InsertPost = z.infer<typeof insertPostSchema>;
-//   export type Post = typeof postsTable.$inferSelect;
+export * from "./users";
+export * from "./departments";
+export * from "./doctors";
+export * from "./appointments";
+export * from "./queue";
+export * from "./prescriptions";
+export * from "./medicines";
+export * from "./subscriptions";
+export * from "./banners";
+export * from "./countries";
+export * from "./notices";
+export * from "./connections";
+export * from "./chat";
+export * from "./logs";
+export * from "./reviews";
+export * from "./availability";
+export * from "./shop";
+export * from "./rx-templates";
+export * from "./rx-settings";
+export * from "./app-settings";
+export * from "./blog-posts";
+export * from "./menu-items";
+export * from "./password-resets";
+export * from "./advertisements";
+export * from "./audit-logs";
+export * from "./migrations";
+export * from "./calculators";
+export * from "./queue-display-devices";
+export * from "./sliders";
+export * from "./adsense-slots";
+export * from "./tools";
+export * from "./payment-gateways";
+export * from "./payment-transactions";
+export * from "./admin-otp";
+export * from "./emergency-contacts";
+export * from "./addresses";
+export * from "./video-promotions";
+export * from "./referrals";
+export * from "./consultations";
+export * from "./blood-donors";
+export * from "./ambulance";
 
-export {}
+export * from "./bd-locations";

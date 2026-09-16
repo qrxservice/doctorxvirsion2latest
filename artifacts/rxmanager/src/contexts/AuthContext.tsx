@@ -67,8 +67,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLocation("/assistant/dashboard");
     } else if (result.user.role === "patient") {
       setLocation("/patient/dashboard");
-    } else if (result.user.role === "driver") {
-      setLocation("/driver/dashboard");
     } else {
       setLocation("/");
     }

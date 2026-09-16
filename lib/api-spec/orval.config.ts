@@ -51,16 +51,11 @@ export default defineConfig({
       workspace: apiZodSrc,
       client: "zod",
       target: "generated",
-      schemas: { path: "generated/types", type: "typescript" },
       mode: "split",
       clean: true,
       prettier: true,
       override: {
         zod: {
-          // Orval resolves `auto` from lib/api-spec/package.json, which has no
-          // zod dependency, so orval >= 8.23 falls back to Zod 4 syntax while
-          // the catalog installs zod 3. Pin to match the catalog.
-          version: 3,
           coerce: {
             query: ['boolean', 'number', 'string'],
             param: ['boolean', 'number', 'string'],
