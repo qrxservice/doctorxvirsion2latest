@@ -71,6 +71,7 @@ interface MedSuggestion {
 }
 
 interface RxTemplate { id: number; type: string; title: string; content: string; department?: string | null; isFavorite?: boolean | null; isHidden?: boolean | null; }
+type QuickTemplateKind = "dose" | "timing" | "duration";
 
 type MedicineShortcut = Omit<MedItem, "id"> & { key: string; lastUsedAt: number; isFavorite: boolean };
 
@@ -895,6 +896,7 @@ export default function NewPrescriptionPage() {
   const [showNewToolNotice, setShowNewToolNotice] = useState(false);
   const [showTemplateForm, setShowTemplateForm] = useState(false);
   const [isManageTemplates, setIsManageTemplates] = useState(false);
+  const [quickTemplateKind, setQuickTemplateKind] = useState<QuickTemplateKind | null>(null);
   const [allTemplatesGrouped, setAllTemplatesGrouped] = useState<Record<string, any[]>>({});
   const [newTmpl, setNewTmpl] = useState(emptyTemplateForm());
   const [templateMedicines, setTemplateMedicines] = useState<MedItem[]>([]);
@@ -3297,19 +3299,6 @@ export default function NewPrescriptionPage() {
                   <div className="rx-dose-grid grid grid-cols-1 gap-2 md:grid-cols-3">
                     <label className="min-w-0 space-y-1">
                       <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">{L.dose}</span>
-                      <div className="rx-quick-options" aria-label={isBn ? "দ্রুত ডোজ নির্বাচন" : "Quick dose options"}>
-                        {doseOptions.slice(0, 8).map(option => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={cn("rx-quick-option", currentMed.dose === option.content && "is-active")}
-                            aria-pressed={currentMed.dose === option.content}
-                            onClick={() => setCurrentMed(m => ({ ...m, dose: option.content }))}
-                          >
-                            {option.title}
-                          </button>
-                        ))}
-                      </div>
                       <select
                         className="h-7 w-full min-w-0 rounded border bg-background px-1.5 text-xs"
                         value={selectedDoseTemplate}
@@ -3322,6 +3311,16 @@ export default function NewPrescriptionPage() {
                         <option value={CUSTOM_TEMPLATE_VALUE}>Manual / Custom</option>
                         {doseOptions.map(option => <option key={option.id} value={option.content}>{option.title}</option>)}
                       </select>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-full justify-start px-1 text-[11px] text-muted-foreground hover:text-teal-700 dark:hover:text-teal-300"
+                        onClick={() => setQuickTemplateKind("dose")}
+                      >
+                        <ChevronDown className="h-3 w-3 mr-1" />
+                        {isBn ? "দ্রুত বাছাই খুলুন" : "Open quick choices"}
+                      </Button>
                       <Input
                         className="h-7 w-full text-xs"
                         placeholder={L.customDose}
@@ -3332,19 +3331,6 @@ export default function NewPrescriptionPage() {
 
                     <label className="min-w-0 space-y-1">
                       <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">{L.timing}</span>
-                      <div className="rx-quick-options" aria-label={isBn ? "দ্রুত সময় নির্বাচন" : "Quick timing options"}>
-                        {timingOptions.slice(0, 6).map(option => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={cn("rx-quick-option", currentMed.timing === option.content && "is-active")}
-                            aria-pressed={currentMed.timing === option.content}
-                            onClick={() => setCurrentMed(m => ({ ...m, timing: option.content }))}
-                          >
-                            {option.title}
-                          </button>
-                        ))}
-                      </div>
                       <select
                         className="h-7 w-full min-w-0 rounded border bg-background px-1.5 text-xs"
                         value={selectedTimingTemplate}
@@ -3357,6 +3343,16 @@ export default function NewPrescriptionPage() {
                         <option value={CUSTOM_TEMPLATE_VALUE}>Manual / Custom</option>
                         {timingOptions.map(option => <option key={option.id} value={option.content}>{option.title}</option>)}
                       </select>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-full justify-start px-1 text-[11px] text-muted-foreground hover:text-teal-700 dark:hover:text-teal-300"
+                        onClick={() => setQuickTemplateKind("timing")}
+                      >
+                        <ChevronDown className="h-3 w-3 mr-1" />
+                        {isBn ? "দ্রুত বাছাই খুলুন" : "Open quick choices"}
+                      </Button>
                       <Input
                         className="h-7 w-full text-xs"
                         placeholder={L.customTiming}
@@ -3367,23 +3363,6 @@ export default function NewPrescriptionPage() {
 
                     <label className="min-w-0 space-y-1">
                       <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">{L.duration}</span>
-                      <div className="rx-quick-options" aria-label={isBn ? "দ্রুত মেয়াদ নির্বাচন" : "Quick duration options"}>
-                        {durationPresetsDB.slice(0, 9).map(option => {
-                          const value = `${option.n}|${option.u}`;
-                          const unitLabel = option.u === "D" ? L.dayUnit : option.u === "W" ? L.weekUnit : L.monthUnit;
-                          return (
-                            <button
-                              key={`${option.n}-${option.u}-${option.title}`}
-                              type="button"
-                              className={cn("rx-quick-option", selectedDurationTemplate === value && "is-active")}
-                              aria-pressed={selectedDurationTemplate === value}
-                              onClick={() => setCurrentMed(m => ({ ...m, durationNum: option.n, durationUnit: option.u }))}
-                            >
-                              {option.n ? `${toBengaliDigits(option.n)} ${unitLabel}` : option.title}
-                            </button>
-                          );
-                        })}
-                      </div>
                       <select
                         className="h-7 w-full min-w-0 rounded border bg-background px-1.5 text-xs"
                         value={selectedDurationTemplate}
@@ -3398,6 +3377,16 @@ export default function NewPrescriptionPage() {
                           <option key={`${option.n}-${option.u}-${option.title}`} value={`${option.n}|${option.u}`}>{option.n ? `${option.n} ${option.u === "D" ? "দিন" : option.u === "W" ? "সপ্তাহ" : "মাস"}` : option.title}</option>
                         ))}
                       </select>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-full justify-start px-1 text-[11px] text-muted-foreground hover:text-teal-700 dark:hover:text-teal-300"
+                        onClick={() => setQuickTemplateKind("duration")}
+                      >
+                        <ChevronDown className="h-3 w-3 mr-1" />
+                        {isBn ? "দ্রুত বাছাই খুলুন" : "Open quick choices"}
+                      </Button>
                       <div className="flex min-w-0 gap-1">
                         <Input
                           type="number"
@@ -4153,6 +4142,85 @@ export default function NewPrescriptionPage() {
         )}
 
       </div>
+
+      {/* ── QUICK TEMPLATE CHOICES POPUP ───────────────────────────── */}
+      <Dialog open={quickTemplateKind !== null} onOpenChange={open => { if (!open) setQuickTemplateKind(null); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>
+              {quickTemplateKind === "dose"
+                ? (isBn ? "দ্রুত ডোজ বাছাই" : "Quick dose choices")
+                : quickTemplateKind === "timing"
+                  ? (isBn ? "দ্রুত সময় বাছাই" : "Quick timing choices")
+                  : (isBn ? "দ্রুত মেয়াদ বাছাই" : "Quick duration choices")}
+            </DialogTitle>
+            <DialogDescription>
+              {isBn ? "একটি অপশন বেছে নিলে সেটি প্রেসক্রিপশন ফর্মে বসবে।" : "Choose an option to fill the prescription form."}
+            </DialogDescription>
+          </DialogHeader>
+
+          {quickTemplateKind === "dose" && (
+            <div className="rx-quick-options" aria-label={isBn ? "দ্রুত ডোজ নির্বাচন" : "Quick dose options"}>
+              {doseOptions.slice(0, 8).map(option => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={cn("rx-quick-option", currentMed.dose === option.content && "is-active")}
+                  aria-pressed={currentMed.dose === option.content}
+                  onClick={() => {
+                    setCurrentMed(m => ({ ...m, dose: option.content }));
+                    setQuickTemplateKind(null);
+                  }}
+                >
+                  {option.title}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {quickTemplateKind === "timing" && (
+            <div className="rx-quick-options" aria-label={isBn ? "দ্রুত সময় নির্বাচন" : "Quick timing options"}>
+              {timingOptions.slice(0, 6).map(option => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={cn("rx-quick-option", currentMed.timing === option.content && "is-active")}
+                  aria-pressed={currentMed.timing === option.content}
+                  onClick={() => {
+                    setCurrentMed(m => ({ ...m, timing: option.content }));
+                    setQuickTemplateKind(null);
+                  }}
+                >
+                  {option.title}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {quickTemplateKind === "duration" && (
+            <div className="rx-quick-options" aria-label={isBn ? "দ্রুত মেয়াদ নির্বাচন" : "Quick duration options"}>
+              {durationPresetsDB.slice(0, 9).map(option => {
+                const value = `${option.n}|${option.u}`;
+                const unitLabel = option.u === "D" ? L.dayUnit : option.u === "W" ? L.weekUnit : L.monthUnit;
+                return (
+                  <button
+                    key={`${option.n}-${option.u}-${option.title}`}
+                    type="button"
+                    className={cn("rx-quick-option", selectedDurationTemplate === value && "is-active")}
+                    aria-pressed={selectedDurationTemplate === value}
+                    onClick={() => {
+                      setCurrentMed(m => ({ ...m, durationNum: option.n, durationUnit: option.u }));
+                      setQuickTemplateKind(null);
+                    }}
+                  >
+                    {option.n ? `${toBengaliDigits(option.n)} ${unitLabel}` : option.title}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* ══ HEADER SETTINGS DIALOG ═══════════════════════════════════ */}
       <Dialog open={showHeaderDlg} onOpenChange={setShowHeaderDlg}>
