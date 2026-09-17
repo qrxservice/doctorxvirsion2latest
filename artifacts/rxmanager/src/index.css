@@ -612,46 +612,6 @@
   box-shadow: inset 3px 0 0 rgba(13, 118, 110, 0.65);
 }
 
-.rx-shell .rx-quick-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.3rem;
-  min-height: 2rem;
-}
-
-.rx-shell .rx-quick-option {
-  min-height: 2rem;
-  border: 1px solid rgba(13, 118, 110, 0.2);
-  border-radius: 0.45rem;
-  background: hsl(var(--background));
-  color: hsl(var(--foreground));
-  padding: 0.25rem 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  line-height: 1.15;
-  transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
-}
-
-.rx-shell .rx-quick-option:hover {
-  border-color: rgba(13, 118, 110, 0.55);
-  background: rgba(13, 118, 110, 0.08);
-}
-
-.rx-shell .rx-quick-option.is-active {
-  border-color: #0d766e;
-  background: #0d766e;
-  color: white;
-  box-shadow: 0 2px 5px rgba(13, 118, 110, 0.2);
-}
-
-.dark .rx-shell .rx-quick-option {
-  border-color: rgba(93, 203, 193, 0.25);
-}
-
-.dark .rx-shell .rx-quick-option:hover {
-  background: rgba(93, 203, 193, 0.12);
-}
-
 .rx-shell .rx-prescribed-list {
   border-color: rgba(13, 118, 110, 0.18);
   background: var(--rx-paper);
@@ -1470,23 +1430,6 @@
 .dark .rx-reference-mode .rx-medicine-composer-body input::placeholder,
 .dark .rx-reference-mode .rx-medicine-composer-body textarea::placeholder {
   color: #9bb8bd;
-}
-
-.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option {
-  border-color: #376b6c;
-  background: #173b41;
-  color: #d7f4ef;
-}
-
-.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option:hover {
-  border-color: #6ccfc0;
-  background: #20535a;
-}
-
-.dark .rx-reference-mode .rx-medicine-composer-body .rx-quick-option.is-active {
-  border-color: #72d8c9;
-  background: #0f8f83;
-  color: #f4fffd;
 }
 
 .dark .rx-reference-mode .rx-prescribed-list {

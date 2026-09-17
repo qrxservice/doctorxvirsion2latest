@@ -119,9 +119,6 @@ const mergeTemplateOptions = (defaults: RxTemplate[], saved: RxTemplate[]) => {
 const toAsciiDigits = (value: string) =>
   value.replace(/[০-৯]/g, digit => String(BENGALI_DIGITS.indexOf(digit)));
 
-const toBengaliDigits = (value: string) =>
-  value.replace(/\d/g, digit => BENGALI_DIGITS[Number(digit)]);
-
 const parseDurationPreset = (content: string) => {
   const normalized = toAsciiDigits(content.trim());
   const match = normalized.match(/^(\d+(?:\.\d+)?)\s*(D|W|M|দিন|সপ্তাহ|মাস)?/i);
@@ -3297,19 +3294,6 @@ export default function NewPrescriptionPage() {
                   <div className="rx-dose-grid grid grid-cols-1 gap-2 md:grid-cols-3">
                     <label className="min-w-0 space-y-1">
                       <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">{L.dose}</span>
-                      <div className="rx-quick-options" aria-label={isBn ? "দ্রুত ডোজ নির্বাচন" : "Quick dose options"}>
-                        {doseOptions.slice(0, 8).map(option => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={cn("rx-quick-option", currentMed.dose === option.content && "is-active")}
-                            aria-pressed={currentMed.dose === option.content}
-                            onClick={() => setCurrentMed(m => ({ ...m, dose: option.content }))}
-                          >
-                            {option.title}
-                          </button>
-                        ))}
-                      </div>
                       <select
                         className="h-7 w-full min-w-0 rounded border bg-background px-1.5 text-xs"
                         value={selectedDoseTemplate}
@@ -3332,19 +3316,6 @@ export default function NewPrescriptionPage() {
 
                     <label className="min-w-0 space-y-1">
                       <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">{L.timing}</span>
-                      <div className="rx-quick-options" aria-label={isBn ? "দ্রুত সময় নির্বাচন" : "Quick timing options"}>
-                        {timingOptions.slice(0, 6).map(option => (
-                          <button
-                            key={option.id}
-                            type="button"
-                            className={cn("rx-quick-option", currentMed.timing === option.content && "is-active")}
-                            aria-pressed={currentMed.timing === option.content}
-                            onClick={() => setCurrentMed(m => ({ ...m, timing: option.content }))}
-                          >
-                            {option.title}
-                          </button>
-                        ))}
-                      </div>
                       <select
                         className="h-7 w-full min-w-0 rounded border bg-background px-1.5 text-xs"
                         value={selectedTimingTemplate}
@@ -3367,23 +3338,6 @@ export default function NewPrescriptionPage() {
 
                     <label className="min-w-0 space-y-1">
                       <span className="text-[10px] text-muted-foreground font-semibold uppercase tracking-wide">{L.duration}</span>
-                      <div className="rx-quick-options" aria-label={isBn ? "দ্রুত মেয়াদ নির্বাচন" : "Quick duration options"}>
-                        {durationPresetsDB.slice(0, 9).map(option => {
-                          const value = `${option.n}|${option.u}`;
-                          const unitLabel = option.u === "D" ? L.dayUnit : option.u === "W" ? L.weekUnit : L.monthUnit;
-                          return (
-                            <button
-                              key={`${option.n}-${option.u}-${option.title}`}
-                              type="button"
-                              className={cn("rx-quick-option", selectedDurationTemplate === value && "is-active")}
-                              aria-pressed={selectedDurationTemplate === value}
-                              onClick={() => setCurrentMed(m => ({ ...m, durationNum: option.n, durationUnit: option.u }))}
-                            >
-                              {option.n ? `${toBengaliDigits(option.n)} ${unitLabel}` : option.title}
-                            </button>
-                          );
-                        })}
-                      </div>
                       <select
                         className="h-7 w-full min-w-0 rounded border bg-background px-1.5 text-xs"
                         value={selectedDurationTemplate}
