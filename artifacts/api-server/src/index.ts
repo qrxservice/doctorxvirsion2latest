@@ -30,8 +30,8 @@ server.on("upgrade", (req, socket, head) => {
   }
 });
 
-server.listen(port, () => {
-  logger.info({ port }, "Server listening");
+server.listen(port, "0.0.0.0", () => {
+  logger.info({ port, host: "0.0.0.0" }, "Server listening");
 
   seedDefaultUsers().catch((err: unknown) => {
     logger.warn({ err }, "Background seed failed (non-fatal)");
