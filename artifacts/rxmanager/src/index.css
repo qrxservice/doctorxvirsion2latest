@@ -886,6 +886,32 @@
   background: rgba(255, 255, 255, 0.84);
 }
 
+.rx-reference-mode .rx-reference-toolbar button {
+  color: hsl(var(--foreground));
+  border-color: hsl(var(--border));
+}
+
+.rx-reference-mode .rx-reference-toolbar button:hover {
+  color: hsl(var(--foreground));
+  background: hsl(var(--accent));
+}
+
+.rx-reference-mode .rx-reference-toolbar button:focus-visible {
+  color: hsl(var(--foreground));
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 1px;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar button {
+  color: #e0f4f1;
+  border-color: #3b686d;
+}
+
+.dark .rx-reference-mode .rx-reference-toolbar button:hover {
+  color: #ffffff;
+  background: #205057;
+}
+
 .rx-reference-mode .rx-reference-toolbar-scroll {
   scrollbar-width: none;
 }
