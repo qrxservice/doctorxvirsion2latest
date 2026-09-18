@@ -386,6 +386,10 @@ function rxLabels(isBn: boolean) {
         avgConsultation: "গড় পরামর্শ", firstPatient: "প্রথম রোগী", lastPatient: "শেষ রোগী",
         daySummaryTitle: "দিনের সারসংক্ষেপ", avgWaitTime: "গড় অপেক্ষা", estWaitNext: "পরবর্তীর অপেক্ষা",
         queuePosition: "কিউ অবস্থান",
+         consultationSummary: "পরামর্শ সারসংক্ষেপ", dailyPatients: "আজকের রোগী", dailyEarnings: "আজকের আয়",
+         dailyFreePatients: "ফ্রি রোগী", weeklyEarnings: "সাপ্তাহিক আয়", monthlyEarnings: "মাসিক আয়",
+         totalEarnings: "মোট আয়", unavailable: "উপলব্ধ নয়",
+         earningsDataNote: "প্রতি পরামর্শের পেমেন্ট/ফ্রি স্ট্যাটাস সংরক্ষিত না থাকায় আয়ের হিসাব দেখানো যাচ্ছে না।",
       }
     : {
         navDashboard: "Dashboard", navNewRx: "New Rx", navPatients: "Patients",
@@ -467,6 +471,10 @@ function rxLabels(isBn: boolean) {
         avgConsultation: "Avg Consultation", firstPatient: "First Patient", lastPatient: "Last Patient",
         daySummaryTitle: "Day Summary", avgWaitTime: "Avg Wait", estWaitNext: "Est. Wait (Next)",
         queuePosition: "Queue Position",
+         consultationSummary: "Consultation Summary", dailyPatients: "Daily Patients", dailyEarnings: "Daily Earnings",
+         dailyFreePatients: "Daily Free Patients", weeklyEarnings: "Weekly Earnings", monthlyEarnings: "Monthly Earnings",
+         totalEarnings: "Total Earnings", unavailable: "Unavailable",
+         earningsDataNote: "Earnings are unavailable because payment/free status is not stored per consultation.",
       };
 }
 
@@ -781,7 +789,7 @@ export default function NewPrescriptionPage() {
 
   // ── Auth redirect
   useEffect(() => {
-    if (!import.meta.env.DEV && !isLoading && (!user || user.role !== "doctor")) setLoc("/login");
+    if (!isLoading && (!user || user.role !== "doctor")) setLoc("/login");
   }, [user, isLoading]);
 
   // ── Main state
@@ -1147,6 +1155,9 @@ export default function NewPrescriptionPage() {
   const qFirstPatientTime = (queueData as any)?.firstPatientTime ?? null;
   const qLastPatientTime = (queueData as any)?.lastPatientTime ?? null;
   const allAppts = apptData?.appointments ?? [];
+  const consultationFeeLabel = doctor?.consultationFee != null
+    ? `${doctor.currency === "USD" ? "$" : "৳"}${doctor.consultationFee}`
+    : null;
 
   const shortcutKey = (med: Omit<MedItem, "id">) =>
     [med.brandName, med.genericName, med.strength, med.dosageForm, med.dose, med.durationNum, med.durationUnit, med.timing, med.instructions]
@@ -2454,7 +2465,7 @@ export default function NewPrescriptionPage() {
   );
 
   // ── Auth guard
-  if (!import.meta.env.DEV && (isLoading || !user)) return <div className="min-h-screen flex items-center justify-center">{L.loading}</div>;
+  if (isLoading || !user) return <div className="min-h-screen flex items-center justify-center">{L.loading}</div>;
 
   // ── Print view
   if (mode === "saved" && savedRx) {
@@ -3611,6 +3622,48 @@ export default function NewPrescriptionPage() {
                   Share
                 </Button>
               </div>
+
+               {/* ── CONSULTATION SUMMARY ─────────────────────────────── */}
+               <section className="mb-4 rounded-xl border border-teal-200 bg-teal-50/40 p-2.5 dark:border-teal-900 dark:bg-teal-950/20" aria-label={L.consultationSummary}>
+                 <div className="mb-2 flex flex-wrap items-center justify-between gap-1.5">
+                   <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-teal-800 dark:text-teal-200">
+                     <TrendingUp className="h-3.5 w-3.5" />
+                     <span>{L.consultationSummary}</span>
+                   </div>
+                   {consultationFeeLabel && (
+                     <span className="text-[10px] font-medium text-muted-foreground">
+                       {isBn ? "প্রোফাইল ফি" : "Profile fee"}: {consultationFeeLabel}
+                     </span>
+                   )}
+                 </div>
+                 <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-6">
+                   <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
+                     <span className="block truncate text-[10px] text-muted-foreground">{L.dailyPatients}</span>
+                     <strong className="mt-0.5 block text-sm text-foreground">{qCompleted}</strong>
+                   </div>
+                   <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
+                     <span className="block truncate text-[10px] text-muted-foreground">{L.dailyEarnings}</span>
+                     <strong className="mt-0.5 block text-sm text-amber-700 dark:text-amber-300">{L.unavailable}</strong>
+                   </div>
+                   <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
+                     <span className="block truncate text-[10px] text-muted-foreground">{L.dailyFreePatients}</span>
+                     <strong className="mt-0.5 block text-sm text-amber-700 dark:text-amber-300">{L.unavailable}</strong>
+                   </div>
+                   <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
+                     <span className="block truncate text-[10px] text-muted-foreground">{L.weeklyEarnings}</span>
+                     <strong className="mt-0.5 block text-sm text-amber-700 dark:text-amber-300">{L.unavailable}</strong>
+                   </div>
+                   <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
+                     <span className="block truncate text-[10px] text-muted-foreground">{L.monthlyEarnings}</span>
+                     <strong className="mt-0.5 block text-sm text-amber-700 dark:text-amber-300">{L.unavailable}</strong>
+                   </div>
+                   <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
+                     <span className="block truncate text-[10px] text-muted-foreground">{L.totalEarnings}</span>
+                     <strong className="mt-0.5 block text-sm text-amber-700 dark:text-amber-300">{L.unavailable}</strong>
+                   </div>
+                 </div>
+                 <p className="mt-2 text-[10px] leading-4 text-muted-foreground">{L.earningsDataNote}</p>
+               </section>
 
             </div>
           </ScrollArea>

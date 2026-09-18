@@ -1,0 +1,61 @@
+Add a compact, responsive “Consultation Summary” to the existing empty space below the prescription action buttons.
+
+IMPORTANT:
+- This is a small UI feature only.
+- Do not redesign the prescription page.
+- Do not change Medicine, Templates, Observation/Left Panel, Queue, Header or existing Save/Preview/Print behavior.
+- Do not use mock, hardcoded or demo patient/earning data.
+- Do not create a second patient or payment data source.
+- Reuse existing DoctorX data and APIs/state.
+
+DATA SOURCE:
+Use real existing patient/appointment/consultation data already available in the project.
+
+The summary must use:
+- Existing completed consultation/patient records
+- Existing patient/serial/appointment data
+- Existing doctor profile data
+- Consultant fee from the authenticated doctor’s existing profile/settings
+
+CALCULATIONS:
+- Daily Patients
+- Daily Earnings
+- Daily Free Patients
+- Weekly Earnings
+- Monthly Earnings
+- Total Earnings
+
+Rules:
+- Count real completed consultations only where appropriate.
+- Free patients count separately.
+- Free consultations must not add consultant fee to earnings.
+- Earnings must be calculated from the doctor’s existing consultant fee source and the real consultation records.
+- Do not hardcode a fee.
+- Do not invent historical earnings if the current backend does not provide the required records.
+
+UI:
+- Compact horizontal layout sized to the existing empty space.
+- Clean medical/professional design.
+- Works with existing light mode and dark mode.
+- Fully responsive.
+- Preserve current prescription page spacing and proportions.
+- No large charts or tables.
+- Keep the section visually consistent with the existing DoctorX UI.
+- Add a small period selector only if it fits without increasing the section height significantly.
+
+IMPORTANT:
+Before implementation, inspect where the existing project gets:
+1. Completed patient/appointment/consultation records.
+2. Doctor consultant fee.
+3. Payment/free consultation status, if available.
+
+Reuse those existing sources.
+
+If any required historical data source is missing from the current backend, DO NOT create fake/local fallback data. Report exactly what is missing instead.
+
+After implementation, report:
+- Existing data sources used
+- Consultant fee source used
+- Calculation logic used
+- Files changed
+- Whether any backend source was missing
