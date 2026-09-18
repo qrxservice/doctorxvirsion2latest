@@ -1158,6 +1158,7 @@ export default function NewPrescriptionPage() {
   const consultationFeeLabel = doctor?.consultationFee != null
     ? `${doctor.currency === "USD" ? "$" : "৳"}${doctor.consultationFee}`
     : null;
+  const [consultationPeriod, setConsultationPeriod] = useState<"today" | "week" | "month" | "all">("today");
 
   const shortcutKey = (med: Omit<MedItem, "id">) =>
     [med.brandName, med.genericName, med.strength, med.dosageForm, med.dose, med.durationNum, med.durationUnit, med.timing, med.instructions]
@@ -2480,7 +2481,6 @@ export default function NewPrescriptionPage() {
       <header className="rx-topbar rx-reference-header min-w-0 shrink-0 border-b bg-background px-3 py-2 print:hidden relative">
         <div className="rx-doctor-identity rx-doctor-identity-left min-w-0">
           <div className="rx-screen-doctor-brand">
-            <div className="rx-screen-doctor-mark" aria-hidden="true">℞</div>
             <div className="min-w-0">
               <p className="rx-screen-doctor-name text-base font-bold text-blue-800 dark:text-blue-300">{screenHName}</p>
               <p className="text-[11px] text-foreground">{screenHDegree || "M.B.B.S."}</p>
@@ -3629,12 +3629,27 @@ export default function NewPrescriptionPage() {
                    <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-teal-800 dark:text-teal-200">
                      <TrendingUp className="h-3.5 w-3.5" />
                      <span>{L.consultationSummary}</span>
+                   </div>                   <div className="flex flex-wrap items-center gap-2">
+                     {consultationFeeLabel && (
+                       <span className="text-[10px] font-medium text-muted-foreground">
+                         {isBn ? "প্রোফাইল ফি" : "Profile fee"}: {consultationFeeLabel}
+                       </span>
+                     )}
+                     <label className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                       <span>{isBn ? "সময়কাল" : "Period"}:</span>
+                       <select
+                         value={consultationPeriod}
+                         onChange={e => setConsultationPeriod(e.target.value as "today" | "week" | "month" | "all")}
+                         className="h-7 rounded-md border bg-background px-2 text-[10px] text-foreground"
+                         aria-label={isBn ? "সারসংক্ষেপের সময়কাল" : "Summary period"}
+                       >
+                         <option value="today">{isBn ? "আজ" : "Today"}</option>
+                         <option value="week">{isBn ? "এই সপ্তাহ" : "This Week"}</option>
+                         <option value="month">{isBn ? "এই মাস" : "This Month"}</option>
+                         <option value="all">{isBn ? "সব সময়" : "All Time"}</option>
+                       </select>
+                     </label>
                    </div>
-                   {consultationFeeLabel && (
-                     <span className="text-[10px] font-medium text-muted-foreground">
-                       {isBn ? "প্রোফাইল ফি" : "Profile fee"}: {consultationFeeLabel}
-                     </span>
-                   )}
                  </div>
                  <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-6">
                    <div className="min-w-0 rounded-lg border bg-background px-2 py-1.5">
